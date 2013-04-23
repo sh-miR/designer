@@ -1,7 +1,7 @@
 from Bio.Blast import NCBIWWW
 from Bio.Blast import NCBIXML
 XML = NCBIWWW.qblast("blastn", "nt", "8332116")
-#print(NCBIWWW.qblast("blastn", "nt", "8332116").read()) #zwraca jako xml są parsery XML'a
+#print(NCBIWWW.qblast("blastn", "nt", "8332116").read()) #zwraca jako xml sa parsery XML'a
 blast_record = NCBIXML.read(XML)
 for alignment in blast_record.alignments:
     for hsp in alignment.hsps:
