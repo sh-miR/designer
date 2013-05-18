@@ -1,5 +1,9 @@
+DROP TABLE backbone;
+DROP DATABASE shmird;
+CREATE DATABASE shmird;
+
 CREATE TABLE backbone (
-    id integer NOT NULL PRIMARY KEY SERIAL,
+    id SERIAL PRIMARY KEY,
     name varchar(10) NOT NULL,
     flanks3_s varchar(80) NOT NULL,
     flanks3_a varchar(80) NOT NULL,
