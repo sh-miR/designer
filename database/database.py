@@ -39,13 +39,13 @@ def add(name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s, loop_a, miRNA_
 
 def get_by_name(name):
     query = "SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s, loop_a, miRNA_s, mirRNA_a, miRNA_length, miRNA_min, miRNA_max, structure, homogeneity, miRBase_link FROM backbone WHERE name = %s;" % name
-    data = execute_with_one_response(query)
-    return Backbone(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12], data[13], data[14])
+    data = execute_with_one_response(query) #nie jestem pewien czy to nie bedzie pierwszy element listy
+    return Backbone(*data)
 
 def get_all():
     query = "SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s, loop_a, miRNA_s, mirRNA_a, miRNA_length, miRNA_min, miRNA_max, structure, homogeneity, miRBase_link FROM backbone;"
     data = execute_with_response(query)
     backbones = []
     for row in data:
-        backbones.append(Backbone(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14]))
+        backbones.append(Backbone(*row))
     return backbones
