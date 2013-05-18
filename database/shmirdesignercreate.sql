@@ -1,5 +1,5 @@
-CREATE TABLE nowy_backbone (
-    id integer NOT NULL PRIMARY KEY,
+CREATE TABLE backbone (
+    id integer NOT NULL PRIMARY KEY SERIAL,
     name varchar(10) NOT NULL,
     flanks3_s varchar(80) NOT NULL,
     flanks3_a varchar(80) NOT NULL,
