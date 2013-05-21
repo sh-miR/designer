@@ -1,11 +1,14 @@
-#!/usr/bin/env python3.3
+#!/usr/bin/env python
 
-import requests
+import urllib2
 import json
 
-url = 'http://127.0.0.1:9001/cgi_app.py'
+url = 'http://127.0.0.1:9001/'
 data = {'foo': 'bar'}
 headers = {'content-type': 'application/json'}
 
-req = requests.post(url, data=json.dumps(data), headers=headers)
-print(req.text)
+req = urllib2.Request(url, json.dumps(data), headers)
+
+resp = urllib2.urlopen(req)
+print(resp.read())
+resp.close()

@@ -1,10 +1,10 @@
 import psycopg2
 from models import Backbone
 
-DB_NAME = ''
-DB_USER = ''
+DB_NAME = 'shmird'
+DB_USER = 'postgres'
 DB_PASS = ''
-DB_HOST = ''
+DB_HOST = 'localhost'
 DB_PORT = 5432
 
 def connect():
