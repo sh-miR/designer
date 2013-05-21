@@ -5,4 +5,6 @@ Sposób użycia:
 
 1. Wejdź do katalogu backbone
 2. Uruchom plik serwer.py
-3. Skrypt CGI staje się dostępny pod adresem http://127.0.0.1:9001/cgi-bin/backbone.py
+3. Skrypt CGI staje się dostępny pod adresem http://127.0.0.1:9001/cgi_app.py
+
+runfcgi.py służy do odpalenia WSGI i FastCGI z gniazdem już na hipotetycznym produkcyjnym serwerze z nginx
