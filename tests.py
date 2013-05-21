@@ -59,22 +59,26 @@ class ShmiRTest(unittest.TestCase):
     def test_check_complementary(self):
         """test for complementary, if both strands are in 5'-3' orientation
         class perform only when there are two strands given; should take as input both strand,
-        reverse second strand,
-        translate reversed strand in a way (a->t, t->a, u->a, c->g, g->c),
+        
+        
+        input:
+        5'acggcttGGaactuctggtac3'
+        5'gtaccagaagttccaagccgt3'
+        reverse second:
+        3'tgccgaaccttgaagaccatg5'
+        translate second strand in a way (a->t, t->a, u->a, c->g, g->c),
+        5'acggcttGGaactuctggtac3'
         check if the strands are the same, starting with first nucleotide or -2,-1,+1,+2 with minimum 80% similarity
         (last thing can be performed with blast)
-
-           5'acggcttGGaactuctggtac3'
-             |||||||||||||||||||||
-           3'tgccgaaccttgaagaccatg5'
-        1) 5'gtaccagaagttccaagccgt3'
-        2) 5'acggcttGGaactuctggtac3'
         3) 5'acggcttGGaactuctggtac3'
              |||||||||||||||||||||
            5'acggcttGGaactuctggtac3'
         output: 1 - complementary
                 2 - noncomplementary
                 3 - incorrect input
+        
+        
+        
         """
 
 
