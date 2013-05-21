@@ -1,0 +1,960 @@
+<?xml version="1.0"?>
+<!DOCTYPE rnaml PUBLIC "-//University of Montreal//RNAML 1.1//EN" "http://www-lbit.iro.umontreal.ca/rnaml/current/rnaml.dtd">
+
+<rnaml version="1.1" comment="Output from UNAFold">
+
+  <analysis id="UNAFold">
+    <program>
+      <prog-name>UNAFold</prog-name>
+      <prog-version>3.8</prog-version>
+    </program>
+  </analysis>
+
+
+  <!-- 1st sequence and its associated foldings ******************* -->
+  <molecule id="_Initially_-66.20__13May21-14-08-24-3690b19481" type="rna">
+    <sequence circular="false" strand="1">
+      <seq-data>
+        CUAAAGAAGG UAUAUUGCUG UUGACAGUGA GCGAcuguaa acauccucga cuggaagcug
+        ugaagccaca gaugggcuuc cagucgagga uguuuacauG CCUACUGCCU CGGACUUCAA
+        GGGGCUACUU UAGGAGCA
+      </seq-data>
+    </sequence>
+
+    <structure analysis-ids="UNAFold">
+      <!-- Start of folding 1 for sequence 1 ************************ -->
+      <model id="_1.1">
+        <model-info>
+          <free-energy>-60.65</free-energy>
+        </model-info>
+
+        <str-annotation>
+          <helix>
+            <base-id-5p>
+              <base-id>
+                <position>1</position>
+              </base-id>
+            </base-id-5p>
+            <base-id-3p>
+              <base-id>
+                <position>133</position>
+              </base-id>
+            </base-id-3p>
+            <length>6</length>
+          </helix>
+          <helix>
+            <base-id-5p>
+              <base-id>
+                <position>8</position>
+              </base-id>
+            </base-id-5p>
+            <base-id-3p>
+              <base-id>
+                <position>103</position>
+              </base-id>
+            </base-id-3p>
+            <length>5</length>
+          </helix>
+          <base-pair>
+            <base-id-5p>
+              <base-id>
+                <position>15</position>
+              </base-id>
+            </base-id-5p>
+            <base-id-3p>
+              <base-id>
+                <position>30</position>
+              </base-id>
+            </base-id-3p>
+          </base-pair>
+          <helix>
+            <base-id-5p>
+              <base-id>
+                <position>18</position>
+              </base-id>
+            </base-id-5p>
+            <base-id-3p>
+              <base-id>
+                <position>27</position>
+              </base-id>
+            </base-id-3p>
+            <length>3</length>
+          </helix>
+          <helix>
+            <base-id-5p>
+              <base-id>
+                <position>37</position>
+              </base-id>
+            </base-id-5p>
+            <base-id-3p>
+              <base-id>
+                <position>97</position>
+              </base-id>
+            </base-id-3p>
+            <length>23</length>
+          </helix>
+          <helix>
+            <base-id-5p>
+              <base-id>
+                <position>60</position>
+              </base-id>
+            </base-id-5p>
+            <base-id-3p>
+              <base-id>
+                <position>69</position>
+              </base-id>
+            </base-id-3p>
+            <length>3</length>
+          </helix>
+          <helix>
+            <base-id-5p>
+              <base-id>
+                <position>107</position>
+              </base-id>
+            </base-id-5p>
+            <base-id-3p>
+              <base-id>
+                <position>125</position>
+              </base-id>
+            </base-id-3p>
+            <length>5</length>
+          </helix>
+        </str-annotation>
+
+        <secondary-structure-display>
+          <ss-base-coord>
+            <base-id>
+              <position>1</position>
+            </base-id>
+            <coordinates>519.49 94.41</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>2</position>
+            </base-id>
+            <coordinates>515.79 119.23</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>3</position>
+            </base-id>
+            <coordinates>512.08 144.05</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>4</position>
+            </base-id>
+            <coordinates>508.37 168.87</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>5</position>
+            </base-id>
+            <coordinates>504.66 193.69</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>6</position>
+            </base-id>
+            <coordinates>500.96 218.5</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>7</position>
+            </base-id>
+            <coordinates>460.01 247.7</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>8</position>
+            </base-id>
+            <coordinates>463.15 312.75</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>9</position>
+            </base-id>
+            <coordinates>447.57 332.43</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>10</position>
+            </base-id>
+            <coordinates>431.99 352.1</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>11</position>
+            </base-id>
+            <coordinates>416.41 371.77</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>12</position>
+            </base-id>
+            <coordinates>400.83 391.44</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>13</position>
+            </base-id>
+            <coordinates>374.22 383.78</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>14</position>
+            </base-id>
+            <coordinates>354.01 386.89</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>15</position>
+            </base-id>
+            <coordinates>328.85 400.79</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>16</position>
+            </base-id>
+            <coordinates>308.08 386.71</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>17</position>
+            </base-id>
+            <coordinates>287.31 372.63</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>18</position>
+            </base-id>
+            <coordinates>266.53 358.55</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>19</position>
+            </base-id>
+            <coordinates>245.76 344.47</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>20</position>
+            </base-id>
+            <coordinates>224.99 330.39</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>21</position>
+            </base-id>
+            <coordinates>207.72 302.66</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>22</position>
+            </base-id>
+            <coordinates>184.82 304.44</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>23</position>
+            </base-id>
+            <coordinates>171.93 323.45</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>24</position>
+            </base-id>
+            <coordinates>178.76 345.38</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>25</position>
+            </base-id>
+            <coordinates>210.91 351.16</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>26</position>
+            </base-id>
+            <coordinates>231.68 365.24</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>27</position>
+            </base-id>
+            <coordinates>252.45 379.32</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>28</position>
+            </base-id>
+            <coordinates>273.23 393.4</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>29</position>
+            </base-id>
+            <coordinates>294 407.48</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>30</position>
+            </base-id>
+            <coordinates>314.77 421.56</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>31</position>
+            </base-id>
+            <coordinates>311.98 437.6</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>32</position>
+            </base-id>
+            <coordinates>297.7 457.6</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>33</position>
+            </base-id>
+            <coordinates>286.54 477.37</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>34</position>
+            </base-id>
+            <coordinates>292.39 490.72</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>35</position>
+            </base-id>
+            <coordinates>314.5 495.9</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>36</position>
+            </base-id>
+            <coordinates>338.89 498.94</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>37</position>
+            </base-id>
+            <coordinates>352.58 507.75</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>38</position>
+            </base-id>
+            <coordinates>348.87 532.57</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>39</position>
+            </base-id>
+            <coordinates>345.16 557.39</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>40</position>
+            </base-id>
+            <coordinates>341.46 582.2</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>41</position>
+            </base-id>
+            <coordinates>337.75 607.02</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>42</position>
+            </base-id>
+            <coordinates>334.04 631.84</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>43</position>
+            </base-id>
+            <coordinates>330.33 656.66</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>44</position>
+            </base-id>
+            <coordinates>326.63 681.48</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>45</position>
+            </base-id>
+            <coordinates>322.92 706.3</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>46</position>
+            </base-id>
+            <coordinates>319.21 731.12</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>47</position>
+            </base-id>
+            <coordinates>315.5 755.94</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>48</position>
+            </base-id>
+            <coordinates>311.79 780.75</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>49</position>
+            </base-id>
+            <coordinates>308.09 805.57</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>50</position>
+            </base-id>
+            <coordinates>304.38 830.39</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>51</position>
+            </base-id>
+            <coordinates>300.67 855.21</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>52</position>
+            </base-id>
+            <coordinates>296.96 880.03</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>53</position>
+            </base-id>
+            <coordinates>293.26 904.85</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>54</position>
+            </base-id>
+            <coordinates>289.55 929.67</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>55</position>
+            </base-id>
+            <coordinates>285.84 954.49</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>56</position>
+            </base-id>
+            <coordinates>282.13 979.31</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>57</position>
+            </base-id>
+            <coordinates>278.43 1004.12</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>58</position>
+            </base-id>
+            <coordinates>274.72 1028.94</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>59</position>
+            </base-id>
+            <coordinates>271.01 1053.76</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>60</position>
+            </base-id>
+            <coordinates>266.11 1087.12</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>61</position>
+            </base-id>
+            <coordinates>259.62 1111.36</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>62</position>
+            </base-id>
+            <coordinates>253.13 1135.6</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>63</position>
+            </base-id>
+            <coordinates>232.59 1161</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>64</position>
+            </base-id>
+            <coordinates>241.78 1182.06</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>65</position>
+            </base-id>
+            <coordinates>263.97 1188</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>66</position>
+            </base-id>
+            <coordinates>282.45 1174.36</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>67</position>
+            </base-id>
+            <coordinates>277.37 1142.09</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>68</position>
+            </base-id>
+            <coordinates>283.86 1117.85</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>69</position>
+            </base-id>
+            <coordinates>290.35 1093.61</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>70</position>
+            </base-id>
+            <coordinates>317.89 1113.33</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>71</position>
+            </base-id>
+            <coordinates>341.91 1108.76</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>72</position>
+            </base-id>
+            <coordinates>355.67 1088.55</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>73</position>
+            </base-id>
+            <coordinates>351.11 1064.53</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>74</position>
+            </base-id>
+            <coordinates>330.9 1050.76</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>75</position>
+            </base-id>
+            <coordinates>295.83 1057.47</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>76</position>
+            </base-id>
+            <coordinates>299.54 1032.65</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>77</position>
+            </base-id>
+            <coordinates>303.25 1007.83</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>78</position>
+            </base-id>
+            <coordinates>306.95 983.01</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>79</position>
+            </base-id>
+            <coordinates>310.66 958.19</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>80</position>
+            </base-id>
+            <coordinates>314.37 933.38</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>81</position>
+            </base-id>
+            <coordinates>318.08 908.56</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>82</position>
+            </base-id>
+            <coordinates>321.78 883.74</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>83</position>
+            </base-id>
+            <coordinates>325.49 858.92</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>84</position>
+            </base-id>
+            <coordinates>329.2 834.1</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>85</position>
+            </base-id>
+            <coordinates>332.91 809.28</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>86</position>
+            </base-id>
+            <coordinates>336.61 784.46</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>87</position>
+            </base-id>
+            <coordinates>340.32 759.64</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>88</position>
+            </base-id>
+            <coordinates>344.03 734.82</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>89</position>
+            </base-id>
+            <coordinates>347.74 710.01</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>90</position>
+            </base-id>
+            <coordinates>351.44 685.19</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>91</position>
+            </base-id>
+            <coordinates>355.15 660.37</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>92</position>
+            </base-id>
+            <coordinates>358.86 635.55</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>93</position>
+            </base-id>
+            <coordinates>362.57 610.73</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>94</position>
+            </base-id>
+            <coordinates>366.27 585.91</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>95</position>
+            </base-id>
+            <coordinates>369.98 561.09</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>96</position>
+            </base-id>
+            <coordinates>373.69 536.27</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>97</position>
+            </base-id>
+            <coordinates>377.4 511.46</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>98</position>
+            </base-id>
+            <coordinates>431.48 472.7</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>99</position>
+            </base-id>
+            <coordinates>420.51 407.02</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>100</position>
+            </base-id>
+            <coordinates>436.09 387.35</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>101</position>
+            </base-id>
+            <coordinates>451.67 367.68</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>102</position>
+            </base-id>
+            <coordinates>467.25 348.01</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>103</position>
+            </base-id>
+            <coordinates>482.83 328.33</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>104</position>
+            </base-id>
+            <coordinates>516.53 329.94</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>105</position>
+            </base-id>
+            <coordinates>536.71 318.15</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>106</position>
+            </base-id>
+            <coordinates>577.09 294.57</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>107</position>
+            </base-id>
+            <coordinates>597.27 282.79</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>108</position>
+            </base-id>
+            <coordinates>619.26 270.68</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>109</position>
+            </base-id>
+            <coordinates>641.24 258.58</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>110</position>
+            </base-id>
+            <coordinates>663.22 246.48</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>111</position>
+            </base-id>
+            <coordinates>685.21 234.38</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>112</position>
+            </base-id>
+            <coordinates>716.69 248.63</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>113</position>
+            </base-id>
+            <coordinates>740.04 242.89</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>114</position>
+            </base-id>
+            <coordinates>757.38 226.24</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>115</position>
+            </base-id>
+            <coordinates>764.07 203.15</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>116</position>
+            </base-id>
+            <coordinates>758.33 179.81</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>117</position>
+            </base-id>
+            <coordinates>741.68 162.46</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>118</position>
+            </base-id>
+            <coordinates>718.59 155.77</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>119</position>
+            </base-id>
+            <coordinates>695.24 161.52</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>120</position>
+            </base-id>
+            <coordinates>677.9 178.17</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>121</position>
+            </base-id>
+            <coordinates>673.1 212.4</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>122</position>
+            </base-id>
+            <coordinates>651.12 224.5</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>123</position>
+            </base-id>
+            <coordinates>629.14 236.6</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>124</position>
+            </base-id>
+            <coordinates>607.15 248.7</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>125</position>
+            </base-id>
+            <coordinates>585.17 260.8</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>126</position>
+            </base-id>
+            <coordinates>565.94 248.08</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>127</position>
+            </base-id>
+            <coordinates>544.75 233.34</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>128</position>
+            </base-id>
+            <coordinates>525.77 222.21</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>129</position>
+            </base-id>
+            <coordinates>529.48 197.39</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>130</position>
+            </base-id>
+            <coordinates>533.19 172.57</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>131</position>
+            </base-id>
+            <coordinates>536.9 147.76</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>132</position>
+            </base-id>
+            <coordinates>540.6 122.94</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>133</position>
+            </base-id>
+            <coordinates>544.31 98.12</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>134</position>
+            </base-id>
+            <coordinates>566.54 70.63</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>135</position>
+            </base-id>
+            <coordinates>560.89 48.01</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>136</position>
+            </base-id>
+            <coordinates>540.91 36</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>137</position>
+            </base-id>
+            <coordinates>518.28 41.64</coordinates>
+          </ss-base-coord>
+          <ss-base-coord>
+            <base-id>
+              <position>138</position>
+            </base-id>
+            <coordinates>506.27 61.63</coordinates>
+          </ss-base-coord>
+        </secondary-structure-display>
+      </model>
+      <!-- End of folding 1 for sequence 1 ************************ -->
+
+    </structure>
+  </molecule>
+
+</rnaml>
