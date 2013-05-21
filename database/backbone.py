@@ -2,6 +2,6 @@
 
 import json
 
-def backbone(environ, start_response):
+def backbone(request):
     dict_response = {'hello_world': True}
     return json.dumps(dict_response)
