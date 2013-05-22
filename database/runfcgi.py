@@ -12,7 +12,7 @@ def backbone_wsgi_app(environ, start_response):
 
 if DEBUG:
     from cherrypy import wsgiserver
-    address = ('localhost', 9001)
+    address = ('127.0.0.1', 9001)
     print("Running on %s:%s" % address)
     wsgiserver.CherryPyWSGIServer(address, backbone_wsgi_app).start()
 else:
