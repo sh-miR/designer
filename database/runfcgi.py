@@ -8,7 +8,7 @@ import json
 def backbone_wsgi_app(environ, start_response):
     request_json = json.loads(environ['wsgi.input'].read().decode())
     start_response('200 OK', [('Content-Type', 'application/json')])
-    return backbone_handler(request_json)
+    return backbone_handler(**request_json)
 
 if DEBUG:
     from cherrypy import wsgiserver
