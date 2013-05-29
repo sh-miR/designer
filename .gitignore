@@ -4,3 +4,4 @@
 local_settings.py
 *~
 .DS_Store
+database/settings.py

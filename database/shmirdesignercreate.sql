@@ -20,10 +20,10 @@ CREATE TABLE backbone (
     homogeneity integer NOT NULL,
     miRBase_link varchar(200) NOT NULL
 );
-
+/*Proszę o trzymanie się składni same wielkie bądź same małe litery w insertach*/
 INSERT INTO backbone VALUES
     (DEFAULT, 'miR-30', 'TGCCTACTGCCTCGGACTTCAAGGGGCTACTTTAGGAGCA', 'TGCTCCTAAAGTAGCCCCTTGAAGTCCGAGGCAGTAGGCA',
     'CTAAAGAAGGTATATTGCTGTTGACAGTGAGCGAC', 'GTCGCTCACTGTCAACAGCAATATACCTTCTTTAG',
-    'cugugaagccacagauggg', 'cccatctgtggcttcacag', 'uguaaacauccucgacuggaag', 'cttccagtcgaggatgtttaca',
+    'CUGUGAAGCCACAGAUGGG', 'CCCATCTGTGGCTTCACAG', 'UGUAAACAUCCUCGACUGGAAG', 'CTTCCAGTCGAGGATGTTTACA',
     22, 19, 25, '/structures/mir30.rnaml', 2, 'http://www.mirbase.org/cgi-bin/mirna_entry.pl?acc=MI0000088'
     );

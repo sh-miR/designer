@@ -1,1 +1,2 @@
 -e hg+http://hg.saddi.com/flup-py3.0#egg=Package
+psycopg2==2.5
