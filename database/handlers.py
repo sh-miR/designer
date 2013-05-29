@@ -1,9 +1,7 @@
-from functools import wraps
 import json
 import database
 
 def require_data(f):
-    @wraps(f)
     def decorated(*args, **kwargs):
         if 'data' in kwargs:
             return f(*args, **kwargs)
