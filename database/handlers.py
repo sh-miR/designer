@@ -23,10 +23,10 @@ def backbone_methods(**request):
     methods = {
         'get_by_name': get_by_name,
         'get_all': database.get_all,
-        'get_by_miRNA_s': get_by_miRNA_s,
+        'get_by_mirna_s': get_by_miRNA_s,
     }
     method = request.pop('method')
-    if method in methods:
+    if method.lower() in methods:
         return methods[method](**request)
     else:
         return {'error': 'Requested method does not exist!'}
