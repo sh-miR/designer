@@ -44,10 +44,6 @@ def check_complementary(str1,str2):
     else:
         return (str1,str2,2)
 
-# poprawic ze to long i to short na to long or to short
-# jak wyrzuca seq,seq, 1 to wtedy pisac correct seq
-# poprawic sprawdzanie complementarnosci
-
 
 def inputt(string_to_be_check):
     __pattern1 = re.compile(
@@ -83,12 +79,13 @@ def inputt(string_to_be_check):
             message = [seq,changed]
 
         else:
-            message = [seq,error]
+            message = [seq,"insert only acgtu letters"]
         return message
 
     sequence = string_to_be_check.split(" ")
     print sequence
-    
+
+#dodac pare ifow i okej
     if len(sequence) == 2:
         zm = [check(sequence[0]),check(sequence[1])]
         print zm
@@ -111,5 +108,5 @@ def inputt(string_to_be_check):
     
 
 cos = check_complementary("tact","tga")
-#print cos
+
 print inputt(string_to_be_check)
