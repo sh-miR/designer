@@ -10,6 +10,9 @@ def require_data(f):
 
 @require_data
 def get_by_name(**request):
+    data = str(request['data'])
+    if len(data.split())>1:
+        return {'error': "Data must be one word"}
     return database.get_by_name(request['data'])
 
 @require_data
