@@ -10,6 +10,9 @@ def require_data(f):
 
 @require_data
 def get_by_name(**request):
+    data = str(request['data'])
+    if len(data.split())>1:
+        return {'error': "Data must be one word"}
     return database.get_by_name(request['data'])
 
 @require_data
@@ -25,8 +28,8 @@ def backbone_methods(**request):
         'get_all': database.get_all,
         'get_by_mirna_s': get_by_miRNA_s,
     }
-    method = request.pop('method')
-    if method.lower() in methods:
+    method = request.pop('method').lower()
+    if method in methods:
         return methods[method](**request)
     else:
         return {'error': 'Requested method does not exist!'}

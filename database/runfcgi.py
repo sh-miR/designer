@@ -6,9 +6,13 @@ from handlers import backbone_handler
 import json
 
 def backbone_wsgi_app(environ, start_response):
-    request_json = json.loads(environ['wsgi.input'].read().decode())
-    start_response('200 OK', [('Content-Type', 'application/json')])
-    return backbone_handler(**request_json)
+    try:
+        request_json = json.loads(environ['wsgi.input'].read().decode())
+        start_response('200 OK', [('Content-Type', 'application/json')])
+        return backbone_handler(**request_json)
+    except ValueError:
+        start_response('200 OK', [('Content-Type', 'application/json')])
+        return "Welcome, use our application to communicate with database."
 
 if DEBUG:
     from cherrypy import wsgiserver
