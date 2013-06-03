@@ -8,35 +8,35 @@ def connect():
 def disconnect():
     conn.close()
 
-def execute(query):
+def execute(query, var=None):
     with conn.cursor() as cur:
-        cur.execute(query)
+        cur.execute(query, var)
 
-def execute_with_one_response(query):
+def execute_with_one_response(query, var=None):
     with conn.cursor() as cur:
-        cur.execute(query)
+        cur.execute(query, var)
         data = cur.fetchone()
     return data
     
-def execute_with_response(query):
+def execute_with_response(query, var=None):
     cur = conn.cursor()
-    cur.execute(query)
+    cur.execute(query, var)
     data = cur.fetchall()
     cur.close()
     return data
 
 def add(name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s, loop_a,\
         miRNA_s, mirRNA_a, miRNA_length, miRNA_min, miRNA_max, structure, homogeneity, miRBase_link):
-    query = "INSERT INTO backbone VALUES(DEFAULT, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %d, %d, %s, %d, %s);" %\
-            (name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s, loop_a,\
+    query = "INSERT INTO backbone VALUES(DEFAULT, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %d, %d, %s, %d, %s);"
+    var = (name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s, loop_a,\
             miRNA_s, mirRNA_a, miRNA_length, miRNA_min, miRNA_max, structure, homogeneity, miRBase_link)
-    execute(query)
+    execute(query, var)
 
 def get_by_name(name):
     query = "SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s, loop_a,"\
             "miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max, structure, homogeneity,"\
-            "miRBase_link FROM backbone WHERE LOWER(name) = LOWER('%s');" % name
-    data = execute_with_one_response(query)
+            "miRBase_link FROM backbone WHERE LOWER(name) = LOWER(%s);"
+    data = execute_with_one_response(query, (name,))
     return serialize(*data) if data else {}
 
 def get_all():
@@ -47,11 +47,11 @@ def get_all():
 def get_by_miRNA_s(letters):
     query = "SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s, loop_a,"\
             "miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max, structure, homogeneity,"\
-            "miRBase_link FROM backbone WHERE miRNA_s LIKE '{0}%';".format(letters.upper())
-    return get_multirow_by_query(query)
+            "miRBase_link FROM backbone WHERE miRNA_s LIKE %s;"
+    return get_multirow_by_query(query, (letters.upper() + "%",))
 
-def get_multirow_by_query(query):
-    data = execute_with_response(query)
+def get_multirow_by_query(query, var=None):
+    data = execute_with_response(query, var)
     backbones = []
     for row in data:
         backbones.append(serialize(*row))
