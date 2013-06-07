@@ -1,3 +1,7 @@
+"""
+Handlers file is an instance to communicate between database and CGI server
+"""
+
 import json
 import database
 
@@ -10,16 +14,18 @@ def require_data(f):
 
 @require_data
 def get_by_name(**request):
+    """We are searching by name case-insensitive"""
     data = str(request['data'])
     if len(data.split())>1:
-        return {'error': "Data must be one word"}
+        return {'error': "Data must be one word!"}
     return database.get_by_name(request['data'])
 
 @require_data
 def get_by_miRNA_s(**request):
+    """We are searching by only first two nucleotides of endogenous miRNA"""
     data = str(request['data'])
     if len(data)!=2:
-        return {'error': "Data must have 2 characters"}
+        return {'error': "Data must have 2 characters!"}
     return database.get_by_miRNA_s(data)
 
 def backbone_methods(**request):

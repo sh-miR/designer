@@ -7,7 +7,9 @@ url = 'http://127.0.0.1:9001/'
 headers = {'content-type': 'application/json'}
 
 class Backbone:
-    def __init__(self, name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s, loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max, structure, homogeneity, miRBase_link):
+    def __init__(self, name, flanks3_s, flanks3_a, flanks5_s, flanks5_a,\
+            loop_s, loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min,\
+            miRNA_max, structure, homogeneity, miRBase_link):
         self.name = name
         self.flanks3_s = flanks3_s
         self.flanks3_a = flanks3_a
@@ -50,6 +52,7 @@ def qbackbone(method, data=None):
     - get_by_name
     - get_by_miRNA_s
     If you use get_by, you should specify data as a string.
+    Returns serialized json data
     """
     json_data = {"method": method}
     if data:
