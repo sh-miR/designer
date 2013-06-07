@@ -18,6 +18,8 @@ CREATE TABLE backbone (
     miRNA_max integer NOT NULL,
     structure varchar(200) NOT NULL,
     homogeneity integer NOT NULL,
+            /*homogeneity of products (length), 0 for very 
+             nonhomogenous, 5 for completely homogenous */ 
     miRBase_link varchar(200) NOT NULL
 );
 /*Proszę o trzymanie się składni same wielkie bądź same małe litery w insertach*/
