@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import re
 import math
 
@@ -8,7 +8,7 @@ def check_complementary(seq1,seq2):
         seq1,seq2 = seq1.lower(), seq2.lower()
         tran = { "a":"t", "t":"a", "u":"a", "c":"g", "g":"c"}
         seq2 = seq2[::-1]
-        maks = float(max(len(seq1), len(seq2)))
+        maks = float(min(len(seq1), len(seq2)))
         count = 0
         for mol1, mol2 in zip(seq1, seq2):
             if tran[mol1] == mol2:
@@ -37,7 +37,8 @@ def check_complementary(seq1,seq2):
 def check_input(seq_to_be_check):
     __pattern = re.compile(
         r'^[acgtACGT]{17,27}$') 
-    error = 'insert only one siRNA sequence or both strands of one siRNA at a time; check if both stands are in 5-3 orientation'
+    error = 'insert only one siRNA sequence or both strands of one siRNA at a\
+             time; check if both stands are in 5-3 orientation'
     changed = "changed 'u' to 't'"
     correct = "correct sequence"
     def check(seq):
@@ -53,15 +54,12 @@ def check_input(seq_to_be_check):
         elif __pattern.search(seq):
             message = [seq,correct], True 
 
-        elif 'u' in seq:
-            seq = seq.replace('u','t')
-            message = [seq,changed],True 
+        #elif 'u' in seq:
+        #    seq = seq.replace('u','t')
+        #    message = [seq,changed],True 
 
         elif not __pattern(seq):
-            message = [seq,"insert only acgtu letters"],False
-        else:
-            message = [seq,error],False
-        return message
+            message = [seq,"insert only acgtu letters"],False  
 
     sequence = seq_to_be_check.split(" ") 
 
@@ -69,14 +67,16 @@ def check_input(seq_to_be_check):
         return check(sequence[0])[0]
     elif len(sequence)==2:
         ch_seq1,ch_seq2 = check(sequence[0]), check(sequence[1])
-        if (ch_seq1[1],ch_seq2[1] is True,True) and check_complementary(sequence[0],sequence[1])[2]==1:
-            return [sequence[0],sequence[1],correct]
+        if (ch_seq1[1],ch_seq2[1] is True, True) and \
+            check_complementary(sequence[0], sequence[1])[2] == 1:
+            return [sequence[0], sequence[1], correct]
         else:
-            return [ch_seq1[0],ch_seq2[0],"Not complementary"]
+            return [ch_seq1[0], ch_seq2[0], "Not complementary"]
 
 
 
-#uncomment to check if its worikng coz tests are little diffrent and I have to w8 for Martyna to approve it <3
+#uncomment to check if its worikng coz tests are little diffrent and I have 
+#to w8 for Martyna to approve it <3
 #print check_input("acggctTggaacttctggtac")
 
 #print check_input('acggcttGGaacttctggtac gtaccagaagttccaagccgt')
