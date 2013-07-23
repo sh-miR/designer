@@ -50,9 +50,6 @@ def check_offset_complementary(seq1, seq2):
         return seq1, seq2, 2
 
 
-#'insert only one siRNA sequence or both strands of one siRNA at a\
-#time; check if both stands are in 5-3 orientation'
- 
 def check_input(seq):
         """Function for check sequence from input"""
         seq = seq.lower() 
@@ -64,7 +61,7 @@ siRNA at a time; check if both stands are in 5-3 orientation'
         if len(seq) > 27 or len(seq) < 17:
             return  [seq, "to long or to short", False]
 
-        elif seq[-2:] == "tt":
+        elif seq[-2:] == "tt" and pattern.search(seq):
             seq = seq[:-2]
             return [seq, "cut 'uu' or 'tt'", True]
 
@@ -86,7 +83,7 @@ time; check if both stands are in 5-3 orientation'
         return check_input(sequence[0])[:2]
 
     elif len(sequence) == 2:
-        ch_seq1, ch_seq2 = check_input(sequence[2]), check_input(sequence[2])
+        ch_seq1, ch_seq2 = check_input(sequence[0]), check_input(sequence[1])
         
         if (ch_seq1[1], ch_seq2[1] is True, True) and \
             check_offset_complementary(sequence[0], sequence[1])[2] == 1:
@@ -95,10 +92,4 @@ time; check if both stands are in 5-3 orientation'
     else:
         return error 
 
-
-
-
-
-
-print check_offset_complementary('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgta')
 
