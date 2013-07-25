@@ -21,33 +21,36 @@ def check_complementary(seq1, seq2):
 
 def check_offset_complementary(seq1, seq2):
     """Checking complementary function""" 
-     
-    nr_offset = 3 
-    for i in range(1, nr_offset):
     
+    nr_offset = 3 
+    
+    if check_complementary(seq1, seq2) >= 80:
+        return seq1, seq2, 0, 1 
+
+    elif check_complementary(seq1[::-1], seq2[::-1]) >= 80:
+        return seq1[::-1], seq2[::-1], 0, 2  #<- Return reversed or normal?
+
+    for i in range(1, nr_offset):
+        #1 - mean checked from beggin, 2 mean checked from the end
+        
         max1, max2 = max(len(seq1[:-i]),len(seq2)),max(len(seq1),len(seq2[:-i]))
         min1, min2 = min(len(seq1[:-i]),len(seq2)),min(len(seq1),len(seq2[:-i]))
  
         if check_complementary(seq1[i:], seq2) >= 80:
-            return seq1[i:], seq2, 1
+            return seq1[i:], seq2, -i, 1 
 
         elif check_complementary(seq1, seq2[i:]) >= 80:
-            return seq1, seq2[i:], 1
+            return seq1, seq2[i:], i, 1
 
         elif check_complementary(seq1[:-i], seq2[(max1-min1):]) >= 80: 
-            return seq1[:-i], seq2[(max1-min1):], 1 
+            return seq1[:-i], seq2[(max1-min1):], -i, 2
 
         elif check_complementary(seq1[(max2-min2):], seq2[:-i]) >= 80:
-            return seq1[(max2-min2):], seq2[:-1], 1
-
-    if check_complementary(seq1, seq2) >= 80:
-        return seq1, seq2, 1
-
-    elif check_complementary(seq1[::-1], seq2[::-1]) >= 80:
-        return seq1[::-1], seq2[::-1], 1
+            return seq1[(max2-min2):], seq2[:-1], i, 2 
 
     else:
-        return seq1, seq2, 2
+        return seq1, seq2, 'insert only one siRNA sequence or both strands of \
+one siRNA at a time; check if both stands are in 5-3 orientation'
 
 
 def check_input(seq):
@@ -92,4 +95,4 @@ time; check if both stands are in 5-3 orientation'
     else:
         return error 
 
-
+print check_offset_complementary('acggcttGGaacttctggtac', 'gaaggtgaagttccaagccgt')
