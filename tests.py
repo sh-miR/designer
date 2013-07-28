@@ -47,7 +47,7 @@ errors:
             #('acggctTggaacttctggtwacTT', 'sequence can contain only {actgu} letters')
             ]
         for list1, expected in tests:
-            self.failUnlessEqual(utils.check_input(list1), expected) 
+            self.failUnlessEqual(utils.check_many_inputs(list1), expected) 
 
 
     
@@ -75,17 +75,17 @@ output: 1 - complementary
 
 
         tests = [
-            ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgt', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgt', 1)),
-            ('acggcttGGaacttctggtac', 'cgtaccagaagttccaagccgt', ('acggcttGGaacttctggtac', 'cgtaccagaagttccaagccgt',1)),
-            ('acggcttGGaacttctggtac', 'gtaccagaagttccaagcc', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagcc',1)),
-            ('acggcttGGaacttctggtac', 'gaaggtgaagttccaagccgt', ('acggcttGGaacttctggtac', 'gaaggtgaagttccaagccgt', 1)),
-            ('acggcttGGaacttctggtac', 'gaaggtgaagccccaagccgt', ('acggcttGGaacttctggtac', 'gaaggtgaagccccaagccgt', 2)), #>20% mismaches
-            ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgttua', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgttua', 2)), #+3
-            ('acggcttggAActuctggtac', 'acggcttggAActuctggtac', ('acggcttggAActuctggtac', 'acggcttggAActuctggtac', 2)), #both same strands
-#            ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgta', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgta', 1))
+            ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgt', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgt', 0, 1)),
+            ('acggcttGGaacttctggtac', 'cgtaccagaagttccaagccgt', ('acggcttGGaacttctggtac', 'cgtaccagaagttccaagccgt', 0, 1)),
+            #('acggcttGGaacttctggtac', 'gtaccagaagttccaagcc', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagcc', -2,  1)),
+            ('acggcttGGaacttctggtac', 'gaaggtgaagttccaagccgt', ('acggcttGGaacttctggtac', 'gaaggtgaagttccaagccgt', 0, 1)),
+            #('acggcttGGaacttctggtac', 'gaaggtgaagccccaagccgt', ('acggcttGGaacttctggtac', 'gaaggtgaagccccaagccgt', 2)), #>20% mismaches
+            #('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgttua', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgttua', 0, 2)), #+3
+            #('acggcttggAActuctggtac', 'acggcttggAActuctggtac', ('acggcttggAActuctggtac', 'acggcttggAActuctggtac', 2)), #both same strands
+            #('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgta', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgta', 1, 1))
             ]
         for seq1, seq2, expected in tests:
-            self.failUnlessEqual(utils.check_complementary(seq1, seq2), expected) 
+            self.failUnlessEqual(utils.check_offset_complementary(seq1, seq2), expected) 
 
 if __name__ == '__main__':
     unittest.main()
