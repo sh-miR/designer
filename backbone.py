@@ -45,6 +45,11 @@ class Backbone:
             'miRBase_link': self.miRBase_link
         }
 
+    def template(self, siRNAstrand_1, siRNAstrand_2):
+        """Returns the template of DNA"""
+        return self.flanks3_s + siRNAstrand_1 + self.loop_s +\
+            siRNAstrand_2 + self.flanks5_s
+
 def qbackbone(method, data=None):
     """
     Acceptable methods(string):
@@ -58,4 +63,7 @@ def qbackbone(method, data=None):
     if data:
         json_data.update({"data": data})
     req = urllib2.Request(url, json.dumps(json_data), headers)
-    return urllib2.urlopen(req).read()
+    try:
+        return json.loads(urllib2.urlopen(req).read())
+    except urllib2.URLError:
+        return {'error': 'Connection to database refused.'} 

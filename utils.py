@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import re
 import math
+from backbone import qbackbone
+from backbone import Backbone
 
 def check_complementary(seq1, seq2):
         seq1, seq2 = seq1.lower(), seq2.lower()
@@ -93,3 +95,21 @@ time; check if both stands are in 5-3 orientation'
         return error 
 
 
+def get_templates(siRNAstrand_1, siRNAstrand_2):
+    """Function connecting with backbone database and retruning template"""
+    data = qbackbone('get_all')
+    if 'error' in data:
+        return data
+    try:
+        seq1, seq2, shift, strand = check_input(siRNAstrand_1, siRNAstrand_2)
+    except ValueError:
+        error = check_input(siRNAstrand_1, siRNAstrand_2)
+        return {'error': error}
+    seq_len = len(seq1)
+    templates = []
+    if shift == 0:
+        for elem in data:
+            frame = Backbone(**elem)
+            if frame.miRNA_min <= seq_len <= frame.miRNA_max:
+                templates.append(frame.template(seq1, seq2))
+    return templates
