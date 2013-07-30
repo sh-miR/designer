@@ -98,21 +98,22 @@ time; check if both stands are in 5-3 orientation'
         return error 
 
 
-def get_templates(siRNAstrand_1, siRNAstrand_2):
+def get_frames(input_seq):
     """Function connecting with backbone database and retruning template"""
     data = qbackbone('get_all')
     if 'error' in data:
         return data
     try:
-        seq1, seq2, shift, strand = check_input(siRNAstrand_1, siRNAstrand_2)
+        seq1, seq2, shift, end = check_input(input_seq)
     except ValueError:
-        error = check_input(siRNAstrand_1, siRNAstrand_2)
+        error = check_input(input_seq)
         return {'error': error}
-    seq_len = len(seq1)
-    templates = []
+    frames = []
+    min_len = len(seq1)
+    max_len = len(seq2)
     if shift == 0:
         for elem in data:
             frame = Backbone(**elem)
-            if frame.miRNA_min <= seq_len <= frame.miRNA_max:
-                templates.append(frame.template(seq1, seq2))
-    return templates
+            if frame.miRNA_min <= min_len <= frame.miRNA_max:
+                frames.append((frame, seq1, seq2))
+    return frames
