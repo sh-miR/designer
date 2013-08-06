@@ -10,8 +10,8 @@ import utils
 
 class ShmiRTest(unittest.TestCase):
     
-    def test_input(self):
-        """test for input
+    #def test_input(self):
+    """test for input
 input limitations: possible letters: {ACTGUactgu}, change all 'u' to 't', length 17-27, one strand or two strands splitted by space,
 if two strands check if they are in correct 5'-3' orientation, allow |_20%_| mismatches, only two additional end nucleotides,
 for sequences with last (3') two 'tt' or'uu' cut those ends
@@ -34,20 +34,20 @@ errors:
 """
 
 
-        tests = [
-            ('acggctTggaacttctggtac', ['acggcttggaacttctggtac', 'correct sequence']),
+        #tests = [
+            #('acggctTggaacttctggtac', ['acggcttggaacttctggtac', 'correct sequence']),
             #('acggcttGGaacttctggtac gtaccagaagttccaagccgt', ['acggcttggaacttctggtac', 'gtaccagaagttccaagccgt', 'correct sequence']),
             #('acggcttggAActuctggtac gtaccagaagttccaagccgt', ['acggcttggaacttctggtac', 'gtaccagaagttccaagccgt', "changed 'u' to 't'"]),
-            ('acggctTggaacttctggtacTT', ['acggcttggaacttctggtac', "cut 'uu' or 'tt'"]),
+           # ('acggctTggaacttctggtacTT', ['acggcttggaacttctggtac', "cut 'uu' or 'tt'"]),
             #('acggcttggaactuct',"to long or to short"),
             #('', "to long or to short"),
             #('acttctggtacTTUUUUUUuuuuuuGGG', "to long or to short"),
             #('acggcttGGaacttctggtac gtaccagaagttccaagccgt acggcttGGaacttctggtac', 'insert only one siRNA sequence or both strands of one siRNA at a time; check if both stands are in 5-3 orientation'),
             #('acggcttGGaacttctggtac tgccgaaccttgaagaccatg', 'insert only one siRNA sequence or both strands of one siRNA at a time; check if both stands are in 5-3 orientation'),
             #('acggctTggaacttctggtwacTT', 'sequence can contain only {actgu} letters')
-            ]
-        for list1, expected in tests:
-            self.failUnlessEqual(utils.check_many_inputs(list1), expected) 
+      #      ]
+      #  for list1, expected in tests:
+      #      self.failUnlessEqual(utils.check_input(list1), expected) 
 
 
     
@@ -82,10 +82,30 @@ output: 1 - complementary
             #('acggcttGGaacttctggtac', 'gaaggtgaagccccaagccgt', ('acggcttGGaacttctggtac', 'gaaggtgaagccccaagccgt', 2)), #>20% mismaches
             #('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgttua', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgttua', 0, 2)), #+3
             #('acggcttggAActuctggtac', 'acggcttggAActuctggtac', ('acggcttggAActuctggtac', 'acggcttggAActuctggtac', 2)), #both same strands
-            #('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgta', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgta', 1, 1))
+            #('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgta', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgta', 1, 1)),
+            ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgtag', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgt', -2,1)),
+            ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgta', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgt', -1,1)),
+            ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgt', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgt', 0,1)),
+            ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccg', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccg', 1,1)),
+            ('acggcttGGaacttctggtac', 'gtaccagaagttccaagcc', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagcc', 2,1)),
+            ('acggcttGGaacttctggtac', 'gagtaccagaagttccaagccgt', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgt',-2,2)),
+            ('acggcttGGaacttctggtac', 'agtaccagaagttccaagccgt', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgt', -1,2)),
+            ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgt', ('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgt', 0,2)),
+            ('acggcttGGaacttctggtac', 'taccagaagttccaagccgt', ('acggcttGGaacttctggta', 'taccagaagttccaagccgt', 1,2)),
+            ('acggcttGGaacttctggtac', 'accagaagttccaagccgt', ('acggcttGGaacttctggt', 'accagaagttccaagccgt', 2,2))
             ]
         for seq1, seq2, expected in tests:
-            self.failUnlessEqual(utils.check_offset_complementary(seq1, seq2), expected) 
+            self.failUnlessEqual(utils.check_complementary(seq1, seq2), expected)
+
+    #def test_get_frames(self):
+
+     #   tests = [
+     #       ('', ()),
+     #       ('', ())
+     #       ]
+     #   for sequences, expected in tests:
+     #       self.failUnlessEqual(utils.get_frames(sequences), expected)
+
 
 if __name__ == '__main__':
     unittest.main()
