@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import re
 import math
+import string
 from backbone import qbackbone
 from backbone import Backbone
 
@@ -55,26 +56,26 @@ one siRNA at a time; check if both stands are in 5-3 orientation'
 
 
 def check_input_single(seq):
-        """Function for check sequence from input"""
-        seq = seq.lower() 
-        seq = seq.replace('u','t') 
-        pattern = re.compile(r'^[acgt]{17,27}$') 
-        error = 'insert only one siRNA sequence or both strands of one \
+    """Function for check sequence from input"""
+    seq = seq.lower() 
+    seq = seq.replace('u','t') 
+    pattern = re.compile(r'^[acgt]{17,27}$') 
+    error = 'insert only one siRNA sequence or both strands of one \
 siRNA at a time; check if both stands are in 5-3 orientation'
 
 
-        if len(seq) > 27 or len(seq) < 17:
-            return  [seq, "to long or to short", False]
+    if len(seq) > 27 or len(seq) < 17:
+        return  [seq, "to long or to short", False]
 
-        elif seq[-2:] == "tt" and pattern.search(seq):
-            seq = seq[:-2]
-            return [seq, "cut 'uu' or 'tt'", True]
+    elif seq[-2:] == "tt" and pattern.search(seq):
+        seq = seq[:-2]
+        return [seq, "cut 'uu' or 'tt'", True]
 
-        elif pattern.search(seq):
-            return [seq, "correct sequence", True] 
+    elif pattern.search(seq):
+        return [seq, "correct sequence", True] 
 
-        elif not pattern.search(seq):
-            return [seq, "insert only acgtu letters", False]
+    elif not pattern.search(seq):
+        return [seq, "insert only acgtu letters", False]
 
 def check_input(seq_to_be_check):
     """Function for checking many sequences and throw error if wrong input"""
@@ -97,6 +98,9 @@ time; check if both stands are in 5-3 orientation'
     else:
         return error 
 
+def complement(sequence):
+    """Generates complement sequence to given"""
+    return sequence.translate(string.maketrans("ATCG", "TAGC"))
 
 def get_frames(input_seq):
     """Function connecting with backbone database and retruning template"""
