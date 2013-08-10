@@ -23,7 +23,7 @@ def check_complementary_single(seq1, seq2):
 
 
 def check_complementary(seq1, seq2):
-        """test for complementary, if both strands are in 5'-3' orientation
+    """test for complementary, if both strands are in 5'-3' orientation
 class perform only when there are two strands given; should take as input both strand,
 input:
 5'acggcttGGaactuctggtac3'
@@ -42,7 +42,7 @@ check if the strands are the same, starting with first nucleotide or -2,-1,+1,+2
 output: 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end{-4,-3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
 """
     
-    nr_offset = 3 
+    nr_offset = 3
     
     if check_complementary_single(seq1, seq2) >= 80:
         return seq1, seq2, 0, 1 
@@ -108,7 +108,7 @@ errors:
 "insert your siRNA sequence"
 "too long"
 "insert only one siRNA sequence or both strands of one siRNA at a time; check if both stands are in 5'-3' orientation"
-"sequence can contain only {actgu} letters""""
+"sequence can contain only {actgu} letters"""
 
     correct = "correct sequence" 
     sequence = seq_to_be_check.split(" ") 
