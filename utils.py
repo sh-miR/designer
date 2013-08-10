@@ -23,7 +23,24 @@ def check_complementary_single(seq1, seq2):
 
 
 def check_complementary(seq1, seq2):
-    """Checking complementary function""" 
+        """test for complementary, if both strands are in 5'-3' orientation
+class perform only when there are two strands given; should take as input both strand,
+input:
+5'acggcttGGaactuctggtac3'
+5'gtaccagaagttccaagccgt3'
+reverse second:
+3'tgccgaaccttgaagaccatg5'
+translate second strand in a way (a->t, t->a, u->a, c->g, g->c),
+5'acggcttGGaactuctggtac3'
+check if the strands are the same, starting with first nucleotide or -2,-1,+1,+2 (from the beggining or the end) with minimum 80% similarity
+
+3) 5'acggcttGGaactuctggtac3'
+     |||||||||||||||||||||
+   3'tgccgaaccttgaagaccatg5'
+   5'acggcttGGaactuctggtac3'
+
+output: 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end{-4,-3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
+"""
     
     nr_offset = 3 
     
@@ -78,7 +95,20 @@ siRNA at a time; check if both stands are in 5-3 orientation'
         return [seq, "insert only acgtu letters", False]
 
 def check_input(seq_to_be_check):
-    """Function for checking many sequences and throw error if wrong input"""
+    """Function for checking many sequences and throw error if wrong input
+input limitations: possible letters: {ACTGUactgu}, change all 'u' to 't', length 19-21, one strand or two strands splitted by space,
+if two strands check if they are in correct 5'-3' orientation, allow |_20%_| mismatches,
+if the sequence is correct input returns 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end{-4,-3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
+messages (moga byc potem zmienione numerycznie i komunikaty w programie):
+"correct sequence"
+"changed 'u' to 't'"
+"cut 'uu' or 'tt' ends"
+errors:
+"too short"
+"insert your siRNA sequence"
+"too long"
+"insert only one siRNA sequence or both strands of one siRNA at a time; check if both stands are in 5'-3' orientation"
+"sequence can contain only {actgu} letters""""
 
     correct = "correct sequence" 
     sequence = seq_to_be_check.split(" ") 
@@ -104,6 +134,28 @@ def complement(sequence):
 
 def get_frames(input_seq):
     """Function connecting with backbone database and retruning template"""
+    """Take output of check_input function and insert into flanking sequences.
+    take from database all miRNA results and check if ends of input is suitable for flanking sequences.
+    If first value == and miRNA_end_5 second value == miRNA_end_3 then simply concatenate
+    sequences flanks5_s + first_sequence + loop_s + second_sequence + flanks3_s.
+    If any end is different function has to modify end of the insert:
+    Right end:
+    if miRNA_end_5<first_end
+    add to right site of second sequence additional nucleotides (as many as |miRNA_end_5 - first_end|)
+    like (dots are nucleotides to add, big letter are flanking sequences, small are input):
+    AAAGGGGCTTTTagtcttaga
+    TTTCCCCGAA....agaatct
+    if miRNA_end_5>first_end
+    cut nucleotides from rigth site of flanks3_s and/or from right site of second sequence
+    before cut:
+    AAAGGGGCTTTTagtcttaga
+    TTTCCCCGAATTTTcctcagaatct
+    after cut:
+    AAAGGGGCTTTTagtcttaga
+    TTTCCCCGAAAAtcagaatct
+    """
+   
+    
     data = qbackbone('get_all')
     if 'error' in data:
         return data
