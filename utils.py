@@ -24,23 +24,23 @@ def check_complementary_single(seq1, seq2):
 
 def check_complementary(seq1, seq2):
     """test for complementary, if both strands are in 5'-3' orientation
-class perform only when there are two strands given; should take as input both strand,
-input:
-5'acggcttGGaactuctggtac3'
-5'gtaccagaagttccaagccgt3'
-reverse second:
-3'tgccgaaccttgaagaccatg5'
-translate second strand in a way (a->t, t->a, u->a, c->g, g->c),
-5'acggcttGGaactuctggtac3'
-check if the strands are the same, starting with first nucleotide or -2,-1,+1,+2 (from the beggining or the end) with minimum 80% similarity
+    class perform only when there are two strands given; should take as input both strand,
+    input:
+    5'acggcttGGaactuctggtac3'
+    5'gtaccagaagttccaagccgt3'
+    reverse second:
+    3'tgccgaaccttgaagaccatg5'
+    translate second strand in a way (a->t, t->a, u->a, c->g, g->c),
+    5'acggcttGGaactuctggtac3'
+    check if the strands are the same, starting with first nucleotide or -2,-1,+1,+2 (from the beggining or the end) with minimum 80% similarity
 
-3) 5'acggcttGGaactuctggtac3'
-     |||||||||||||||||||||
-   3'tgccgaaccttgaagaccatg5'
-   5'acggcttGGaactuctggtac3'
+    3) 5'acggcttGGaactuctggtac3'
+         |||||||||||||||||||||
+       3'tgccgaaccttgaagaccatg5'
+       5'acggcttGGaactuctggtac3'
 
-output: 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end{-4,-3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
-"""
+    output: 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end{-4,-3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
+    """
     
     nr_offset = 3
     
@@ -96,19 +96,19 @@ siRNA at a time; check if both stands are in 5-3 orientation'
 
 def check_input(seq_to_be_check):
     """Function for checking many sequences and throw error if wrong input
-input limitations: possible letters: {ACTGUactgu}, change all 'u' to 't', length 19-21, one strand or two strands splitted by space,
-if two strands check if they are in correct 5'-3' orientation, allow |_20%_| mismatches,
-if the sequence is correct input returns 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end{-4,-3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
-messages (moga byc potem zmienione numerycznie i komunikaty w programie):
-"correct sequence"
-"changed 'u' to 't'"
-"cut 'uu' or 'tt' ends"
-errors:
-"too short"
-"insert your siRNA sequence"
-"too long"
-"insert only one siRNA sequence or both strands of one siRNA at a time; check if both stands are in 5'-3' orientation"
-"sequence can contain only {actgu} letters"""
+    input limitations: possible letters: {ACTGUactgu}, change all 'u' to 't', length 19-21, one strand or two strands splitted by space,
+    if two strands check if they are in correct 5'-3' orientation, allow |_20%_| mismatches,
+    if the sequence is correct input returns 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end{-4,-3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
+    messages (moga byc potem zmienione numerycznie i komunikaty w programie):
+    "correct sequence"
+    "changed 'u' to 't'"
+    "cut 'uu' or 'tt' ends"
+    errors:
+    "too short"
+    "insert your siRNA sequence"
+    "too long"
+    "insert only one siRNA sequence or both strands of one siRNA at a time; check if both stands are in 5'-3' orientation"
+    "sequence can contain only {actgu} letters"""
 
     correct = "correct sequence" 
     sequence = seq_to_be_check.split(" ") 
