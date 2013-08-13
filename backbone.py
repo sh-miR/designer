@@ -22,6 +22,8 @@ class Backbone:
         self.miRNA_length = miRNA_length
         self.miRNA_min = miRNA_min
         self.miRNA_max = miRNA_max
+        self.miRNA_end_5 = miRNA_end_5
+        self.miRNA_end_3 = miRNA_end_3
         self.structure = structure
         self.homogeneity = homogeneity
         self.miRBase_link = miRBase_link
@@ -40,6 +42,8 @@ class Backbone:
             'miRNA_length': self.miRNA_length,
             'miRNA_min': self.miRNA_min,
             'miRNA_max': self.miRNA_max,
+            'miRNA_end_5': self.miRNA_end_5,
+            'miRNA_end_3': self.miRNA_end_3,
             'structure': self.structure,
             'homogeneity': self.homogeneity,
             'miRBase_link': self.miRBase_link
