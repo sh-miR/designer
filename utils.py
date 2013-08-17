@@ -46,8 +46,7 @@ output: 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end{-4,
 -3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
 """
 
-
-    nr_offset = 3
+nr_offset = 3
 
     tab = []
 
@@ -73,7 +72,7 @@ output: 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end{-4,
         if check_complementary_single(seq1[::-1], seq2[::-1][offset:]) >= 80:
             tab.append((seq1, seq2, -offset, -end_offset,4))
 
-    return tab
+    return tab[0]
 
 def check_input_single(seq):
     """Function for check sequence from input"""
