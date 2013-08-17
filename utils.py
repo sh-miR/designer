@@ -46,6 +46,7 @@ output: 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end{-4,
 -3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
 """
 
+
     nr_offset = 3
 
     tab = []
@@ -117,6 +118,7 @@ errors:
 both stands are in 5'-3' orientation"
 "sequence can contain only {actgu} letters"""
 
+
     correct = "correct sequence"
     sequence = seq_to_be_check.split(" ")
     error = 'insert only one siRNA sequence or both strands of one siRNA at a\
@@ -135,11 +137,11 @@ time; check if both stands are in 5-3 orientation'
     else:
         return error
 
-def complement(sequence):
-    """Generates complement sequence to given"""
-    return sequence.translate(string.maketrans("ATCG", "TAGC"))
+def reverse_complement(sequence):
+    """Generates reverse complement sequence to given"""
+    return sequence.translate(string.maketrans("ATCG", "TAGC"))[::-1]
 
-def get_frames(input_seq):
+def get_frames(seq1, seq2, shift_left, shift_right):
     """Function connecting with backbone database and retruning template"""
     """Take output of check_input function and insert into flanking sequences.
     take from database all miRNA results and check if ends of input is suitable
@@ -172,17 +174,13 @@ def get_frames(input_seq):
     data = qbackbone('get_all')
     if 'error' in data:
         return data
-    try:
-        seq1, seq2, shift, end = check_input(input_seq)
-    except ValueError:
-        error = check_input(input_seq)
-        return {'error': error}
     frames = []
     min_len = len(seq1)
     max_len = len(seq2)
-    if shift == 0:
+    if shift_left == 0 and shift_right == 0:
         for elem in data:
             frame = Backbone(**elem)
             if frame.miRNA_min <= min_len <= frame.miRNA_max:
                 frames.append((frame, seq1, seq2))
     return frames
+
