@@ -1,6 +1,5 @@
 #!usr/bin/env python
 import os
-os.chdir('structures')
 
 def parser_ss(file_name):
     """Function for parse ss file and gives tuples with first
