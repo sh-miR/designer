@@ -161,7 +161,7 @@ def get_frames(seq1, seq2, shift_left, shift_right):
     second sequence 
     before cut:
     AAAGGGGCTTTTagtcttaga
-    TTTCCCCGAAAATTcctcagaatct
+    TTTCCCCGAAAATTcctcagaatct (-2, +2)
     After
     AAAGGGGCTTTTagtcttaga
     TTTCCCCGAAAAtcagaatct
@@ -179,29 +179,50 @@ def get_frames(seq1, seq2, shift_left, shift_right):
             _seq1 = seq1[:]
             _seq2 = seq2[:]
             quantity = abs(shift_left - frame.miRNA_end_5)
+            #miRNA 5 end
             if frame.miRNA_end_5 < shift_left:
-                if frame.miRNA_end_5 < 0 and shift_left <= 0:
-                    nucleotides = reverse_complement
+                if frame.miRNA_end_5 < 0 and shift_left < 0:
+                    nucleotides = reverse_complement(
+                        frame.flanks5_s[-shift_left:frame.miRNA_end_5])
                 elif frame.miRNA_end_5 < 0 and shift_left > 0:
                     nucleotides = reverse_complement(
                         frame.flanks5_s[frame.miRNA_end_5:] +\
                         _seq1[:shift_left])
                 else:
-                    nucleotides = reverse_complement(\
-                        frame.flanks5_s[-quantity:])
+                    nucleotides = reverse_complement(
+                        _seq1[frame.miRNA_end_5:shift_left])
                 _seq2 += nucleotides
             elif frame.miRNA_end_5 > shift_left:
                 if frame.miRNA_end_5 > 0 and shift_left < 0:
                     _seq2 = _seq2[:shift_left]
-                    frame.flanks5_s = frame.flanks5_s[:-frame.miRNA_end_5] #!!important
-                elif frame.miRNA_end_5 > 0 and shift_left >= 0:
-                    frame.flanks5_s = frame.flanks5_s[:-quantity]
+                    frame.flanks5_a = frame.flanks5_a[frame.miRNA_end_5:] #!!important
+                elif frame.miRNA_end_5 > 0 and shift_left > 0:
+                    frame.flanks5_a = frame.flanks5_a[quantity:]
                 else:
-                    _seq2 = _seq[:-quantity]
+                    _seq2 = _seq2[:-quantity]
+
+            #miRNA 3 end
             if frame.miRNA_end_3 < shift_right:
-                pass
-            elif frames.miRNA_end_3 > shift_left:
-                pass
+                if frame.miRNA_end_3 < 0 and shift_right > 0:
+                    _seq1 = _seq1[:-shift_right]
+                    frame.loop_s = frame.loop_s[-frame.miRNA_end_3:]
+                elif frame.miRNA_end_3 > 0 and shift_right > 0:
+                    _seq1 = _seq1[:-quantity]
+                else:
+                    frame.loop_s[quantity:]
+            elif frames.miRNA_end_3 > shift_right:
+                if frame.miRNA_end_3 > 0 and shift_right < 0:
+                    nucleotides = reverse_complement( 
+                        _seq2[:-shift_right] +\
+                        frame.loop_a[-frame.miRNA_end_3:])
+                elif frame.miRNA_end_3 > 0 and shift_right >= 0:
+                    nucleotides = reverse_complement(
+                        frame.loop_a[-frame.miRNA_end_3:-shift_right])
+                else:
+                    nucleotides = reverse_complement(
+                        _seq2[-frame.miRNA_end_3:-shift_right])
+                _seq1 += nucleotides
+            
             frames.append((frame, _seq1, _seq2))
     return frames
 
