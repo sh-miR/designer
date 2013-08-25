@@ -54,7 +54,7 @@ nr_offset = 3
         tab.append((seq1,seq2,0,0))
 
     elif check_complementary_single(seq1[::-1], seq2[::-1]) >= 80:
-        return seq1[::-1], seq2[::-1], 0, 2  #<- Return reversed or normal?
+        return seq1 seq2, 0, 2
 
     for offset in range(1, nr_offset):
 
@@ -98,8 +98,8 @@ siRNA at a time; check if both stands are in 5-3 orientation'
 
 def check_input(seq_to_be_check):
     """Function for checking many sequences and throw error if wrong input
-input limitations: possible letters: {ACTGUactgu}, change all 'u' to 't', length
- 19-21, one strand or two strands splitted by space,
+input limitations: possible letters: {ACTGUactgu}, change all 'u' to 't',
+length 19-21, one strand or two strands splitted by space,
 if two strands check if they are in correct 5'-3' orientation, allow |_20%_|
 mismatches,
 if the sequence is correct input returns 'first sequence' (19-21nt), 'second
@@ -113,8 +113,8 @@ errors:
 "too short"
 "insert your siRNA sequence"
 "too long"
-"insert only one siRNA sequence or both strands of one siRNA at a time; check if
-both stands are in 5'-3' orientation"
+"insert only one siRNA sequence or both strands of one siRNA at a time; check
+if both stands are in 5'-3' orientation"
 "sequence can contain only {actgu} letters"""
 
 
@@ -127,7 +127,8 @@ time; check if both stands are in 5-3 orientation'
         return check_input(sequence[0])[:2]
 
     elif len(sequence) == 2:
-        ch_seq1, ch_seq2 = check_input_single(sequence[0]), check_input_single(sequence[1])
+        ch_seq1, ch_seq2 = check_input_single(sequence[0]), \
+            check_input_single(sequence[1])
 
         if (ch_seq1[1], ch_seq2[1] is True, True) and \
             check_complementary(sequence[0], sequence[1])[2] == 1:
