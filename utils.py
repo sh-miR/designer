@@ -21,78 +21,66 @@ def check_complementary_single(seq1, seq2):
         proc = (count/mini)*100
         return math.floor(proc)
 
-
 def check_complementary(seq1, seq2):
     """test for complementary, if both strands are in 5'-3' orientation
-class perform only when there are two strands given; should take as input
-both strand,
-input:
-5'acggcttGGaactuctggtac3'
-5'gtaccagaagttccaagccgt3'
-reverse second:
-3'tgccgaaccttgaagaccatg5'
-translate second strand in a way (a->t, t->a, u->a, c->g, g->c),
-5'acggcttGGaactuctggtac3'
-check if the strands are the same,
-starting with first nucleotide or -2,-1,
-+1,+2 (from the beggining or the end) with minimum 80% similarity
+    class perform only when there are two strands given; should take as input
+    both strand,
+    input:
+    5'acggcttGGaactuctggtac3'
+    5'gtaccagaagttccaagccgt3'
+    reverse second:
+    3'tgccgaaccttgaagaccatg5'
+    translate second strand in a way (a->t, t->a, u->a, c->g, g->c),
+    5'acggcttGGaactuctggtac3'
+    check if the strands are the same,
+    starting with first nucleotide or -2,-1,
+    +1,+2 (from the beggining or the end) with minimum 80% similarity
 
-3) 5'acggcttGGaactuctggtac3'
-     |||||||||||||||||||||
-   3'tgccgaaccttgaagaccatg5'
-   5'acggcttGGaactuctggtac3'
+    3) 5'acggcttGGaactuctggtac3'
+         |||||||||||||||||||||
+       3'tgccgaaccttgaagaccatg5'
+       5'acggcttGGaactuctggtac3'
 
-output: 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end{-4,
--3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
-"""
-
-nr_offset = 3
-
+    output: 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end{-4,
+    -3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
+    """
+    nr_offset = 3
     tab = []
+    end_offset = abs(len(seq1)-len(seq2))
 
     if check_complementary_single(seq1, seq2) >= 80:
-        tab.append((seq1,seq2,0,0))
-
-    elif check_complementary_single(seq1[::-1], seq2[::-1]) >= 80:
-        return seq1 seq2, 0, 2
+        tab.append((seq1, seq2, 0, end_offset))
+    end_offset = abs(len(seq1[::-1])-len(seq2[::-1]))
+    if check_complementary_single(seq1[::-1], seq2[::-1]) >= 80:
+        tab.append((seq1, seq2, end_offset, 0))
 
     for offset in range(1, nr_offset):
-
         end_offset = abs(len(seq1)-len(seq2))-offset
-
         if check_complementary_single(seq1[offset:], seq2) >= 80:
-            tab.append((seq1, seq2, offset, end_offset,1))
-
+            tab.append((seq1, seq2, offset, end_offset))
         if check_complementary_single(seq1, seq2[offset:]) >= 80:
-            tab.append((seq1, seq2, -offset, -end_offset,2))
-
+            tab.append((seq1, seq2, -offset, -end_offset))
         if check_complementary_single(seq1[::-1][offset:], seq2[::-1]) >= 80:
-            tab.append((seq1, seq2, offset, end_offset,3))
-
+            tab.append((seq1, seq2, offset, end_offset))
         if check_complementary_single(seq1[::-1], seq2[::-1][offset:]) >= 80:
-            tab.append((seq1, seq2, -offset, -end_offset,4))
-
-    return tab[0]
+            tab.append((seq1, seq2, -offset, -end_offset))
+    return tab
 
 def check_input_single(seq):
     """Function for check sequence from input"""
     seq = seq.lower()
     seq = seq.replace('u','t')
     pattern = re.compile(r'^[acgt]{19,21}$')
-    error = 'insert only one siRNA sequence or both strands of one \
-siRNA at a time; check if both stands are in 5-3 orientation'
-
+    error = 'insert only one siRNA sequence or both strands of one' \
+        'siRNA at a time; check if both stands are in 5-3 orientation'
 
     if len(seq) > 21 or len(seq) < 19:
         return  [seq, "to long or to short", False]
-
     elif seq[-2:] == "tt" and pattern.search(seq):
         seq = seq[:-2]
         return [seq, "cut 'uu' or 'tt'", True]
-
     elif pattern.search(seq):
         return [seq, "correct sequence", True]
-
     elif not pattern.search(seq):
         return [seq, "insert only acgtu letters", False]
 
@@ -116,12 +104,10 @@ errors:
 "insert only one siRNA sequence or both strands of one siRNA at a time; check
 if both stands are in 5'-3' orientation"
 "sequence can contain only {actgu} letters"""
-
-
     correct = "correct sequence"
     sequence = seq_to_be_check.split(" ")
-    error = 'insert only one siRNA sequence or both strands of one siRNA at a\
-time; check if both stands are in 5-3 orientation'
+    error = 'insert only one siRNA sequence or both strands of one siRNA at a'\
+        'time; check if both stands are in 5-3 orientation'
 
     if len(sequence) == 1:
         return check_input(sequence[0])[:2]
@@ -158,15 +144,15 @@ def get_frames(seq1, seq2, shift_left, shift_right):
     AAAGGGGCTTTTagtcttaga
     TTTCCCCGAA....agaatct
     if miRNA_end_5>first_end
-    cut nucleotides from rigth site of flanks3_s and/or from right site of 
-    second sequence 
+    cut nucleotides from rigth site of flanks3_s and/or from right site of
+    second sequence
     before cut:
     AAAGGGGCTTTTagtcttaga
     TTTCCCCGAAAATTcctcagaatct (-2, +2)
     After
     AAAGGGGCTTTTagtcttaga
     TTTCCCCGAAAAtcagaatct
-    Returns list of tuples (frame, sequence_1 sequence_2) 
+    Returns list of tuples (frame, sequence_1 sequence_2)
     """
     data = qbackbone('get_all')
     if 'error' in data:
@@ -213,7 +199,7 @@ def get_frames(seq1, seq2, shift_left, shift_right):
                     frame.loop_s[quantity:]
             elif frames.miRNA_end_3 > shift_right:
                 if frame.miRNA_end_3 > 0 and shift_right < 0:
-                    nucleotides = reverse_complement( 
+                    nucleotides = reverse_complement(
                         _seq2[:-shift_right] +\
                         frame.loop_a[-frame.miRNA_end_3:])
                 elif frame.miRNA_end_3 > 0 and shift_right >= 0:
@@ -223,7 +209,7 @@ def get_frames(seq1, seq2, shift_left, shift_right):
                     nucleotides = reverse_complement(
                         _seq2[-frame.miRNA_end_3:-shift_right])
                 _seq1 += nucleotides
-            
+
             frames.append((frame, _seq1, _seq2))
     return frames
 
