@@ -7,7 +7,6 @@ from settings import DB_NAME, DB_USER, DB_PASS, DB_HOST, DB_PORT
 def get_db():
     """
     Global connector variable
-
     """
     db = getattr(g, '_database', None)
     if db is None:
