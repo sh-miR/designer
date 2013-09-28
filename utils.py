@@ -2,8 +2,10 @@
 import re
 import math
 import string
+
 from backbone import qbackbone
 from backbone import Backbone
+
 
 def check_complementary_single(seq1, seq2):
         seq1, seq2 = seq1.lower(), seq2.lower()
@@ -20,6 +22,7 @@ def check_complementary_single(seq1, seq2):
                 count += 1
         proc = (count/mini)*100
         return math.floor(proc)
+
 
 def check_complementary(seq1, seq2):
     """test for complementary, if both strands are in 5'-3' orientation
@@ -44,32 +47,27 @@ def check_complementary(seq1, seq2):
     output: 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end{-4,
     -3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
     """
-    nr_offset = 3
+    nr_offset = 5
     tab = []
-    end_offset = abs(len(seq1)-len(seq2))
+    end_offset = len(seq1)-len(seq2)
 
     if check_complementary_single(seq1, seq2) >= 80:
         tab.append((seq1, seq2, 0, end_offset))
-    end_offset = abs(len(seq1[::-1])-len(seq2[::-1]))
-    if check_complementary_single(seq1[::-1], seq2[::-1]) >= 80:
-        tab.append((seq1, seq2, end_offset, 0))
 
     for offset in range(1, nr_offset):
-        end_offset = abs(len(seq1)-len(seq2))-offset
         if check_complementary_single(seq1[offset:], seq2) >= 80:
+            end_offset = len(seq1)-len(seq2)-offset
             tab.append((seq1, seq2, offset, end_offset))
-        if check_complementary_single(seq1, seq2[offset:]) >= 80:
-            tab.append((seq1, seq2, -offset, -end_offset))
-        if check_complementary_single(seq1[::-1][offset:], seq2[::-1]) >= 80:
-            tab.append((seq1, seq2, offset, end_offset))
-        if check_complementary_single(seq1[::-1], seq2[::-1][offset:]) >= 80:
-            tab.append((seq1, seq2, -offset, -end_offset))
-    return tab
+        if check_complementary_single(seq1, seq2[:-offset]) >= 80:
+            end_offset = len(seq1)-len(seq2)+offset
+            tab.append((seq1, seq2, -offset, end_offset))
+
+    return tab[0]
+
 
 def check_input_single(seq):
     """Function for check sequence from input"""
-    seq = seq.lower()
-    seq = seq.replace('u','t')
+    seq = seq.lower().replace('u','t')
     pattern = re.compile(r'^[acgt]{19,21}$')
     error = 'insert only one siRNA sequence or both strands of one' \
         'siRNA at a time; check if both stands are in 5-3 orientation'
@@ -83,6 +81,7 @@ def check_input_single(seq):
         return [seq, "correct sequence", True]
     elif not pattern.search(seq):
         return [seq, "insert only acgtu letters", False]
+
 
 def check_input(seq_to_be_check):
     """Function for checking many sequences and throw error if wrong input
@@ -108,20 +107,20 @@ if both stands are in 5'-3' orientation"
     sequence = seq_to_be_check.split(" ")
     error = 'insert only one siRNA sequence or both strands of one siRNA at a'\
         'time; check if both stands are in 5-3 orientation'
-
     if len(sequence) == 1:
-        return check_input(sequence[0])[:2]
+
+        return check_input_single(sequence[0])[:1]
 
     elif len(sequence) == 2:
         ch_seq1, ch_seq2 = check_input_single(sequence[0]), \
             check_input_single(sequence[1])
 
-        if (ch_seq1[1], ch_seq2[1] is True, True) and \
-            check_complementary(sequence[0], sequence[1])[2] == 1:
-            return [sequence[0], sequence[1], correct]
+        if (ch_seq1[2], ch_seq2[2] is True, True) :
+            return [check_complementary(ch_seq1[0], ch_seq2[0])]
 
     else:
         return error
+
 
 def reverse_complement(sequence):
     """Generates reverse complement sequence to given"""

@@ -9,7 +9,7 @@ import unittest
 import utils
 
 class ShmiRTest(unittest.TestCase):
-    
+
     def test_input(self):
         tests = [
             ('acggctTggaacttctggtac', ['acggcttggaacttctggtac']),
@@ -18,7 +18,7 @@ class ShmiRTest(unittest.TestCase):
             ('acggctTggaacttctggtTT', ['acggcttggaacttctggt']),
             ]
         for list1, expected in tests:
-            self.failUnlessEqual(utils.check_input(list1), expected) 
+            self.failUnlessEqual(utils.check_input(list1), expected)
 
     """def test_input_exceptions(self):
         self.assertRaisesWithMessage(utils.check_input('acggcttggaactuct'), InputException('to long or to short'))
@@ -27,7 +27,7 @@ class ShmiRTest(unittest.TestCase):
         self.assertRaisesWithMessage(utils.check_input('acggcttGGaacttctggtac gtaccagaagttccaagccgt acggcttGGaacttctggtac'), InputException('insert only one siRNA sequence or both strands of one siRNA at a time; check if both stands are in 5-3 orientation'))
         self.assertRaisesWithMessage(utils.check_input('acggcttGGaacttctggtac tgccgaaccttgaagaccatg'), InputException('insert only one siRNA sequence or both strands of one siRNA at a time; check if both stands are in 5-3 orientation'))
         self.assertRaisesWithMessage(utils.check_input('acggctTggaacttctggtwacTT'), InputException('sequence can contain only {actgu} letters'))"""
-    
+
     def test_check_complementary(self):
         tests = [
             ('cttggaacttctggtacat', 'gtaccagaagttccaagccgt', ('cttggaacttctggtacat', 'gtaccagaagttccaagccgt', -4, 2)),
@@ -45,7 +45,7 @@ class ShmiRTest(unittest.TestCase):
             ('cttggaacttctggtacatg', 'tgtaccagaagttccaagc', ('cttggaacttctggtacatg', 'tgtaccagaagttccaagc', -1, 2)),
             ('cttggaacttctggtacat', 'tgtaccagaagttccaagc', ('cttggaacttctggtacat', 'tgtaccagaagttccaagc', -1, 1)),
             ('cttggaacttctggtacat', 'atgtaccagaagttccaagc', ('cttggaacttctggtacat', 'atgtaccagaagttccaagc', -1, 0)),
-            ('cttggaacttctggtacat', 'catgtaccagaagttccaagc', ('cttggaacttctggtacat', 'catgtaccagaagttccaagc' -1, -1)),
+            ('cttggaacttctggtacat', 'catgtaccagaagttccaagc', ('cttggaacttctggtacat', 'catgtaccagaagttccaagc', -1, -1)),
 
 
             ('acggcttggaacttctggtac', 'accagaagttccaagccgt', ('acggcttggaacttctggtac', 'accagaagttccaagccgt', 0, 2)),
