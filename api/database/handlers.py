@@ -2,15 +2,14 @@
 Handlers to communicate with database
 """
 
-from flask import jsonify
-
 from database import database
 from decorators import require_json
+from utils import json_result, json_error
 
 
 @require_json(require_data=False)
 def get_all(**kwargs):
-    return jsonify(database.get_all())
+    return json_result(database.get_all())
 
 
 @require_json
@@ -21,9 +20,9 @@ def get_by_name(data=None, **kwargs):
     """
 
     if len(data.split()) > 1:
-        return jsonify(error="Data must be one word!")
+        return json_error("Data must be one word!")
 
-    return jsonify(database.get_by_name(data))
+    return json_result(database.get_by_name(data))
 
 
 @require_json
@@ -34,9 +33,9 @@ def get_by_miRNA_s(data=None, **kwargs):
     """
 
     if len(data) != 2:
-        return jsonify(error="Data must have 2 characters!")
+        return json_error("Data must have 2 characters!")
 
-    return jsonify(database.get_by_miRNA_s(data))
+    return json_result(database.get_by_miRNA_s(data))
 
 
 get_all.methods = ['POST']

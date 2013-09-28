@@ -46,8 +46,8 @@ def add(name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s, loop_a,
         miRNA_s, mirRNA_a, miRNA_length, miRNA_min, miRNA_max, miRNA_end_5,
         miRNA_end_3, structure, homogeneity, miRBase_link):
 
-    query = "INSERT INTO backbone VALUES(DEFAULT, %s, %s, %s, %s, %s, %s, %s,"
-    "%s, %s, %d, %d, %d, %s, %d, %s);"
+    query = ("INSERT INTO backbone VALUES(DEFAULT, %s, %s, %s, %s, %s, %s, %s,"
+             " %s, %s, %d, %d, %d, %s, %d, %s);")
 
     var = (name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s, loop_a,
            miRNA_s, mirRNA_a, miRNA_length, miRNA_min, miRNA_max, miRNA_end_5,
@@ -57,10 +57,10 @@ def add(name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s, loop_a,
 
 
 def get_by_name(name):
-    query = "SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,"
-    "loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max,"
-    "miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link FROM"
-    "backbone WHERE LOWER(name) = LOWER(%s);"
+    query = ("SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,"
+             " loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max, "
+             "miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link "
+             "FROM backbone WHERE LOWER(name) = LOWER(%s);")
 
     data = execute_with_one_response(query, (name,))
 
@@ -68,19 +68,19 @@ def get_by_name(name):
 
 
 def get_all():
-    query = "SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,"
-    "loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max,"
-    "miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link"
-    "FROM backbone;"
+    query = ("SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,"
+             " loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max, "
+             "miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link "
+             "FROM backbone;")
 
     return get_multirow_by_query(query)
 
 
 def get_by_miRNA_s(letters):
-    query = "SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,"
-    "loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max,"
-    "miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link FROM"
-    "backbone WHERE miRNA_s LIKE %s;"
+    query = ("SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,"
+             " loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max, "
+             "miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link "
+             "FROM backbone WHERE miRNA_s LIKE %s;")
 
     return get_multirow_by_query(query, (letters.upper() + "%",))
 
