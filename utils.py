@@ -4,6 +4,8 @@ import math
 import string
 from backbone import qbackbone
 from backbone import Backbone
+from ss import parse
+from ss import parse_score
 
 def check_complementary_single(seq1, seq2):
         seq1, seq2 = seq1.lower(), seq2.lower()
@@ -86,24 +88,24 @@ def check_input_single(seq):
 
 def check_input(seq_to_be_check):
     """Function for checking many sequences and throw error if wrong input
-input limitations: possible letters: {ACTGUactgu}, change all 'u' to 't',
-length 19-21, one strand or two strands splitted by space,
-if two strands check if they are in correct 5'-3' orientation, allow |_20%_|
-mismatches,
-if the sequence is correct input returns 'first sequence' (19-21nt), 'second
-sequence' (19-21nt), left_end{-4,-3,-2,-1,0,1,2,3,4},
-rigth_end{-4,-3,-2,-1,0,1,2,3,4}
-messages (moga byc potem zmienione numerycznie i komunikaty w programie):
-"correct sequence"
-"changed 'u' to 't'"
-"cut 'uu' or 'tt' ends"
-errors:
-"too short"
-"insert your siRNA sequence"
-"too long"
-"insert only one siRNA sequence or both strands of one siRNA at a time; check
-if both stands are in 5'-3' orientation"
-"sequence can contain only {actgu} letters"""
+    input limitations: possible letters: {ACTGUactgu}, change all 'u' to 't',
+    length 19-21, one strand or two strands splitted by space,
+    if two strands check if they are in correct 5'-3' orientation, allow |_20%_|
+    mismatches,
+    if the sequence is correct input returns 'first sequence' (19-21nt), 'second
+    sequence' (19-21nt), left_end{-4,-3,-2,-1,0,1,2,3,4},
+    rigth_end{-4,-3,-2,-1,0,1,2,3,4}
+    messages (moga byc potem zmienione numerycznie i komunikaty w programie):
+    "correct sequence"
+    "changed 'u' to 't'"
+    "cut 'uu' or 'tt' ends"
+    errors:
+    "too short"
+    "insert your siRNA sequence"
+    "too long"
+    "insert only one siRNA sequence or both strands of one siRNA at a time; check
+    if both stands are in 5'-3' orientation"
+    "sequence can contain only {actgu} letters"""
     correct = "correct sequence"
     sequence = seq_to_be_check.split(" ")
     error = 'insert only one siRNA sequence or both strands of one siRNA at a'\
@@ -231,11 +233,24 @@ def get_frames(seq1, seq2, shift_left, shift_right):
                         frame.loop_s[:frame.miRNA_end_3])
                 elif frame.miRNA_end_3 == 0:
                     nucleotides = reverse_complement(_seq2[:-shift_right])
-                else: #
+                else:
                     nucleotides = reverse_complement(
                         _seq2[-frame.miRNA_end_3:-shift_right])
                 _seq1 += nucleotides
 
             frames.append((frame, _seq1, _seq2))
     return frames
+
+
+def score_frame(frame, frame_ss_file, orginal_frame):
+    """
+    frame is a tuple of object Backbone and two sequences
+    frame_ss_file is file from mfold
+    orignal_frame is object Backbone from database (not changed)
+    """
+    structure, seq1, seq2 = frame
+    structure_ss = parse(frame_ss_file)
+    orginal_score = parse_score(orginal_frame.structure)
+
+
 
