@@ -8,6 +8,8 @@ from backbone import Backbone
 from ss import parse
 from ss import parse_score
 
+import errors
+
 
 def check_complementary_single(seq1, seq2):
         seq1, seq2 = seq1.lower(), seq2.lower()
@@ -46,13 +48,14 @@ def check_complementary(seq1, seq2):
        3'tgccgaaccttgaagaccatg5'
        5'acggcttGGaactuctggtac3'
 
-    output: 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end{-4,
-    -3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
+    output: 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end
+    {-4,-3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
     """
     nr_offset = 5
     tab = []
     end_offset = len(seq1)-len(seq2)
-
+    error = 'insert only one siRNA sequence or both strands of one' \
+        'siRNA at a time; check if both stands are in 5-3 orientation'
     if check_complementary_single(seq1, seq2) >= 80:
         tab.append((seq1, seq2, 0, end_offset))
 
@@ -63,7 +66,8 @@ def check_complementary(seq1, seq2):
         if check_complementary_single(seq1, seq2[:-offset]) >= 80:
             end_offset = len(seq1)-len(seq2)+offset
             tab.append((seq1, seq2, -offset, end_offset))
-
+    if not tab:
+        raise errors.InputException(error)
     return tab[0]
 
 
@@ -73,16 +77,18 @@ def check_input_single(seq):
     pattern = re.compile(r'^[acgt]{19,21}$')
     error = 'insert only one siRNA sequence or both strands of one' \
         'siRNA at a time; check if both stands are in 5-3 orientation'
+    len_error = "to long or to short"
+    patt_error = 'sequence can contain only {actgu} letters'
 
     if len(seq) > 21 or len(seq) < 19:
-        return  [seq, "to long or to short", False]
+        raise errors.InputException('%s' % len_error)
     elif seq[-2:] == "tt" and pattern.search(seq):
         seq = seq[:-2]
         return [seq, "cut 'uu' or 'tt'", True]
     elif pattern.search(seq):
-        return [seq, "correct sequence", True]
+        return [seq, None, True]
     elif not pattern.search(seq):
-        return [seq, "insert only acgtu letters", False]
+        raise errors.InputException('%s' % patt_error)
 
 
 def check_input(seq_to_be_check):
@@ -102,26 +108,22 @@ def check_input(seq_to_be_check):
     "too short"
     "insert your siRNA sequence"
     "too long"
-    "insert only one siRNA sequence or both strands of one siRNA at a time; check
-    if both stands are in 5'-3' orientation"
+    "insert only one siRNA sequence or both strands of one siRNA at a time;
+    check if both stands are in 5'-3' orientation"
     "sequence can contain only {actgu} letters"""
-    correct = "correct sequence"
     sequence = seq_to_be_check.split(" ")
     error = 'insert only one siRNA sequence or both strands of one siRNA at a'\
         'time; check if both stands are in 5-3 orientation'
-    if len(sequence) == 1:
-
+    len_seq = len(sequence)
+    if len_seq == 1:
         return check_input_single(sequence[0])[:1]
-
-    elif len(sequence) == 2:
+    elif len_seq != 2:
+        raise errors.InputException('%s' % error)
+    elif len_seq == 2:
         ch_seq1, ch_seq2 = check_input_single(sequence[0]), \
             check_input_single(sequence[1])
-
         if (ch_seq1[2], ch_seq2[2] is True, True) :
             return [check_complementary(ch_seq1[0], ch_seq2[0])]
-
-    else:
-        return error
 
 
 def reverse_complement(sequence):

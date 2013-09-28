@@ -8,6 +8,7 @@ Test for shmiR application
 import unittest
 import utils
 
+import errors
 class ShmiRTest(unittest.TestCase):
 
     def test_input(self):
@@ -20,13 +21,30 @@ class ShmiRTest(unittest.TestCase):
         for list1, expected in tests:
             self.failUnlessEqual(utils.check_input(list1), expected)
 
-    """def test_input_exceptions(self):
-        self.assertRaisesWithMessage(utils.check_input('acggcttggaactuct'), InputException('to long or to short'))
-        self.assertRaisesWithMessage(utils.check_input(''), InputException('to long or to short'))
-        self.assertRaisesWithMessage(utils.check_input('acttctggtacTTUUUUUUuuuuuuGGG'), InputException('to long or to short'))
-        self.assertRaisesWithMessage(utils.check_input('acggcttGGaacttctggtac gtaccagaagttccaagccgt acggcttGGaacttctggtac'), InputException('insert only one siRNA sequence or both strands of one siRNA at a time; check if both stands are in 5-3 orientation'))
-        self.assertRaisesWithMessage(utils.check_input('acggcttGGaacttctggtac tgccgaaccttgaagaccatg'), InputException('insert only one siRNA sequence or both strands of one siRNA at a time; check if both stands are in 5-3 orientation'))
-        self.assertRaisesWithMessage(utils.check_input('acggctTggaacttctggtwacTT'), InputException('sequence can contain only {actgu} letters'))"""
+    def test_input_exceptions(self):
+        error = 'insert only one siRNA sequence or both strands of one' \
+        'siRNA at a time; check if both stands are in 5-3 orientation'
+        len_error = "to long or to short"
+
+        with self.assertRaises(errors.InputException) as err:
+            utils.check_input('acggcttggaactuct')
+        self.assertEqual(len_error, str(err.exception))
+        with self.assertRaises(errors.InputException) as err:
+            utils.check_input('')
+        self.assertEqual(len_error, str(err.exception))
+        with self.assertRaises(errors.InputException) as err:
+            utils.check_input('acttctggtacTTUUUUUUuuuuuuGGG')
+        self.assertEqual(len_error, str(err.exception))
+        with self.assertRaises(errors.InputException) as err:
+            utils.check_input('acggcttGGaacttctggtac gtaccagaagttccaagccgt'\
+                'acggcttGGaacttctggtac')
+        self.assertEqual(len_error, str(err.exception))
+        with self.assertRaises(errors.InputException) as err:
+            utils.check_input('acggcttGGaacttctggtac tgccgaaccttgaagaccatg')
+        self.assertEqual(error, str(err.exception))
+        # with self.assertRaises(errors.InputException) as err:
+        #     utils.check_input('acggctTggactggtwacTT')
+        # self.assertEqual(len_error, str(err.exception))
 
     def test_check_complementary(self):
         tests = [
