@@ -5,11 +5,17 @@ DEBUG = True
 
 from flask import Flask
 
+from database.database import disconnect
 import database.handlers
 import mfold.handlers
 
 
 app = Flask(__name__)
+
+
+@app.teardown_appcontext
+def close_connection(exception):
+    disconnect()
 
 
 app.add_url_rule('/database/get_all', 'database.get_all',

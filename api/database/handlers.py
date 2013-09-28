@@ -4,7 +4,7 @@ Handlers to communicate with database
 
 from flask import jsonify
 
-import database.database
+from database import database
 from decorators import require_json
 
 
@@ -37,3 +37,8 @@ def get_by_miRNA_s(data=None, **kwargs):
         return jsonify(error="Data must have 2 characters!")
 
     return jsonify(database.get_by_miRNA_s(data))
+
+
+get_all.methods = ['POST']
+get_by_name.methods = ['POST']
+get_by_miRNA_s.methods = ['POST']

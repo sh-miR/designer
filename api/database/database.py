@@ -1,39 +1,41 @@
 import psycopg2
+from flask import g
+
 from settings import DB_NAME, DB_USER, DB_PASS, DB_HOST, DB_PORT
 
 
-conn = None
-
-
-def connect():
+def get_db():
     """
     Global connector variable
 
     """
-
-    global conn
-    conn = psycopg2.connect(database=DB_NAME, user=DB_USER,
-                            password=DB_PASS, host=DB_HOST, port=DB_PORT)
+    db = getattr(g, '_database', None)
+    if db is None:
+        db = psycopg2.connect(database=DB_NAME, user=DB_USER,
+                              password=DB_PASS, host=DB_HOST, port=DB_PORT)
+    return db
 
 
 def disconnect():
-    conn.close()
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.close()
 
 
 def execute(query, var=None):
-    with conn.cursor() as cur:
+    with get_db().cursor() as cur:
         cur.execute(query, var)
 
 
 def execute_with_one_response(query, var=None):
-    with conn.cursor() as cur:
+    with get_db().cursor() as cur:
         cur.execute(query, var)
         data = cur.fetchone()
     return data
 
 
 def execute_with_response(query, var=None):
-    cur = conn.cursor()
+    cur = get_db().cursor()
     cur.execute(query, var)
     data = cur.fetchall()
     cur.close()

@@ -16,8 +16,9 @@ def require_json(require_data=True, required_data_words=None,
     def decorator(f):
 
         def decorated(*args, **kwargs):
+            data = request.data.decode('utf-8')
             try:
-                request_json = json.loads(request.data)
+                request_json = json.loads(data)
             except (ValueError, KeyError, TypeError):
                 return jsonify(error='Use JSON to comunicate with our API')
 
