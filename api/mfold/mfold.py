@@ -28,11 +28,13 @@ def mfold(input):
 
     execlp("mfold", "seq='mfold_input'")
 
-    with ZipFile("%s.zip" % current_datetime) as mfold_zip:
+    zipname = "%s.zip" % current_datetime
+
+    with ZipFile(zipname) as mfold_zip:
         mfold_zip.write("mfold.pdf")
         mfold_zip.write("mfold.ss")
 
-    with open("%s.zip" % current_datetime, "rb") as f:
-        result = f.read()
+    #with open(zipname, "rb") as f:
+    #    result = f.read()
 
-    return result
+    return join(tmp_dirname, zipname)

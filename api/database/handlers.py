@@ -1,26 +1,25 @@
 """
-Handlers file is an instance to communicate between database and CGI server
+Handlers to communicate with database
+
 """
 
 from flask import jsonify
 
-import database
+import database.database
 from decorators import require_json
 
 
 @require_json(require_data=False)
-def get_all():
+def get_all(**kwargs):
     return jsonify(database.get_all())
 
 
 @require_json
-def get_by_name(request_json):
+def get_by_name(data=None, **kwargs):
     """
     We are searching by name case-insensitive
 
     """
-
-    data = str(request_json['data'])
 
     if len(data.split()) > 1:
         return jsonify(error="Data must be one word!")
@@ -29,13 +28,11 @@ def get_by_name(request_json):
 
 
 @require_json
-def get_by_miRNA_s(**request):
+def get_by_miRNA_s(data=None, **kwargs):
     """
     We are searching by only first two nucleotides of endogenous miRNA
 
     """
-
-    data = str(request['data'])
 
     if len(data) != 2:
         return jsonify(error="Data must have 2 characters!")
