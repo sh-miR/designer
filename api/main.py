@@ -1,3 +1,8 @@
+#!/usr/bin/env python2.7
+
+DEBUG = True
+
+
 from flask import Flask
 
 import database.handlers
@@ -5,6 +10,7 @@ import mfold.handlers
 
 
 app = Flask(__name__)
+
 
 app.add_url_rule('/database/get_all', 'database.get_all',
                  database.handlers.get_all)

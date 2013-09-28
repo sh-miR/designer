@@ -1,6 +1,5 @@
 """
 Handlers to communicate with database
-
 """
 
 from flask import jsonify

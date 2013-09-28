@@ -15,7 +15,6 @@ def mfold(input):
     Executing mfold to create appropriate files
 
     """
-
     current_datetime = datetime.now().strftime('%H:%M:%S-%d-%m-%y')
 
     tmp_dirname = join(dirname(__file__), current_datetime)
