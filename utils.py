@@ -191,7 +191,7 @@ def get_frames(seq1, seq2, shift_left, shift_right):
                 elif shift_left == 0:
                     frame.flanks5_s += reverse_complement(
                         frame.flanks3_s[:frame.miRNA_end_5])
-                elif frame.miRNA_end_5 == 0
+                elif frame.miRNA_end_5 == 0:
                     frame.flanks5_s += reverse_complement(_seq2[shift_left:])
                 else:
                     frame.flanks5_s += reverse_complement(
