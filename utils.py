@@ -5,6 +5,7 @@ import string
 from backbone import get_all
 from backbone import get_by_name
 from backbone import Backbone
+from backbone import get_by_name
 from ss import parse
 from ss import parse_score
 
@@ -279,6 +280,31 @@ def score_2():
         if shmir == template[0]:
             score += template[1]
     return score
+
+def score_homogeneity(struc_name):
+    """We are taking value homogenity from database and multiply it 4 times """
+    return Backbone(**get_by_name(struc_name)["result"]).homogeneity*3
+
+
+def two_same_strands_score(seq1, struc_name):
+    miRNA_s = Backbone(**get_by_name(struc_name)["result"]).miRNA_s[:2].lower()
+    seq = seq1[:2].lower()
+    if seq == miRNA_s:
+        return 10
+    elif seq[0] == miRNA_s[0]
+        return 4
+    else:
+        return 0
+
+
+
+
+
+
+
+
+
+
 
 
 def add_if_not_zero(start, end, frame_ss, value):
