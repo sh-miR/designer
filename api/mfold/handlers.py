@@ -9,7 +9,7 @@ from decorators import require_json
 from mfold.mfold import mfold
 
 
-@require_json
+@require_json()
 def get_mfold(data=None, **kwargs):
     filename = mfold(data)
 

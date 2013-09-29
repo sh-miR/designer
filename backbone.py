@@ -1,11 +1,12 @@
 #!/usr/bin/env python2.7
 
-import urllib2
+import requests
 import json
 
-URL_ALL = 'http://127.0.0.1:5000/database/get_all'
-URL_BY_NAME = 'http://127.0.0.1:5000/database/get_all'
-URL_BY_MIRNA_S = 'http://127.0.0.1:5000/database/get_by_mirna_s'
+HOST = 'http://127.0.0.1:5000/'
+URL_ALL = HOST + 'database/get_all'
+URL_BY_NAME = HOST + 'database/get_by_name'
+URL_BY_MIRNA_S = HOST + 'database/get_by_mirna_s'
 
 HEADERS = {'content-type': 'application/json'}
 
@@ -73,10 +74,10 @@ def qbackbone(data=None, url=None):
     json_data = {}
     if data:
         json_data.update({"data": data})
-    req = urllib2.Request(url, json.dumps(json_data), HEADERS)
+    req = requests.post(url, json.dumps(json_data), headers=HEADERS)
     try:
-        return json.loads(urllib2.urlopen(req).read())
-    except urllib2.URLError:
+        return json.loads(req.content)
+    except requests.ConnectionError:
         return {'error': 'Connection to database refused.'}
 
 
