@@ -253,7 +253,7 @@ def score_2():
     structure = Backbone(**get_by_name('miR-155'))
     orginal_frame = Backbone(**get_by_name('miR-155'))
     seq1, seq2 = 'UUUGUAUUCAGCCCAUAGCGC', 'CGCUAUGGCGAAUACAAACA'
-    structure_ss = parse('155_luc')
+    structure_ss = parse('155LUC_NEW.ss')
     orginal_score = parse_score('155_NEW')
     #da differences
     flanks5 = len(orginal_frame.flanks5_s) - len(structure.flanks5_s)
@@ -269,17 +269,24 @@ def score_2():
         add_if_not_zero(0, structure_len, structure_ss, flanks5)
     else:
         add_if_not_zero(position, structure_len,\
-                        structure_ss, flanks5)
+                       structure_ss, flanks5)
     for diff, nucleotides in [(insertion1, seq1), (loop, structure.loop_s),\
-        (insertion2, seq2), (flanks3, 0)]:
+        (insertion2, seq2), (flanks3, '')]:
         position += len(nucleotides)
         add_if_not_zero(position, structure_len, structure_ss, diff)
-
     score = 0
-    for shmir, template in zip(structure_ss, orginal_score):
-        if shmir == template[0]:
-            score += template[1]
+    for shmir in structure_ss: 
+        for template in orginal_score:
+            if shmir == template[0]:
+                score += template[1]
     return score
+
+
+def add_if_not_zero(start, end, frame_ss, value):
+    for num in range(start, end):
+        frame_ss[num][0] += value
+        if frame_ss[num][1] != 0 and frame_ss[num] > start:
+            frame_ss[num][1] += value
 
 def score_homogeneity(struc_name):
     """We are taking value homogenity from database and multiply it 4 times """
@@ -291,25 +298,7 @@ def two_same_strands_score(seq1, struc_name):
     seq = seq1[:2].lower()
     if seq == miRNA_s:
         return 10
-    elif seq[0] == miRNA_s[0]
+    elif seq[0] == miRNA_s[0]:
         return 4
     else:
         return 0
-
-
-
-
-
-
-
-
-
-
-
-
-def add_if_not_zero(start, end, frame_ss, value):
-    for num in range(start, end):
-        frame_ss[num][0] += value
-        if frame_ss[num][1] != 0 and frame_ss[num] > start:
-            frame_ss[num][1] += value
-

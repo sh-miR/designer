@@ -9,8 +9,9 @@ def parse(file_name):
     with open(file_name, "r") as ss_file:
         for line in ss_file.readlines():
             splited = line.split()
-            read_data.append([int(splited[0]), int(splited[-1])])
+            read_data.append(map(int, [splited[0], splited[-1]]))
     return read_data
+
 
 def to_normal():
     """
@@ -21,6 +22,7 @@ def to_normal():
             for elem in parse(name + ".ss"):
                 new_file.write(" ".join(elem)+"\n")
 
+
 def parse_score(name):
     """
     Parses files with score to list of tuple and score value
@@ -29,5 +31,5 @@ def parse_score(name):
     with open(name) as score_file:
         for line in score_file:
             number, pair, score = line.split()
-            data.append(([int(number), int(pair)], score))
+            data.append([map(int, [number, pair]), int(score)])
     return data
