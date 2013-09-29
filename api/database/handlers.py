@@ -2,7 +2,7 @@
 Handlers to communicate with database
 """
 
-from database import database
+from . import database
 from decorators import require_json
 from utils import json_result, json_error
 
