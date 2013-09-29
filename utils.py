@@ -9,6 +9,7 @@ from ss import parse
 from ss import parse_score
 
 import errors
+import logging
 
 
 def check_complementary_single(seq1, seq2):
@@ -54,8 +55,6 @@ def check_complementary(seq1, seq2):
     nr_offset = 5
     tab = []
     end_offset = len(seq1)-len(seq2)
-    error = 'insert only one siRNA sequence or both strands of one' \
-        'siRNA at a time; check if both stands are in 5-3 orientation'
     if check_complementary_single(seq1, seq2) >= 80:
         tab.append((seq1, seq2, 0, end_offset))
 
@@ -67,8 +66,7 @@ def check_complementary(seq1, seq2):
             end_offset = len(seq1)-len(seq2)+offset
             tab.append((seq1, seq2, -offset, end_offset))
     if not tab:
-        raise errors.InputException(error)
-
+        raise errors.InputException(errors.error)
     return tab[0]
 
 
@@ -76,20 +74,18 @@ def check_input_single(seq):
     """Function for check sequence from input"""
     seq = seq.lower().replace('u','t')
     pattern = re.compile(r'^[acgt]{19,21}$')
-    error = 'insert only one siRNA sequence or both strands of one' \
-        'siRNA at a time; check if both stands are in 5-3 orientation'
-    len_error = "to long or to short"
-    patt_error = 'sequence can contain only {actgu} letters'
+    cut_warn = "cut 'uu' or 'tt'"
 
-    if len(seq) > 21 or len(seq) < 19:
-        raise errors.InputException('%s' % len_error)
+    if not pattern.search(seq):
+        if len(seq) > 21 or len(seq) < 19:
+            raise errors.InputException('%s' % errors.len_error)
+        raise errors.InputException('%s' % errors.patt_error)
     elif seq[-2:] == "tt" and pattern.search(seq):
         seq = seq[:-2]
-        return [seq, "cut 'uu' or 'tt'", True]
+        logging.warn(cut_warn)
+        return [seq, cut_warn, True]
     elif pattern.search(seq):
         return [seq, None, True]
-    elif not pattern.search(seq):
-        raise errors.InputException('%s' % patt_error)
 
 
 def check_input(seq_to_be_check):
@@ -119,7 +115,7 @@ def check_input(seq_to_be_check):
     if len_seq == 1:
         return check_input_single(sequence[0])[:1]
     elif len_seq != 2:
-        raise errors.InputException('%s' % error)
+        raise errors.InputException('%s' % errors.error)
     elif len_seq == 2:
         ch_seq1, ch_seq2 = check_input_single(sequence[0]), \
             check_input_single(sequence[1])
