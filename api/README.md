@@ -11,7 +11,15 @@ sudo -u postgres psql < shmirdesignercreate.sql
 ```
 pip install -r requirements.txt
 ```
-3. Odpal serwer:
+3. Stwórz plik settings.py z ustawieniami twojej isntacji PostgreSQL w zmiennych DB_NAME, DB_USER, DB_PASS, DB_HOST, DB_PORT:
+```
+DB_NAME = 'shmird'
+DB_USER = 'postgres'
+DB_PASS = 'mypassword'
+DB_HOST = '127.0.0.1'
+DB_PORT = '5432'
+```
+4. Odpal serwer:
 ```
 python main.py
 ```
