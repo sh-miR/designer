@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import re
 import math
 import string
@@ -166,76 +165,72 @@ def get_frames(seq1, seq2, shift_left, shift_right):
         else:
             _seq1 = seq1[:]
             _seq2 = seq2[:]
-            nucleotides = ""
             #miRNA 5 end (left)
             if frame.miRNA_end_5 < shift_left:
                 if frame.miRNA_end_5 < 0 and shift_left < 0:
-                    nucleotides = reverse_complement(
+                    _seq2 += reverse_complement(
                         frame.flanks5_s[frame.miRNA_end_5:shift_left])
                 elif frame.miRNA_end_5 < 0 and shift_left > 0:
                     frame.flanks5_s = frame.flanks5_s[:frame.miRNA_end_5]
-                    nucleotides = reverse_complement(_seq1[:shift_left])
+                    _seq2 += reverse_complement(_seq1[:shift_left])
                 elif shift_left == 0:
-                    frame.flanks3_s = reverse_complement(
-                        frame.flanks5_s[:frame.miRNA_end_5]) + frame.flanks3_s
+                    _seq2 += reverse_complement(
+                        frame.flanks5_s[:frame.miRNA_end_5])
                 elif frame.miRNA_end_5 == 0:
-                    nucleotides = reverse_complement(_seq1[:frame.miRNA_end_5])
+                    _seq2 += reverse_complement(_seq1[:frame.miRNA_end_5])
                 else:
-                    nucleotides = reverse_complement(
+                    _seq2 += reverse_complement(
                         _seq1[frame.miRNA_end_5:shift_left])
-                _seq2 += nucleotides
             elif frame.miRNA_end_5 > shift_left:
                 if frame.miRNA_end_5 > 0 and shift_left < 0:
-                    nucleotides = reverse_complement(_seq2[frame.miRNA_end_5:])
+                    frame.flanks5_s += reverse_complement(
+                        _seq2[frame.miRNA_end_5:])
                     frame.flanks3_s = frame.flanks3_s[frame.miRNA_end_5:]
                 elif frame.miRNA_end_5 > 0 and shift_left > 0:
-                    nucleotides = reverse_complement(
+                    frame.flanks5_s += reverse_complement(
                         frame.flanks3_s[shift_left:frame.miRNA_end_5])
                 elif shift_left == 0:
                     frame.flanks5_s += reverse_complement(
                         frame.flanks3_s[:frame.miRNA_end_5])
-                elif frame.miRNA_end_5 == 0:
-                    nucleotides = reverse_complement(_seq2[shift_left:])
+                elif frame.miRNA_end_5 == 0
+                    frame.flanks5_s += reverse_complement(_seq2[shift_left:])
                 else:
-                    nucleotides = reverse_complement(
+                    frame.flanks5_s += reverse_complement(
                         _seq2[shift_left:frame.miRNA_end_5])
-                _seq1 = nucleotides + _seq1
 
             #miRNA 3 end (right)
             if frame.miRNA_end_3 < shift_right:
                 if frame.miRNA_end_3 < 0 and shift_right > 0:
-                    nucleotides = reverse_complement(
-                        _seq1[-shift_right:])
                     frame.loop_s = frame.loop_s[-frame.miRNA_end_3:]
+                    frame.loop_s += reverse_complement(
+                        _seq1[-shift_right:])
                 elif frame.miRNA_end_3 > 0 and shift_right > 0:
-                    nucleotides = reverse_complement(
+                    frame.loop_s += reverse_complement(
                         _seq1[-shift_right:-frame.miRNA_end_3])
                 elif frame.miRNA_end_3 == 0:
-                    nucleotides = reverse_complement(_seq1[-shift_right:])
+                    frame.loop_s += reverse_complement(_seq1[-shift_right:])
                 elif shift_right == 0:
-                    frame.loop_s = reverse_complement(
-                        frame.loop_s[frame.miRNA_end_3:]) + frame.loop_s
+                    frame.loop_s += reverse_complement(
+                        frame.loop_s[:-frame.miRNA_end_3])
                 else:
-                    nucleotides = reverse_complement(
+                    frame.loop_s += reverse_complement(
                         frame.loop_s[-shift_right:-frame.miRNA_end_3])
-                _seq2 = nucleotides + _seq2
             elif frames.miRNA_end_3 > shift_right:
                 if frame.miRNA_end_3 > 0 and shift_right < 0:
-                    nucleotides = reverse_complement(
+                    _seq1 += reverse_complement(
                         _seq2[:-shift_right])
                     frame.loop_s = frame.loop_s[:-frame.miRNA_end_3]
                 elif frame.miRNA_end_3 > 0 and shift_right > 0:
-                    nucleotides = reverse_complement(
+                    _seq1 += reverse_complement(
                         frame.loop_s[-frame.miRNA_end_3:-shift_right])
                 elif shift_right == 0:
-                    frame.loop_s += reverse_complement(
+                    _seq1 += reverse_complement(
                         frame.loop_s[:frame.miRNA_end_3])
                 elif frame.miRNA_end_3 == 0:
-                    nucleotides = reverse_complement(_seq2[:-shift_right])
+                    _seq1 += reverse_complement(_seq2[:-shift_right])
                 else:
-                    nucleotides = reverse_complement(
+                    _seq1 += reverse_complement(
                         _seq2[-frame.miRNA_end_3:-shift_right])
-                _seq1 += nucleotides
 
             frames.append((frame, _seq1, _seq2))
     return frames
@@ -250,6 +245,20 @@ def score_frame(frame, frame_ss_file, orginal_frame):
     structure, seq1, seq2 = frame
     structure_ss = parse(frame_ss_file)
     orginal_score = parse_score(orginal_frame.structure)
+
+
+def score_2():
+    #dodaje/odejmuje do obu; w prawej kolumnie tylko gdy jest wieksze od wartosci na ktorej jestesmy zera nie ruszac
+    structure = Backbone(**qbackbone("get_by_name", 'miR-155'))
+    orginal_frame = Backbone(**qbackbone("get_by_name", 'miR-155'))
+    seq1, seq2 = 'UUUGUAUUCAGCCCAUAGCGC', 'CGCUAUGGCGAAUACAAACA'
+    structure_ss = parse('155_luc')
+    orginal_score = parse_score('155_NEW')
+    flanks5 = len(orginal_frame.flanks5_s) - len(structure.flanks5_s)
+    insertion1 = len(orginal_frame.miRNA_s) - len(seq1)
+    loop = len(orginal_frame.loop_s) - len(structure.loop_s)
+    insertion2 = len(orginal_frame.miRNA_a) - len(seq2)
+    flanks3 = len(orginal_frame.flanks3_s) - len(structure.flanks3_s)
 
 
 
