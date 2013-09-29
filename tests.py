@@ -16,8 +16,7 @@ class ShmiRTest(unittest.TestCase):
             ('acggctTggaacttctggtac', ['acggcttggaacttctggtac']),
             ('acggcttGGaacttctggtac gtaccagaagttccaagccgt', [utils.check_complementary('acggcttggaacttctggtac', 'gtaccagaagttccaagccgt')]),
             ('acggcttggAActuctggtac gtaccagaagttccaagccgt', [utils.check_complementary('acggcttggaacttctggtac', 'gtaccagaagttccaagccgt')]),
-            ('acggctTggaacttctggtTT', ['acggcttggaacttctggt']),
-            ]
+            ('acggctTggaacttctggtTT', ['acggcttggaacttctggt'])]
         for list1, expected in tests:
             self.failUnlessEqual(utils.check_input(list1), expected)
 

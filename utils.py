@@ -68,6 +68,7 @@ def check_complementary(seq1, seq2):
             tab.append((seq1, seq2, -offset, end_offset))
     if not tab:
         raise errors.InputException(error)
+
     return tab[0]
 
 
