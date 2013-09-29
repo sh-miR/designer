@@ -17,3 +17,17 @@ python main.py
 ```
 
 API będzie dostępne na http://127.0.0.1:5000
+
+Dostępne metody, które wymagają zapytania POST w formacie JSON:
+* get_all
+* get_by_name (wymaga parametru 'data')
+* get_by_mirna_s (wymaga parametru 'data')
+
+Przykład zapytania:
+```
+import requests
+import json
+
+req = requests.post('http://127.0.0.1:5000/get_by_name', json.dumps({'data': 'example'}), headers={'content-type': 'application/json'})
+data = json.loads(req.content)
+```
