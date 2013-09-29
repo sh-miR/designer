@@ -4,6 +4,7 @@ import string
 
 from backbone import qbackbone
 from backbone import Backbone
+from backbone import get_by_name
 from ss import parse
 from ss import parse_score
 
@@ -258,6 +259,31 @@ def score_2():
     loop = len(orginal_frame.loop_s) - len(structure.loop_s)
     insertion2 = len(orginal_frame.miRNA_a) - len(seq2)
     flanks3 = len(orginal_frame.flanks3_s) - len(structure.flanks3_s)
+
+
+def score_homogeneity(struc_name):
+    """We are taking value homogenity from database and multiply it 4 times """
+    return Backbone(**get_by_name(struc_name)["result"]).homogeneity*3
+
+
+def two_same_strands(seq1, struc_name):
+    miRNA_s = Backbone(**get_by_name(struc_name)["result"]).miRNA_s[:2].lower()
+    seq = seq1[:2].lower()
+    if seq == miRNA_s:
+        return 10
+    elif seq[0] == miRNA_s[0]
+        return 4
+    else:
+        return 0
+
+
+
+
+
+
+
+
+
 
 
 
