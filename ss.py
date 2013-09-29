@@ -9,7 +9,7 @@ def parse(file_name):
     with open(file_name, "r") as ss_file:
         for line in ss_file.readlines():
             splited = line.split()
-            read_data.append((splited[0], splited[-1]))
+            read_data.append([int(splited[0]), int(splited[-1])])
     return read_data
 
 def to_normal():
@@ -29,5 +29,5 @@ def parse_score(name):
     with open(name) as score_file:
         for line in score_file:
             number, pair, score = line.split()
-            data.append(((number, pair), score))
+            data.append(([int(number), int(pair)], score))
     return data

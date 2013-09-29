@@ -2,7 +2,8 @@ import re
 import math
 import string
 
-from backbone import qbackbone
+from backbone import get_all
+from backbone import get_by_name
 from backbone import Backbone
 from ss import parse
 from ss import parse_score
@@ -153,14 +154,14 @@ def get_frames(seq1, seq2, shift_left, shift_right):
     TTTCCCCGAAAAtcagaatct
     Returns list of tuples (frame, sequence_1 sequence_2)
     """
-    data = qbackbone('get_all')
-    if 'error' in data:
-        return data
+    data = get_all()
+    if error in data:
+        return error
     frames = []
     for elem in data:
         frame = Backbone(**elem)
         if shift_left == frame.miRNA_end_5 and shift_right == frame.miRNA_end_5:
-            frames.append((frame, seq1, seq2))
+            frames.append([frame, seq1, seq2])
         else:
             _seq1 = seq1[:]
             _seq2 = seq2[:]
@@ -231,7 +232,7 @@ def get_frames(seq1, seq2, shift_left, shift_right):
                     _seq1 += reverse_complement(
                         _seq2[-frame.miRNA_end_3:-shift_right])
 
-            frames.append((frame, _seq1, _seq2))
+            frames.append([frame, _seq1, _seq2])
     return frames
 
 
@@ -248,16 +249,41 @@ def score_frame(frame, frame_ss_file, orginal_frame):
 
 def score_2():
     #dodaje/odejmuje do obu; w prawej kolumnie tylko gdy jest wieksze od wartosci na ktorej jestesmy zera nie ruszac
-    structure = Backbone(**qbackbone("get_by_name", 'miR-155'))
-    orginal_frame = Backbone(**qbackbone("get_by_name", 'miR-155'))
+    structure = Backbone(**get_by_name('miR-155'))
+    orginal_frame = Backbone(**get_by_name('miR-155'))
     seq1, seq2 = 'UUUGUAUUCAGCCCAUAGCGC', 'CGCUAUGGCGAAUACAAACA'
     structure_ss = parse('155_luc')
     orginal_score = parse_score('155_NEW')
+    #da differences
     flanks5 = len(orginal_frame.flanks5_s) - len(structure.flanks5_s)
     insertion1 = len(orginal_frame.miRNA_s) - len(seq1)
     loop = len(orginal_frame.loop_s) - len(structure.loop_s)
     insertion2 = len(orginal_frame.miRNA_a) - len(seq2)
     flanks3 = len(orginal_frame.flanks3_s) - len(structure.flanks3_s)
+    
+    position = len(structure.flanks5_s)
+    structure_len = len(structure.template(seq1, seq2))
+    
+    if flanks5 < 0:
+        add_if_not_zero(0, structure_len, structure_ss, flanks5)
+    else:
+        add_if_not_zero(position, structure_len,\
+                        structure_ss, flanks5)
+    for diff, nucleotides in [(insertion1, seq1), (loop, structure.loop_s),\
+        (insertion2, seq2), (flanks3, 0)]:
+        position += len(nucleotides)
+        add_if_not_zero(position, structure_len, structure_ss, diff)
+
+    score = 0
+    for shmir, template in zip(structure_ss, orginal_score):
+        if shmir == template[0]:
+            score += template[1]
+    return score
 
 
+def add_if_not_zero(start, end, frame_ss, value):
+    for num in range(start, end):
+        frame_ss[num][0] += value
+        if frame_ss[num][1] != 0 and frame_ss[num] > start:
+            frame_ss[num][1] += value
 
