@@ -1,10 +1,4 @@
-<<<<<<< HEAD
 import urllib2
-=======
-#!/usr/bin/env python2.7
-
-import requests
->>>>>>> ccae87ab65c44809ae03c77107ebc9f0a0b7efcb
 import json
 
 HOST = 'http://127.0.0.1:5000/'
