@@ -266,7 +266,7 @@ def score_homogeneity(struc_name):
     return Backbone(**get_by_name(struc_name)["result"]).homogeneity*3
 
 
-def two_same_strands(seq1, struc_name):
+def two_same_strands_score(seq1, struc_name):
     miRNA_s = Backbone(**get_by_name(struc_name)["result"]).miRNA_s[:2].lower()
     seq = seq1[:2].lower()
     if seq == miRNA_s:
