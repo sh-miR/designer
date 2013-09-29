@@ -1,12 +1,13 @@
 #!/usr/bin/python
-#
 
 """
 Test for shmiR application
 """
-
 import unittest
 import utils
+
+import errors
+
 
 class ShmiRTest(unittest.TestCase):
 
@@ -15,18 +16,30 @@ class ShmiRTest(unittest.TestCase):
             ('acggctTggaacttctggtac', ['acggcttggaacttctggtac']),
             ('acggcttGGaacttctggtac gtaccagaagttccaagccgt', [utils.check_complementary('acggcttggaacttctggtac', 'gtaccagaagttccaagccgt')]),
             ('acggcttggAActuctggtac gtaccagaagttccaagccgt', [utils.check_complementary('acggcttggaacttctggtac', 'gtaccagaagttccaagccgt')]),
-            ('acggctTggaacttctggtTT', ['acggcttggaacttctggt']),
-            ]
+            ('acggctTggaacttctggtTT', ['acggcttggaacttctggt'])]
         for list1, expected in tests:
             self.failUnlessEqual(utils.check_input(list1), expected)
 
-    """def test_input_exceptions(self):
-        self.assertRaisesWithMessage(utils.check_input('acggcttggaactuct'), InputException('to long or to short'))
-        self.assertRaisesWithMessage(utils.check_input(''), InputException('to long or to short'))
-        self.assertRaisesWithMessage(utils.check_input('acttctggtacTTUUUUUUuuuuuuGGG'), InputException('to long or to short'))
-        self.assertRaisesWithMessage(utils.check_input('acggcttGGaacttctggtac gtaccagaagttccaagccgt acggcttGGaacttctggtac'), InputException('insert only one siRNA sequence or both strands of one siRNA at a time; check if both stands are in 5-3 orientation'))
-        self.assertRaisesWithMessage(utils.check_input('acggcttGGaacttctggtac tgccgaaccttgaagaccatg'), InputException('insert only one siRNA sequence or both strands of one siRNA at a time; check if both stands are in 5-3 orientation'))
-        self.assertRaisesWithMessage(utils.check_input('acggctTggaacttctggtwacTT'), InputException('sequence can contain only {actgu} letters'))"""
+    def test_input_exceptions(self):
+        with self.assertRaises(errors.InputException) as err:
+            utils.check_input('acggcttggaactuct')
+        self.assertEqual(errors.len_error, str(err.exception))
+        with self.assertRaises(errors.InputException) as err:
+            utils.check_input('')
+        self.assertEqual(errors.len_error, str(err.exception))
+        with self.assertRaises(errors.InputException) as err:
+            utils.check_input('acttctggtacTTUUUUUUuuuuuuGGG')
+        self.assertEqual(errors.len_error, str(err.exception))
+        with self.assertRaises(errors.InputException) as err:
+            utils.check_input('acggcttGGaacttctggtac gtaccagaagttccaagccgt '\
+                'acggcttGGaacttctggtac')
+        self.assertEqual(errors.error, str(err.exception))
+        with self.assertRaises(errors.InputException) as err:
+            utils.check_input('acggcttGGaacttctggtac tgccgaaccttgaagaccatg')
+        self.assertEqual(errors.error, str(err.exception))
+        with self.assertRaises(errors.InputException) as err:
+            utils.check_input('acggctTggactggtwacTT')
+        self.assertEqual(errors.patt_error, str(err.exception))
 
     def test_check_complementary(self):
         tests = [

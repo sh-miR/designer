@@ -1,13 +1,25 @@
+<<<<<<< HEAD
 import urllib2
+=======
+#!/usr/bin/env python2.7
+
+import requests
+>>>>>>> ccae87ab65c44809ae03c77107ebc9f0a0b7efcb
 import json
 
-url = 'http://127.0.0.1:9001/'
-headers = {'content-type': 'application/json'}
+HOST = 'http://127.0.0.1:5000/'
+URL_ALL = HOST + 'database/get_all'
+URL_BY_NAME = HOST + 'database/get_by_name'
+URL_BY_MIRNA_S = HOST + 'database/get_by_mirna_s'
+
+HEADERS = {'content-type': 'application/json'}
+
 
 class Backbone:
-    def __init__(self, name, flanks3_s, flanks3_a, flanks5_s, flanks5_a,\
-            loop_s, loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min,\
-            miRNA_max, structure, homogeneity, miRBase_link):
+    def __init__(self, name, flanks3_s, flanks3_a, flanks5_s, flanks5_a,
+                 loop_s, loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min,
+                 miRNA_max, miRNA_end_5, miRNA_end_3, structure, homogeneity,
+                 miRBase_link):
         self.name = name
         self.flanks3_s = flanks3_s
         self.flanks3_a = flanks3_a
@@ -52,7 +64,8 @@ class Backbone:
         return self.flanks5_s + siRNAstrand_1 + self.loop_s +\
             siRNAstrand_2 + self.flanks3_s
 
-def qbackbone(method, data=None):
+
+def qbackbone(data=None, url=None):
     """
     Acceptable methods(string):
     - get_all
@@ -61,11 +74,24 @@ def qbackbone(method, data=None):
     If you use get_by, you should specify data as a string.
     Returns serialized json data
     """
-    json_data = {"method": method}
+
+    json_data = {}
     if data:
         json_data.update({"data": data})
-    req = urllib2.Request(url, json.dumps(json_data), headers)
+    req = requests.post(url, json.dumps(json_data), headers=HEADERS)
     try:
-        return json.loads(urllib2.urlopen(req).read())
-    except urllib2.URLError:
-        return {'error': 'Connection to database refused.'} 
+        return json.loads(req.content)
+    except requests.ConnectionError:
+        return {'error': 'Connection to database refused.'}
+
+
+def get_all(data=None):
+    return qbackbone(data=data, url=URL_ALL)
+
+
+def get_by_name(data=None):
+    return qbackbone(data=data, url=URL_BY_NAME)
+
+
+def get_by_mirna_s(data=None):
+    return qbackbone(data=data, url=URL_BY_MIRNA_S)
