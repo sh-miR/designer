@@ -254,7 +254,7 @@ def score_2():
     orginal_frame = Backbone(**get_by_name('miR-155'))
     seq1, seq2 = 'UUUGUAUUCAGCCCAUAGCGC', 'CGCUAUGGCGAAUACAAACA'
     structure_ss = parse('155LUC_NEW.ss')
-    orginal_score = parse_score('155_NEW')
+    orginal_score = parse_score('structures/miR-155')
     #da differences
     flanks5 = len(orginal_frame.flanks5_s) - len(structure.flanks5_s)
     insertion1 = len(orginal_frame.miRNA_s) - len(seq1)
@@ -266,14 +266,14 @@ def score_2():
     structure_len = len(structure.template(seq1, seq2))
     
     if flanks5 < 0:
-        add_if_not_zero(0, structure_len, structure_ss, flanks5)
+        add_shifts(0, structure_len, structure_ss, flanks5)
     else:
-        add_if_not_zero(position, structure_len,\
+        add_shifts(position, structure_len,\
                        structure_ss, flanks5)
     for diff, nucleotides in [(insertion1, seq1), (loop, structure.loop_s),\
         (insertion2, seq2), (flanks3, '')]:
         position += len(nucleotides)
-        add_if_not_zero(position, structure_len, structure_ss, diff)
+        add_shifts(position, structure_len, structure_ss, diff)
     score = 0
     for shmir in structure_ss: 
         for template in orginal_score:
@@ -282,11 +282,13 @@ def score_2():
     return score
 
 
-def add_if_not_zero(start, end, frame_ss, value):
-    for num in range(start, end):
-        frame_ss[num][0] += value
-        if frame_ss[num][1] != 0 and frame_ss[num] > start:
+def add_shifts(start, end, frame_ss, value):
+    for num in range(end):
+        if num >= start:
+            frame_ss[num][0] += value
+        if frame_ss[num][1] != 0 and frame_ss[num][1] > start:
             frame_ss[num][1] += value
+
 
 def score_homogeneity(struc_name):
     """We are taking value homogenity from database and multiply it 4 times """
