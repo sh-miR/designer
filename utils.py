@@ -262,18 +262,20 @@ def score_2():
     insertion2 = len(orginal_frame.miRNA_a) - len(seq2)
     flanks3 = len(orginal_frame.flanks3_s) - len(structure.flanks3_s)
     
-    position = len(structure.flanks5_s)
+    position = len(structure.flanks5_s) #position in sequence (list)
     structure_len = len(structure.template(seq1, seq2))
+    current = position + flanks5 #current position (after changes)
     
     if flanks5 < 0:
-        add_shifts(0, structure_len, structure_ss, flanks5)
+        add_shifts(0, structure_len, structure_ss, flanks5, 0)
     else:
         add_shifts(position, structure_len,\
-                       structure_ss, flanks5)
+                       structure_ss, flanks5, current)
     for diff, nucleotides in [(insertion1, seq1), (loop, structure.loop_s),\
         (insertion2, seq2), (flanks3, '')]:
         position += len(nucleotides)
-        add_shifts(position, structure_len, structure_ss, diff)
+        current = position + diff
+        add_shifts(position, structure_len, structure_ss, diff, current)
     score = 0
     for shmir in structure_ss: 
         for template in orginal_score:
@@ -282,11 +284,11 @@ def score_2():
     return score, structure_ss
 
 
-def add_shifts(start, end, frame_ss, value):
+def add_shifts(start, end, frame_ss, value, current):
     for num in range(end):
-        if num > start:
+        if num >= start:
             frame_ss[num][0] += value
-        if frame_ss[num][1] != 0 and frame_ss[num][1] > start:
+        if frame_ss[num][1] != 0 and frame_ss[num][1] > current:
             frame_ss[num][1] += value
 
 
@@ -309,8 +311,15 @@ poprawne = [[1, 0], [2, 0], [3, 107], [4, 106], [5, 105], [6, 0], [7, 0], [8, 0]
 
 def porownywarka():
     bad = []
-    for number, elem in enumerate(zip(score_2()[1], poprawne)):
+    ss = score_2()[1]
+    for number, elem in enumerate(zip(ss, poprawne)):
         if elem[0] != elem[1]:
             bad.append(number)
+    if not bad: #LOL
+        print('Wynik poprawny')
+    else:
+        print("Poprawne | Niepoprawne")
+        for elem in bad:
+            print "%s | %s" % (poprawne[elem], ss[elem])
     return bad
 
