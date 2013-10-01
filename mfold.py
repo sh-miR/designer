@@ -20,7 +20,8 @@ def mfold(data=None):
         return {'error': 'Connection to mfold server refused'}
     files = get_list(new_zip)
     os.remove(new_zip)
-    return sorted(files)
+    files.sort()
+    return files[0], files[1]
 
 
 def get_list(file_path):
