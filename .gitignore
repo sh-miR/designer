@@ -5,3 +5,4 @@ local_settings.py
 *~
 .DS_Store
 api/settings.py
+api/mfold/[0-9][0-9]:[0-9][0-9]:[0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]
