@@ -6,7 +6,7 @@ from backbone import get_all
 from backbone import get_by_name
 from backbone import Backbone
 from backbone import get_by_name
-from ss import parse
+from ss import parse_ss
 from ss import parse_score
 
 import errors
@@ -243,45 +243,38 @@ def score_frame(frame, frame_ss_file, orginal_frame):
     frame_ss_file is file from mfold
     orignal_frame is object Backbone from database (not changed)
     """
+    import math
     structure, seq1, seq2 = frame
-    structure_ss = parse(frame_ss_file)
-    orginal_score = parse_score(orginal_frame.structure)
+    structure_ss = parse_ss(frame_ss_file)
+    max_score, orginal_score = parse_score(orginal_frame.structure)
 
-
-def score_2():
-    #dodaje/odejmuje do obu; w prawej kolumnie tylko gdy jest wieksze od wartosci na ktorej jestesmy zera nie ruszac
-    structure = Backbone(**get_by_name('miR-155'))
-    orginal_frame = Backbone(**get_by_name('miR-155'))
-    seq1, seq2 = 'UUUGUAUUCAGCCCAUAGCGC', 'CGCUAUGGCGAAUACAAACA'
-    structure_ss = parse('155LUC_NEW.ss')
-    orginal_score = parse_score('structures/miR-155')
-    #da differences
+    #differences
     flanks5 = len(orginal_frame.flanks5_s) - len(structure.flanks5_s)
     insertion1 = len(orginal_frame.miRNA_s) - len(seq1)
     loop = len(orginal_frame.loop_s) - len(structure.loop_s)
     insertion2 = len(orginal_frame.miRNA_a) - len(seq2)
     flanks3 = len(orginal_frame.flanks3_s) - len(structure.flanks3_s)
-    
+
     position = len(structure.flanks5_s) #position in sequence (list)
     structure_len = len(structure.template(seq1, seq2))
     current = position + flanks5 #current position (after changes)
-    
+
     if flanks5 < 0:
         add_shifts(0, structure_len, structure_ss, flanks5, 0)
     else:
         add_shifts(position, structure_len,\
-                       structure_ss, flanks5, current)
+                    structure_ss, flanks5, current)
     for diff, nucleotides in [(insertion1, seq1), (loop, structure.loop_s),\
-        (insertion2, seq2), (flanks3, '')]:
+                                (insertion2, seq2), (flanks3, '')]:
         position += len(nucleotides)
         current = position + diff
         add_shifts(position, structure_len, structure_ss, diff, current)
     score = 0
-    for shmir in structure_ss: 
+    for shmir in structure_ss:
         for template in orginal_score:
             if shmir == template[0]:
                 score += template[1]
-    return score, structure_ss
+    return int(math.ceil(score/max_score * 100))
 
 
 def add_shifts(start, end, frame_ss, value, current):
@@ -292,13 +285,13 @@ def add_shifts(start, end, frame_ss, value, current):
             frame_ss[num][1] += value
 
 
-def score_homogeneity(struc_name):
+def score_homogeneity(orginal_frame):
     """We are taking value homogenity from database and multiply it 4 times """
-    return Backbone(**get_by_name(struc_name)["result"]).homogeneity*3
+    return orginal_frame.homogeneity*3
 
 
-def two_same_strands_score(seq1, struc_name):
-    miRNA_s = Backbone(**get_by_name(struc_name)["result"]).miRNA_s[:2].lower()
+def two_same_strands_score(seq1, orignal_frame):
+    miRNA_s = orginal_frame.miRNA_s[:2].lower()
     seq = seq1[:2].lower()
     if seq == miRNA_s:
         return 10
@@ -306,20 +299,3 @@ def two_same_strands_score(seq1, struc_name):
         return 4
     else:
         return 0
-
-poprawne = [[1, 0], [2, 0], [3, 107], [4, 106], [5, 105], [6, 0], [7, 0], [8, 0], [9, 0], [10, 0], [11, 99], [12, 98], [13, 97], [14, 96], [15, 95], [16, 0], [17, 91], [18, 90], [19, 89], [20, 88], [21, 87], [22, 86], [23, 83], [24, 82], [25, 81], [26, 80], [27, 79], [28, 78], [29, 77], [30, 76], [31, 75], [32, 74], [33, 73], [34, 0], [35, 72], [36, 71], [37, 70], [38, 0], [39, 69], [40, 68], [41, 67], [42, 66], [43, 65], [44, 64], [45, 0], [48, 0], [49, 0], [50, 59], [51, 58], [52, 57], [53, 0], [54, 0], [55, 0], [56, 0], [57, 52], [58, 51], [59, 50], [60, 0], [61, 0], [62, 0], [63, 0], [64, 44], [65, 43], [66, 42], [67, 41], [68, 40], [69, 39], [70, 37], [71, 36], [72, 35], [73, 33], [74, 32], [75, 31], [76, 30], [77, 29], [78, 28], [79, 27], [80, 26], [81, 25], [82, 24], [83, 23], [86, 22], [87, 21], [88, 20], [89, 19], [90, 18], [91, 17], [92, 0], [93, 0], [94, 0], [95, 15], [96, 14], [97, 13], [98, 12], [99, 11], [100, 0], [101, 0], [102, 0], [103, 0], [104, 0], [105, 5], [106, 4], [107, 3], [108, 0], [109, 141], [110, 140], [111, 139], [112, 0], [113, 137], [114, 136], [115, 135], [116, 134], [117, 133], [118, 0], [119, 0], [120, 129], [121, 128], [122, 0], [123, 0], [124, 0], [125, 0], [126, 0], [127, 0], [128, 121], [129, 120], [130, 0], [131, 0], [132, 0], [133, 117], [134, 116], [135, 115], [136, 114], [137, 113], [138, 0], [139, 111], [140, 110], [141, 109], [142, 0], [143, 0], [144, 0], [145, 0], [146, 0], [147, 0], [148, 0], [149, 0], [150, 0], [151, 0], [152, 0]]
-
-def porownywarka():
-    bad = []
-    ss = score_2()[1]
-    for number, elem in enumerate(zip(ss, poprawne)):
-        if elem[0] != elem[1]:
-            bad.append(number)
-    if not bad: #LOL
-        print('Wynik poprawny')
-    else:
-        print("Poprawne | Niepoprawne")
-        for elem in bad:
-            print "%s | %s" % (poprawne[elem], ss[elem])
-    return bad
-

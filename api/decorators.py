@@ -24,11 +24,11 @@ def require_json(require_data=True, required_data_words=None,
             if not require_data:
                 return f(request_json=request_json, *args, **kwargs)
             elif 'data' in request_json.keys():
-                data = str(request_json['data'])
+                data = str(request_json['data']).strip()
 
                 if required_data_words:
                     if len(data.split()) != required_data_words:
-                        return json_error("Data must have %d words!" %
+                        return json_error("Data must have %d word(s)!" %
                                           required_data_words)
 
                 if required_data_characters:

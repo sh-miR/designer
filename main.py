@@ -25,7 +25,7 @@ def main(input_str):
         score += score_frame(frame, SSFROMFRAME, orginal)
         score += score_homogeneity(orignal) #change interface in utils
         score += two_same_strands_score(seq1, orginal) #change interface
-        frames_with_score.append((score, frame))
+        frames_with_score.append((score, frame.template(seq1, seq2)))
 
     return frames_with_score
 

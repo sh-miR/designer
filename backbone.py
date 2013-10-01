@@ -1,5 +1,4 @@
-#import urllib2
-import requests
+import urllib2
 import json
 
 HOST = 'http://127.0.0.1:5000/'
@@ -62,7 +61,7 @@ class Backbone:
 
 def qbackbone(data=None, url=None):
     """
-    Acceptable methods(string):
+    Acceptable methods:
     - get_all
     - get_by_name
     - get_by_miRNA_s
@@ -73,10 +72,10 @@ def qbackbone(data=None, url=None):
     json_data = {}
     if data:
         json_data.update({"data": data})
-    req = requests.post(url, json.dumps(json_data), headers=HEADERS)
+    req = urllib2.Request(url, json.dumps(json_data), headers=HEADERS)
     try:
-        return json.loads(req.content)
-    except requests.ConnectionError:
+        return json.loads(urllib2.urlopen(req).read())
+    except urllib2.URLError:
         return {'error': 'Connection to database refused.'}
 
 
