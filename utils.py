@@ -156,7 +156,7 @@ def get_frames(seq1, seq2, shift_left, shift_right):
     Returns list of tuples (frame, sequence_1 sequence_2)
     """
     data = get_all()
-    if error in data:
+    if 'error' in data:
         return error
     frames = []
     for elem in data:
@@ -216,7 +216,7 @@ def get_frames(seq1, seq2, shift_left, shift_right):
                 else:
                     frame.loop_s += reverse_complement(
                         frame.loop_s[-shift_right:-frame.miRNA_end_3])
-            elif frames.miRNA_end_3 > shift_right:
+            elif frame.miRNA_end_3 > shift_right:
                 if frame.miRNA_end_3 > 0 and shift_right < 0:
                     _seq1 += reverse_complement(
                         _seq2[:-shift_right])
@@ -246,7 +246,7 @@ def score_frame(frame, frame_ss_file, orginal_frame):
     import math
     structure, seq1, seq2 = frame
     structure_ss = parse_ss(frame_ss_file)
-    max_score, orginal_score = parse_score(orginal_frame.structure)
+    max_score, orginal_score = parse_score(u'.' + orginal_frame.structure)
 
     #differences
     flanks5 = len(orginal_frame.flanks5_s) - len(structure.flanks5_s)
@@ -285,13 +285,13 @@ def add_shifts(start, end, frame_ss, value, current):
             frame_ss[num][1] += value
 
 
-def score_homogeneity(orginal_frame):
+def score_homogeneity(original_frame):
     """We are taking value homogenity from database and multiply it 4 times """
-    return orginal_frame.homogeneity*3
+    return original_frame.homogeneity*3
 
 
-def two_same_strands_score(seq1, orignal_frame):
-    miRNA_s = orginal_frame.miRNA_s[:2].lower()
+def two_same_strands_score(seq1, original_frame):
+    miRNA_s = original_frame.miRNA_s[:2].lower()
     seq = seq1[:2].lower()
     if seq == miRNA_s:
         return 10
