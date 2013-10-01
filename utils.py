@@ -128,7 +128,7 @@ def reverse_complement(sequence):
     """Generates reverse complement sequence to given"""
     return sequence.translate(string.maketrans("ATCG", "TAGC"))[::-1]
 
-def get_frames(seq1, seq2, shift_left, shift_right):
+def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
     """Take output of check_input function and insert into flanking sequences.
     take from database all miRNA results and check if ends of input is suitable
     for flanking sequences.
@@ -155,11 +155,8 @@ def get_frames(seq1, seq2, shift_left, shift_right):
     TTTCCCCGAAAAtcagaatct
     Returns list of tuples (frame, sequence_1 sequence_2)
     """
-    data = get_all()
-    if 'error' in data:
-        return error
     frames = []
-    for elem in data:
+    for elem in all_frames:
         frame = Backbone(**elem)
         if shift_left == frame.miRNA_end_5 and shift_right == frame.miRNA_end_5:
             frames.append([frame, seq1, seq2])
