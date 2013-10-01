@@ -1,6 +1,4 @@
-from os import chdir
-from os import execlp
-from os import mkdir
+from os import chdir, execlp, mkdir, fork, waitpid
 
 from os.path import dirname
 from os.path import join
@@ -25,15 +23,15 @@ def mfold(input):
     with open(current_datetime, "w") as f:
         f.write(input)
 
-    execlp("mfold", "seq='mfold_input'")
+    pid = fork()
+    if pid == 0:
+        execlp("mfold", "mfold", "SEQ=%s" % current_datetime)
+    waitpid(pid, 0)
 
     zipname = "%s.zip" % current_datetime
 
-    with ZipFile(zipname) as mfold_zip:
-        mfold_zip.write("mfold.pdf")
-        mfold_zip.write("mfold.ss")
-
-    #with open(zipname, "rb") as f:
-    #    result = f.read()
+    with ZipFile(zipname, 'w') as mfold_zip:
+        mfold_zip.write("%s_1.pdf" % current_datetime)
+        mfold_zip.write("%s_1.ss" % current_datetime)
 
     return join(tmp_dirname, zipname)

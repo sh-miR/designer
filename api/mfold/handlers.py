@@ -14,3 +14,6 @@ def get_mfold(data=None, **kwargs):
     filename = mfold(data)
 
     return send_file(filename)
+
+
+get_mfold.methods = ['POST']
