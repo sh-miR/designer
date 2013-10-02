@@ -127,7 +127,7 @@ def check_input(seq_to_be_check):
 def reverse_complement(sequence):
     """Generates reverse complement sequence to given"""
     sequence = str(sequence)
-    return sequence.translate(string.maketrans("ATCG", "TAGC"))[::-1]
+    return sequence.translate(string.maketrans("atcgATCG", "tagcTAGC"))[::-1]
 
 def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
     """Take output of check_input function and insert into flanking sequences.
