@@ -1,7 +1,11 @@
+import os
+
+import logging
+
 import urllib2
 import json
 from zipfile import ZipFile
-import os
+
 
 URL = 'http://127.0.0.1:5000/mfold'
 
@@ -23,6 +27,7 @@ def mfold(data=None):
         with open(new_zip, "wb") as f:
             f.write(urllib2.urlopen(req).read())
     except urllib2.URLError:
+        logging.error('Connection to mfold server refused')
         return {'error': 'Connection to mfold server refused'}
     files = get_list(new_zip)
     os.remove(new_zip)
