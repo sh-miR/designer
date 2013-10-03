@@ -1,4 +1,4 @@
-from os import chdir, execlp, mkdir, fork, waitpid
+from os import chdir, execlp, fork, waitpid, path, makedirs
 
 from os.path import dirname
 from os.path import join
@@ -15,9 +15,11 @@ def mfold(input):
     """
     current_datetime = datetime.now().strftime('%H:%M:%S-%d-%m-%y')
 
-    tmp_dirname = join(dirname(__file__), current_datetime)
+    mfold_dirname = "mfold_files"
+    tmp_dirname = join(dirname(__file__), mfold_dirname, current_datetime)
 
-    mkdir(tmp_dirname)
+    if not path.exists(tmp_dirname):
+        makedirs(tmp_dirname)
     chdir(tmp_dirname)
 
     with open(current_datetime, "w") as f:

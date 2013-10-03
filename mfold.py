@@ -35,8 +35,8 @@ def mfold(data=None):
 
 
 def get_list(file_path):
-    zip_file = ZipFile(file_path)
-    zip_list = zip_file.namelist()
-    zip_file.extractall(path="mfold_files/")
-    zip_list = map(lambda x: "mfold_files/" + x, zip_list)
+    with ZipFile(file_path) as zip_file:
+        zip_list = zip_file.namelist()
+        zip_file.extractall(path="mfold_files/")
+        zip_list = map(lambda x: "mfold_files/" + x, zip_list)
     return zip_list
