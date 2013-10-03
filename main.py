@@ -11,7 +11,7 @@ from mfold import mfold
 import sys
 
 def main(input_str):
-    sequence = check_input(input_str)[0] #just for now
+    sequence = check_input(input_str)
     seq1, seq2, shift_left, shift_right = sequence
     if not seq2:
         seq2 = reverse_complement(seq1)
