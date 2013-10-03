@@ -114,13 +114,13 @@ def check_input(seq_to_be_check):
         'time; check if both stands are in 5-3 orientation'
     len_seq = len(sequence)
     if len_seq == 1:
-        return check_input_single(sequence[0])[:1]
+        return [check_input_single(sequence[0])[0], '', 0, 0]
     elif len_seq != 2:
         raise errors.InputException('%s' % errors.error)
     elif len_seq == 2:
         ch_seq1, ch_seq2 = check_input_single(sequence[0]), \
             check_input_single(sequence[1])
-        if (ch_seq1[2], ch_seq2[2] is True, True) :
+        if (ch_seq1[2], ch_seq2[2] is True, True):
             return [check_complementary(ch_seq1[0], ch_seq2[0])]
 
 
