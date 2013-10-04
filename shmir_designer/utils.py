@@ -58,7 +58,9 @@ def check_complementary(seq1, seq2):
 
     output: 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end
     {-4,-3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
+
     input: string, string
+
     output: tuple (string, string, int, int)"""
     nr_offset = 5
     tab = []
@@ -80,7 +82,8 @@ def check_complementary(seq1, seq2):
 
 def check_input_single(seq):
     """Function for check sequence from input
-    if a single siRNA strand have only actgu letters and is 19-21 nucleotides long. Also rigth end of siRNA is cut if contain 'uu' or 'tt'
+    if a single siRNA strand have only actgu letters and is 19-21 nucleotides long.
+    Also rigth end of siRNA is cut if contain 'uu' or 'tt'
     input: string
     The function has no output"""
     seq = seq.lower().replace('u','t')
@@ -153,10 +156,9 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
     If any end is different function has to modify end of the insert:
     Right end:
     if miRNA_end_5<first_end
-    add to right site of second sequence additional nucleotides (as many as |
-        miRNA_end_5 - first_end|)
-    like (dots are nucleotides to add, big letter are flanking sequences, small
-        are input):
+    add to right site of second sequence additional nucleotides
+    (as many as |miRNA_end_5 - first_end|)
+    like (dots are nucleotides to add, big letter are flanking sequences, small are input):
     AAAGGGGCTTTTagtcttaga
     TTTCCCCGAA....agaatct
     if miRNA_end_5>first_end
