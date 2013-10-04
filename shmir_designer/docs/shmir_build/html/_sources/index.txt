@@ -3,8 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to ..'s documentation!
+Welcome to sh-miR Designer's documentation!
 ==============================
+
+Biological documentation:
+
+   * :download:`sh-miR biological documentation<shmir_static/Documentation-1.pdf>`
+   * :download:`sh-miR next version plans <shmir_static/Documentation-2.pdf>`
 
 Contents:
 

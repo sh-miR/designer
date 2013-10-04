@@ -20,11 +20,11 @@ CREATE TABLE backbone (
     miRNA_end_3 integer NOT NULL,
     structure varchar(200) NOT NULL,
     homogeneity integer NOT NULL,
-            /*homogeneity of products (length), 0 for very 
-             nonhomogenous, 5 for completely homogenous */ 
+            /*homogeneity of products (length), 0 for very
+             nonhomogenous, 5 for completely homogenous */
     miRBase_link varchar(200) NOT NULL
 );
-/*Proszę o trzymanie się składni same wielkie bądź same małe litery w insertach*/
+/*Please use only uppercase letters in sequences*/
 INSERT INTO backbone VALUES
     (DEFAULT, 'miR-30a', 'TGCCTACTGCCTCGGACTTCAAGGGGCTACTTTAGGAGCA', 'TGCTCCTAAAGTAGCCCCTTGAAGTCCGAGGCAGTAGGCA',
     'CTAAAGAAGGTATATTGCTGTTGACAGTGAGCGAC', 'GTCGCTCACTGTCAACAGCAATATACCTTCTTTAG',
