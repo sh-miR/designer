@@ -4,6 +4,6 @@
 local_settings.py
 *~
 .DS_Store
-api/settings.py
-api/mfold/mfold_files/
-mfold_files/
+shmir_api/settings.py
+shmir_api/mfold/mfold_files/
+shmir_designer/mfold_files/
