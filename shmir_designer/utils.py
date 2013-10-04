@@ -159,17 +159,25 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
     add to right site of second sequence additional nucleotides
     (as many as |miRNA_end_5 - first_end|)
     like (dots are nucleotides to add, big letter are flanking sequences, small are input):
+
     AAAGGGGCTTTTagtcttaga
+
     TTTCCCCGAA....agaatct
+
     if miRNA_end_5>first_end
     cut nucleotides from rigth site of flanks3_s and/or from right site of
     second sequence
+
     before cut:
     AAAGGGGCTTTTagtcttaga
+
     TTTCCCCGAAAATTcctcagaatct (-2, +2)
+
     After
     AAAGGGGCTTTTagtcttaga
+
     TTTCCCCGAAAAtcagaatct
+
     Returns list of tuples (frame, sequence_1 sequence_2)
     input: string, string, int, int, pri-miRNA objects
     output: List of list of Backbone object, 1st strand 2nd strand"""
