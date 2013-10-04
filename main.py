@@ -11,6 +11,10 @@ from mfold import mfold
 import sys
 
 def main(input_str):
+
+    """
+Main function takes string input and return the best results depending on scoring. Single score include sh-miR sequence, score and link to 2D structure from mfold program 
+    """
     sequence = check_input(input_str)
     seq1, seq2, shift_left, shift_right = sequence
     if not seq2:

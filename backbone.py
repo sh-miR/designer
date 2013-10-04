@@ -10,6 +10,7 @@ HEADERS = {'content-type': 'application/json'}
 
 
 class Backbone:
+    """pri-miRNA class"""
     def __init__(self, name, flanks3_s, flanks3_a, flanks5_s, flanks5_a,
                  loop_s, loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min,
                  miRNA_max, miRNA_end_5, miRNA_end_3, structure, homogeneity,
@@ -33,6 +34,7 @@ class Backbone:
         self.miRBase_link = miRBase_link
 
     def serialize(self):
+        """Makes dictionary of object variables"""
         return {
             'name': self.name,
             'flanks3_s': self.flanks3_s,
@@ -54,7 +56,7 @@ class Backbone:
         }
 
     def template(self, siRNAstrand_1, siRNAstrand_2):
-        """Returns the template of DNA"""
+        """Returns the template of DNA (sh-miR)"""
         return (self.flanks5_s + siRNAstrand_1 + self.loop_s +\
             siRNAstrand_2 + self.flanks3_s).upper()
 
@@ -80,12 +82,15 @@ def qbackbone(data=None, url=None):
 
 
 def get_all(data=None):
+    """Takes all objects from database"""
     return qbackbone(data=data, url=URL_ALL)
 
 
 def get_by_name(data=None):
+    """takes object from database depending on the given name"""
     return qbackbone(data=data, url=URL_BY_NAME)
 
 
 def get_by_mirna_s(data=None):
+    """takes object from database depending on the sequence of miRNA_s"""
     return qbackbone(data=data, url=URL_BY_MIRNA_S)

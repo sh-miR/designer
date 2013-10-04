@@ -10,8 +10,9 @@ import errors
 
 
 class ShmiRTest(unittest.TestCase):
-
+    """Tests for shmiR designer application"""
     def test_input(self):
+        """Tests for check_input function"""
         tests = [
             ('acggctTggaacttctggtac', ['acggcttggaacttctggtac', '', 0, 0]),
             ('acggcttGGaacttctggtac gtaccagaagttccaagccgt', [utils.check_complementary('acggcttggaacttctggtac', 'gtaccagaagttccaagccgt')]),
@@ -21,6 +22,7 @@ class ShmiRTest(unittest.TestCase):
             self.failUnlessEqual(utils.check_input(list1), expected)
 
     def test_input_exceptions(self):
+        """Tests for check_input Exceptions"""
         with self.assertRaises(errors.InputException) as err:
             utils.check_input('acggcttggaactuct')
         self.assertEqual(errors.len_error, str(err.exception))
@@ -42,6 +44,7 @@ class ShmiRTest(unittest.TestCase):
         self.assertEqual(errors.patt_error, str(err.exception))
 
     def test_check_complementary(self):
+        """Tests for check_complementary function"""
         tests = [
             ('cttggaacttctggtacat', 'gtaccagaagttccaagccgt', ('cttggaacttctggtacat', 'gtaccagaagttccaagccgt', -4, 2)),
 
@@ -88,19 +91,7 @@ class ShmiRTest(unittest.TestCase):
         for seq1, seq2, expected in tests:
             self.failUnlessEqual(utils.check_complementary(seq1, seq2), expected)
 
-    """def test_complementary_exceptions(self):
-        self.assertRaisesWithMessage(utils.check_complementary('acggcttGGaacttctggtac', 'gaaggtgaagccccaagccgt'), InputException('>20% mismaches'))
-        self.assertRaisesWithMessage(utils.check_complementary('acggcttGGaacttctggtac', 'gtaccagaagttccaagccgttua'), InputException('+3'))
-        self.assertRaisesWithMessage(utils.check_complementary('acggcttggAActuctggtac', 'acggcttggAActuctggtac'), InputException('both same strands'))"""
 
-    #def test_get_frames(self):
-
-     #   tests = [
-     #       ('', ()),
-     #       ('', ())
-     #       ]
-     #   for sequences, expected in tests:
-     #       self.failUnlessEqual(utils.get_frames(sequences), expected)
 
 
 if __name__ == '__main__':

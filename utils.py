@@ -14,6 +14,9 @@ import logging
 
 
 def check_complementary_single(seq1, seq2):
+    """The funtion checks complementary of two sequences
+       input: string, string
+       output: int"""
         seq1, seq2 = seq1.lower(), seq2.lower()
         tran = { "a":"t",
                  "t":"a",
@@ -52,6 +55,8 @@ def check_complementary(seq1, seq2):
 
     output: 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end
     {-4,-3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
+    input: string, string
+    output: tuple (string, string, int, int)
     """
     nr_offset = 5
     tab = []
@@ -72,7 +77,10 @@ def check_complementary(seq1, seq2):
 
 
 def check_input_single(seq):
-    """Function for check sequence from input"""
+    """Function for check sequence from input
+    if a single siRNA strand have only actgu letters and is 19-21 nucleotides long. Also rigth end of siRNA is cut if contain 'uu' or 'tt'
+    input: string
+    The function has no output"""
     seq = seq.lower().replace('u','t')
     pattern = re.compile(r'^[acgt]{19,21}$')
     cut_warn = "cut 'uu' or 'tt'"
@@ -98,7 +106,7 @@ def check_input(seq_to_be_check):
     if the sequence is correct input returns 'first sequence' (19-21nt), 'second
     sequence' (19-21nt), left_end{-4,-3,-2,-1,0,1,2,3,4},
     rigth_end{-4,-3,-2,-1,0,1,2,3,4}
-    messages (moga byc potem zmienione numerycznie i komunikaty w programie):
+    messages:
     "correct sequence"
     "changed 'u' to 't'"
     "cut 'uu' or 'tt' ends"
@@ -108,7 +116,9 @@ def check_input(seq_to_be_check):
     "too long"
     "insert only one siRNA sequence or both strands of one siRNA at a time;
     check if both stands are in 5'-3' orientation"
-    "sequence can contain only {actgu} letters"""
+    "sequence can contain only {actgu} letters
+    input: string
+    output: output of check_complementary"""
     sequence = seq_to_be_check.split(" ")
     error = 'insert only one siRNA sequence or both strands of one siRNA at a'\
         'time; check if both stands are in 5-3 orientation'
@@ -125,7 +135,9 @@ def check_input(seq_to_be_check):
 
 
 def reverse_complement(sequence):
-    """Generates reverse complement sequence to given"""
+    """Generates reverse complement sequence to given
+    input: string
+    output: string"""
     sequence = str(sequence)
     return sequence.translate(string.maketrans("atcgATCG", "tagcTAGC"))[::-1]
 
@@ -155,6 +167,8 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
     AAAGGGGCTTTTagtcttaga
     TTTCCCCGAAAAtcagaatct
     Returns list of tuples (frame, sequence_1 sequence_2)
+    input: string, string, int, int, pri-miRNA objects
+    output:
     """
     frames = []
     for elem in all_frames:
@@ -240,6 +254,8 @@ def score_frame(frame, frame_ss_file, orginal_frame):
     frame is a tuple of object Backbone and two sequences
     frame_ss_file is file from mfold
     orignal_frame is object Backbone from database (not changed)
+    input: sh-miR object, ss_file, ss_file
+    output: int
     """
     import math
     structure, seq1, seq2 = frame
@@ -276,6 +292,9 @@ def score_frame(frame, frame_ss_file, orginal_frame):
 
 
 def add_shifts(start, end, frame_ss, value, current):
+    """The numbers assigned to the nucleotides have to be verified, because flanking sequences can be shortened or extended during insertion. Moreover, the length of the siRNA insert can differ from the natural one.
+    input: start, end, frame_ss, value, current
+    The function has no output"""
     for num in range(end):
         if num >= start:
             frame_ss[num][0] += value
@@ -284,11 +303,16 @@ def add_shifts(start, end, frame_ss, value, current):
 
 
 def score_homogeneity(original_frame):
-    """We are taking value homogenity from database and multiply it 4 times """
+    """We are taking value homogenity from database and multiply it 4 times
+    input: sh-miR object
+    output: sh-miR object with modified homogeneity"""
     return original_frame.homogeneity*3
 
 
 def two_same_strands_score(seq1, original_frame):
+    """ 
+    input: string, pri-miRNA object
+    The function has no output."""
     miRNA_s = original_frame.miRNA_s[:2].lower()
     seq = seq1[:2].lower()
     if seq == miRNA_s:
