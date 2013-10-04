@@ -42,7 +42,7 @@ def mfold(data=None):
 
 
 def get_list(file_path, extract_to):
-    """Function unzipping file and return list of files"""
+    """Function unzipps file and returns list of files"""
     with ZipFile(file_path) as zip_file:
         zip_list = zip_file.namelist()
         zip_file.extractall(path=extract_to)

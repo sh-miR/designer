@@ -17,7 +17,7 @@ def get_all(**kwargs):
 @require_json(required_data_words=1)
 def get_by_name(data=None, **kwargs):
     """
-    We are searching by name case-insensitive
+    Searching by name in a case-insensitive way
     """
     return dumps(database.get_by_name(data))
 
@@ -25,7 +25,7 @@ def get_by_name(data=None, **kwargs):
 @require_json(required_data_characters=2)
 def get_by_miRNA_s(data=None, **kwargs):
     """
-    We are searching by only first two nucleotides of endogenous miRNA
+    Searching by first two nucleotides of endogenous miRNA
     """
     return dumps(database.get_by_miRNA_s(data))
 
