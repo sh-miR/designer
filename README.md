@@ -30,9 +30,9 @@ You can also use it on our [website](http://shmir.pycircle.org) what is much eas
 What if you would like to make own mfold/database server?
 =========================================================
 You need to do it:
-    * python in version 3.3
-    * [mfold](http://mfold.rna.albany.edu/?q=mfold/mfold-references)
-    * postgresql
-    * flask
-    * psycopg2
+* python in version 3.3
+* [mfold](http://mfold.rna.albany.edu/?q=mfold/mfold-references)
+* postgresql
+* flask
+* psycopg2
 [How?](shmir_api/README.md)
