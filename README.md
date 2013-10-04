@@ -4,7 +4,7 @@ shmir
 sh-miR Designer is a software aimed for fast and efficient design of effective RNA interference (RNAi) reagents - sh-miRs, also known as artificial miRNAs. sh-miRs are RNA particles whose structure is based on miRNA precursor pri-miRNA, but sequence interacting with transcript is changed depending on research purpose. Maintenance of structure of pri-miRNA is very important to enable cellular processing and therefore ensure functionality of artificial particles. sh-miRs delivered to cells on genetic vectors - plasmids or viral vectors - enter natural RNAi pathway and silence target mRNA. They can be used in genetic therapies and basic biomedical research.
 
 ##Documentation:
-* [sh-miR Designer](http://shmir-desinger.rtfd.org)
+* [sh-miR Designer](http://shmir-designer.readthedocs.org/)
 * [sh-miR Api](http://shmir-api.rtfd.org)
 
 ##What you need to use it?

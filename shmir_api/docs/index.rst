@@ -1,8 +1,7 @@
 Welcome to sh-miR api's documentation!
 ==============================
 
-Related to:
-   .. _shmiR Designer: http://shmir-designer.readthedocs.org/
+Related to: `sh-miR  Designer <http://shmir-designer.readthedocs.org/>`
 
 Contents:
 
