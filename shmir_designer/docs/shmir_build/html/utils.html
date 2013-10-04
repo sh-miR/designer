@@ -1,0 +1,235 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>utils Module &mdash; sh-miR Designer 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="sh-miR Designer 1.0 documentation" href="index.html" />
+    <link rel="prev" title="tests Module" href="tests.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tests.html" title="tests Module"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">sh-miR Designer 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-utils">
+<span id="utils-module"></span><h1>utils Module<a class="headerlink" href="#module-utils" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="utils.add_shifts">
+<tt class="descclassname">utils.</tt><tt class="descname">add_shifts</tt><big>(</big><em>start</em>, <em>end</em>, <em>frame_ss</em>, <em>value</em>, <em>current</em><big>)</big><a class="reference internal" href="_modules/utils.html#add_shifts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.add_shifts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utils.check_complementary">
+<tt class="descclassname">utils.</tt><tt class="descname">check_complementary</tt><big>(</big><em>seq1</em>, <em>seq2</em><big>)</big><a class="reference internal" href="_modules/utils.html#check_complementary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.check_complementary" title="Permalink to this definition">¶</a></dt>
+<dd><p>test for complementary, if both strands are in 5&#8217;-3&#8217; orientation
+class perform only when there are two strands given; should take as input
+both strand,
+input:
+5&#8217;acggcttGGaactuctggtac3&#8217;
+5&#8217;gtaccagaagttccaagccgt3&#8217;
+reverse second:
+3&#8217;tgccgaaccttgaagaccatg5&#8217;
+translate second strand in a way (a-&gt;t, t-&gt;a, u-&gt;a, c-&gt;g, g-&gt;c),
+5&#8217;acggcttGGaactuctggtac3&#8217;
+check if the strands are the same,
+starting with first nucleotide or -2,-1,
++1,+2 (from the beggining or the end) with minimum 80% similarity</p>
+<ol class="arabic" start="3">
+<li><dl class="first docutils">
+<dt>5&#8217;acggcttGGaactuctggtac3&#8217;</dt>
+<dd></dd>
+</dl>
+<p>3&#8217;tgccgaaccttgaagaccatg5&#8217;
+5&#8217;acggcttGGaactuctggtac3&#8217;</p>
+</li>
+</ol>
+<p>output: &#8216;first sequence&#8217; (19-21nt), &#8216;second sequence&#8217; (19-21nt), left_end
+{-4,-3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utils.check_complementary_single">
+<tt class="descclassname">utils.</tt><tt class="descname">check_complementary_single</tt><big>(</big><em>seq1</em>, <em>seq2</em><big>)</big><a class="reference internal" href="_modules/utils.html#check_complementary_single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.check_complementary_single" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="utils.check_input">
+<tt class="descclassname">utils.</tt><tt class="descname">check_input</tt><big>(</big><em>seq_to_be_check</em><big>)</big><a class="reference internal" href="_modules/utils.html#check_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.check_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for checking many sequences and throw error if wrong input
+input limitations: possible letters: {ACTGUactgu}, change all &#8216;u&#8217; to &#8216;t&#8217;,
+length 19-21, one strand or two strands splitted by space,
+if two strands check if they are in correct 5&#8217;-3&#8217; orientation, allow <a href="#id1"><span class="problematic" id="id2">|_20%_|</span></a>
+mismatches,
+if the sequence is correct input returns &#8216;first sequence&#8217; (19-21nt), &#8216;second
+sequence&#8217; (19-21nt), left_end{-4,-3,-2,-1,0,1,2,3,4},
+rigth_end{-4,-3,-2,-1,0,1,2,3,4}
+messages (moga byc potem zmienione numerycznie i komunikaty w programie):
+&#8220;correct sequence&#8221;
+&#8220;changed &#8216;u&#8217; to &#8216;t&#8217;&#8221;
+&#8220;cut &#8216;uu&#8217; or &#8216;tt&#8217; ends&#8221;
+errors:
+&#8220;too short&#8221;
+&#8220;insert your siRNA sequence&#8221;
+&#8220;too long&#8221;
+&#8220;insert only one siRNA sequence or both strands of one siRNA at a time;
+check if both stands are in 5&#8217;-3&#8217; orientation&#8221;
+&#8220;sequence can contain only {actgu} letters</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utils.check_input_single">
+<tt class="descclassname">utils.</tt><tt class="descname">check_input_single</tt><big>(</big><em>seq</em><big>)</big><a class="reference internal" href="_modules/utils.html#check_input_single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.check_input_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for check sequence from input</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utils.get_frames">
+<tt class="descclassname">utils.</tt><tt class="descname">get_frames</tt><big>(</big><em>seq1</em>, <em>seq2</em>, <em>shift_left</em>, <em>shift_right</em>, <em>all_frames</em><big>)</big><a class="reference internal" href="_modules/utils.html#get_frames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.get_frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take output of check_input function and insert into flanking sequences.
+take from database all miRNA results and check if ends of input is suitable
+for flanking sequences.
+If first value == and miRNA_end_5 second value == miRNA_end_3 then simply
+concatenate
+sequences flanks5_s + first_sequence + loop_s + second_sequence + flanks3_s.
+If any end is different function has to modify end of the insert:
+Right end:
+if miRNA_end_5&lt;first_end
+add to right site of second sequence additional nucleotides (as many as |</p>
+<blockquote>
+<div>miRNA_end_5 - first_end|)</div></blockquote>
+<dl class="docutils">
+<dt>like (dots are nucleotides to add, big letter are flanking sequences, small</dt>
+<dd>are input):</dd>
+</dl>
+<p>AAAGGGGCTTTTagtcttaga
+TTTCCCCGAA....agaatct
+if miRNA_end_5&gt;first_end
+cut nucleotides from rigth site of flanks3_s and/or from right site of
+second sequence
+before cut:
+AAAGGGGCTTTTagtcttaga
+TTTCCCCGAAAATTcctcagaatct (-2, +2)
+After
+AAAGGGGCTTTTagtcttaga
+TTTCCCCGAAAAtcagaatct
+Returns list of tuples (frame, sequence_1 sequence_2)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utils.reverse_complement">
+<tt class="descclassname">utils.</tt><tt class="descname">reverse_complement</tt><big>(</big><em>sequence</em><big>)</big><a class="reference internal" href="_modules/utils.html#reverse_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.reverse_complement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates reverse complement sequence to given</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utils.score_frame">
+<tt class="descclassname">utils.</tt><tt class="descname">score_frame</tt><big>(</big><em>frame</em>, <em>frame_ss_file</em>, <em>orginal_frame</em><big>)</big><a class="reference internal" href="_modules/utils.html#score_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.score_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>frame is a tuple of object Backbone and two sequences
+frame_ss_file is file from mfold
+orignal_frame is object Backbone from database (not changed)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utils.score_homogeneity">
+<tt class="descclassname">utils.</tt><tt class="descname">score_homogeneity</tt><big>(</big><em>original_frame</em><big>)</big><a class="reference internal" href="_modules/utils.html#score_homogeneity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.score_homogeneity" title="Permalink to this definition">¶</a></dt>
+<dd><p>We are taking value homogenity from database and multiply it 4 times</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="utils.two_same_strands_score">
+<tt class="descclassname">utils.</tt><tt class="descname">two_same_strands_score</tt><big>(</big><em>seq1</em>, <em>original_frame</em><big>)</big><a class="reference internal" href="_modules/utils.html#two_same_strands_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.two_same_strands_score" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tests.html"
+                        title="previous chapter">tests Module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/utils.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tests.html" title="tests Module"
+             >previous</a> |</li>
+        <li><a href="index.html">sh-miR Designer 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Sylwester Brzęczkowski, Mateusz Flieger, Piotr Rogulski, Michał Rostecki, Martyna Urbanek.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

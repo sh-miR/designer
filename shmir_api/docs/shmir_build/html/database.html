@@ -1,0 +1,195 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>database Package &mdash; sh-miR api 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="sh-miR api 1.0 documentation" href="index.html" />
+    <link rel="next" title="decorators Module" href="decorators.html" />
+    <link rel="prev" title="Welcome to sh-miR api’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="decorators.html" title="decorators Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to sh-miR api’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">sh-miR api 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="database-package">
+<h1>database Package<a class="headerlink" href="#database-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-database.database">
+<span id="database-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">database</span></tt> Module<a class="headerlink" href="#module-database.database" title="Permalink to this headline">¶</a></h2>
+<p>Module for communicating with database</p>
+<dl class="function">
+<dt id="database.database.add">
+<tt class="descclassname">database.database.</tt><tt class="descname">add</tt><big>(</big><em>name</em>, <em>flanks3_s</em>, <em>flanks3_a</em>, <em>flanks5_s</em>, <em>flanks5_a</em>, <em>loop_s</em>, <em>loop_a</em>, <em>miRNA_s</em>, <em>mirRNA_a</em>, <em>miRNA_length</em>, <em>miRNA_min</em>, <em>miRNA_max</em>, <em>miRNA_end_5</em>, <em>miRNA_end_3</em>, <em>structure</em>, <em>homogeneity</em>, <em>miRBase_link</em><big>)</big><a class="reference internal" href="_modules/database/database.html#add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which adds another flank to database without closing server</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="database.database.disconnect">
+<tt class="descclassname">database.database.</tt><tt class="descname">disconnect</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/database/database.html#disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Global disconnector</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="database.database.execute_with_one_response">
+<tt class="descclassname">database.database.</tt><tt class="descname">execute_with_one_response</tt><big>(</big><em>query</em>, <em>var=None</em><big>)</big><a class="reference internal" href="_modules/database/database.html#execute_with_one_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.execute_with_one_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes query and returns only first response</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="database.database.execute_with_response">
+<tt class="descclassname">database.database.</tt><tt class="descname">execute_with_response</tt><big>(</big><em>query</em>, <em>var=None</em><big>)</big><a class="reference internal" href="_modules/database/database.html#execute_with_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.execute_with_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes query and returns all responses</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="database.database.get_all">
+<tt class="descclassname">database.database.</tt><tt class="descname">get_all</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/database/database.html#get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.get_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which gets all serialized Backbones in database</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="database.database.get_by_miRNA_s">
+<tt class="descclassname">database.database.</tt><tt class="descname">get_by_miRNA_s</tt><big>(</big><em>letters</em><big>)</big><a class="reference internal" href="_modules/database/database.html#get_by_miRNA_s"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.get_by_miRNA_s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which gets serialized Backbones by first two letters of miRNA_s</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="database.database.get_by_name">
+<tt class="descclassname">database.database.</tt><tt class="descname">get_by_name</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/database/database.html#get_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.get_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which gets one serialized Backbone by name</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="database.database.get_db">
+<tt class="descclassname">database.database.</tt><tt class="descname">get_db</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/database/database.html#get_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.get_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Global connector variable</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="database.database.get_multirow_by_query">
+<tt class="descclassname">database.database.</tt><tt class="descname">get_multirow_by_query</tt><big>(</big><em>query</em>, <em>var=None</em><big>)</big><a class="reference internal" href="_modules/database/database.html#get_multirow_by_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.get_multirow_by_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns serialized data from database</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="database.database.serialize">
+<tt class="descclassname">database.database.</tt><tt class="descname">serialize</tt><big>(</big><em>name</em>, <em>flanks3_s</em>, <em>flanks3_a</em>, <em>flanks5_s</em>, <em>flanks5_a</em>, <em>loop_s</em>, <em>loop_a</em>, <em>miRNA_s</em>, <em>miRNA_a</em>, <em>miRNA_length</em>, <em>miRNA_min</em>, <em>miRNA_max</em>, <em>miRNA_end_5</em>, <em>miRNA_end_3</em>, <em>structure</em>, <em>homogeneity</em>, <em>miRBase_link</em><big>)</big><a class="reference internal" href="_modules/database/database.html#serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which serialize data from database to dictionary</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-database.handlers">
+<span id="handlers-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">handlers</span></tt> Module<a class="headerlink" href="#module-database.handlers" title="Permalink to this headline">¶</a></h2>
+<p>Handlers to communicate with database</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">database Package</a><ul>
+<li><a class="reference internal" href="#module-database.database"><tt class="docutils literal"><span class="pre">database</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-database.handlers"><tt class="docutils literal"><span class="pre">handlers</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to sh-miR api&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="decorators.html"
+                        title="next chapter">decorators Module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/database.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="decorators.html" title="decorators Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to sh-miR api’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">sh-miR api 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Sylwester Brzęczkowski, Mateusz Flieger, Piotr Rogulski, Michał Rostecki, Martyna Urbanek.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
