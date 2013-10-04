@@ -1,0 +1,185 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>backbone &mdash; .  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title=".  documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">.  documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for backbone</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">urllib2</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">HOST</span> <span class="o">=</span> <span class="s">&#39;http://127.0.0.1:5000/&#39;</span>
+<span class="n">URL_ALL</span> <span class="o">=</span> <span class="n">HOST</span> <span class="o">+</span> <span class="s">&#39;database/get_all&#39;</span>
+<span class="n">URL_BY_NAME</span> <span class="o">=</span> <span class="n">HOST</span> <span class="o">+</span> <span class="s">&#39;database/get_by_name&#39;</span>
+<span class="n">URL_BY_MIRNA_S</span> <span class="o">=</span> <span class="n">HOST</span> <span class="o">+</span> <span class="s">&#39;database/get_by_mirna_s&#39;</span>
+
+<span class="n">HEADERS</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;content-type&#39;</span><span class="p">:</span> <span class="s">&#39;application/json&#39;</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="Backbone"><a class="viewcode-back" href="../backbone.html#backbone.Backbone">[docs]</a><span class="k">class</span> <span class="nc">Backbone</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">flanks3_s</span><span class="p">,</span> <span class="n">flanks3_a</span><span class="p">,</span> <span class="n">flanks5_s</span><span class="p">,</span> <span class="n">flanks5_a</span><span class="p">,</span>
+                 <span class="n">loop_s</span><span class="p">,</span> <span class="n">loop_a</span><span class="p">,</span> <span class="n">miRNA_s</span><span class="p">,</span> <span class="n">miRNA_a</span><span class="p">,</span> <span class="n">miRNA_length</span><span class="p">,</span> <span class="n">miRNA_min</span><span class="p">,</span>
+                 <span class="n">miRNA_max</span><span class="p">,</span> <span class="n">miRNA_end_5</span><span class="p">,</span> <span class="n">miRNA_end_3</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">homogeneity</span><span class="p">,</span>
+                 <span class="n">miRBase_link</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flanks3_s</span> <span class="o">=</span> <span class="n">flanks3_s</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flanks3_a</span> <span class="o">=</span> <span class="n">flanks3_a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flanks5_s</span> <span class="o">=</span> <span class="n">flanks5_s</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flanks5_a</span> <span class="o">=</span> <span class="n">flanks5_a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop_s</span> <span class="o">=</span> <span class="n">loop_s</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop_a</span> <span class="o">=</span> <span class="n">loop_a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">miRNA_s</span> <span class="o">=</span> <span class="n">miRNA_s</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">miRNA_a</span> <span class="o">=</span> <span class="n">miRNA_a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">miRNA_length</span> <span class="o">=</span> <span class="n">miRNA_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">miRNA_min</span> <span class="o">=</span> <span class="n">miRNA_min</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">miRNA_max</span> <span class="o">=</span> <span class="n">miRNA_max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">miRNA_end_5</span> <span class="o">=</span> <span class="n">miRNA_end_5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">miRNA_end_3</span> <span class="o">=</span> <span class="n">miRNA_end_3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">structure</span> <span class="o">=</span> <span class="n">structure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">homogeneity</span> <span class="o">=</span> <span class="n">homogeneity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">miRBase_link</span> <span class="o">=</span> <span class="n">miRBase_link</span>
+
+<div class="viewcode-block" id="Backbone.serialize"><a class="viewcode-back" href="../backbone.html#backbone.Backbone.serialize">[docs]</a>    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s">&#39;flanks3_s&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">flanks3_s</span><span class="p">,</span>
+            <span class="s">&#39;flanks3_a&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">flanks3_a</span><span class="p">,</span>
+            <span class="s">&#39;flanks5_s&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">flanks5_s</span><span class="p">,</span>
+            <span class="s">&#39;flanks5_a&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">flanks5_a</span><span class="p">,</span>
+            <span class="s">&#39;loop_s&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop_s</span><span class="p">,</span>
+            <span class="s">&#39;loop_a&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop_a</span><span class="p">,</span>
+            <span class="s">&#39;miRNA_s&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">miRNA_s</span><span class="p">,</span>
+            <span class="s">&#39;miRNA_a&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">miRNA_a</span><span class="p">,</span>
+            <span class="s">&#39;miRNA_length&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">miRNA_length</span><span class="p">,</span>
+            <span class="s">&#39;miRNA_min&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">miRNA_min</span><span class="p">,</span>
+            <span class="s">&#39;miRNA_max&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">miRNA_max</span><span class="p">,</span>
+            <span class="s">&#39;miRNA_end_5&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">miRNA_end_5</span><span class="p">,</span>
+            <span class="s">&#39;miRNA_end_3&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">miRNA_end_3</span><span class="p">,</span>
+            <span class="s">&#39;structure&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span>
+            <span class="s">&#39;homogeneity&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">homogeneity</span><span class="p">,</span>
+            <span class="s">&#39;miRBase_link&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">miRBase_link</span>
+        <span class="p">}</span>
+</div>
+<div class="viewcode-block" id="Backbone.template"><a class="viewcode-back" href="../backbone.html#backbone.Backbone.template">[docs]</a>    <span class="k">def</span> <span class="nf">template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">siRNAstrand_1</span><span class="p">,</span> <span class="n">siRNAstrand_2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the template of DNA&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flanks5_s</span> <span class="o">+</span> <span class="n">siRNAstrand_1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop_s</span> <span class="o">+</span>\
+            <span class="n">siRNAstrand_2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">flanks3_s</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+</div></div>
+<div class="viewcode-block" id="qbackbone"><a class="viewcode-back" href="../backbone.html#backbone.qbackbone">[docs]</a><span class="k">def</span> <span class="nf">qbackbone</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Acceptable methods:</span>
+<span class="sd">    - get_all</span>
+<span class="sd">    - get_by_name</span>
+<span class="sd">    - get_by_miRNA_s</span>
+<span class="sd">    If you use get_by, you should specify data as a string.</span>
+<span class="sd">    Returns serialized json data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">json_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">data</span><span class="p">:</span>
+        <span class="n">json_data</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s">&quot;data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">})</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">json_data</span><span class="p">),</span> <span class="n">headers</span><span class="o">=</span><span class="n">HEADERS</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="k">except</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">URLError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s">&#39;error&#39;</span><span class="p">:</span> <span class="s">&#39;Connection to database refused.&#39;</span><span class="p">}</span>
+
+</div>
+<div class="viewcode-block" id="get_all"><a class="viewcode-back" href="../backbone.html#backbone.get_all">[docs]</a><span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">qbackbone</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">URL_ALL</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="get_by_name"><a class="viewcode-back" href="../backbone.html#backbone.get_by_name">[docs]</a><span class="k">def</span> <span class="nf">get_by_name</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">qbackbone</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">URL_BY_NAME</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="get_by_mirna_s"><a class="viewcode-back" href="../backbone.html#backbone.get_by_mirna_s">[docs]</a><span class="k">def</span> <span class="nf">get_by_mirna_s</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">qbackbone</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">URL_BY_MIRNA_S</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">.  documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Martyna Urbanek.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
