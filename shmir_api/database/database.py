@@ -1,3 +1,7 @@
+"""
+Module for communicating with database
+"""
+
 import psycopg2
 from flask import g
 
@@ -16,17 +20,18 @@ def get_db():
 
 
 def disconnect():
+    """
+    Global disconnector
+    """
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
 
 
-def execute(query, var=None):
-    with get_db().cursor() as cur:
-        cur.execute(query, var)
-
-
 def execute_with_one_response(query, var=None):
+    """
+    Executes query and returns only first response
+    """
     with get_db().cursor() as cur:
         cur.execute(query, var)
         data = cur.fetchone()
@@ -34,16 +39,32 @@ def execute_with_one_response(query, var=None):
 
 
 def execute_with_response(query, var=None):
-    cur = get_db().cursor()
-    cur.execute(query, var)
-    data = cur.fetchall()
-    cur.close()
+    """
+    Executes query and returns all responses
+    """
+    with get_db().cursor() as cur:
+        cur.execute(query, var)
+        data = cur.fetchall()
+        cur.close()
     return data
+
+def get_multirow_by_query(query, var=None):
+    """
+    Returns serialized data from database
+    """
+    data = execute_with_response(query, var)
+    backbones = []
+    for row in data:
+        backbones.append(serialize(*row))
+    return backbones
 
 
 def add(name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s, loop_a,
         miRNA_s, mirRNA_a, miRNA_length, miRNA_min, miRNA_max, miRNA_end_5,
         miRNA_end_3, structure, homogeneity, miRBase_link):
+    """
+    Function which adds another flank to database without closing server
+    """
 
     query = ("INSERT INTO backbone VALUES(DEFAULT, %s, %s, %s, %s, %s, %s, %s,"
              " %s, %s, %d, %d, %d, %s, %d, %s);")
@@ -56,6 +77,9 @@ def add(name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s, loop_a,
 
 
 def get_by_name(name):
+    """
+    Function which gets one serialized Backbone by name
+    """
     query = ("SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,"
              " loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max, "
              "miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link "
@@ -67,6 +91,9 @@ def get_by_name(name):
 
 
 def get_all():
+    """
+    Function which gets all serialized Backbones in database
+    """
     query = ("SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,"
              " loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max, "
              "miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link "
@@ -76,6 +103,9 @@ def get_all():
 
 
 def get_by_miRNA_s(letters):
+    """
+    Function which gets serialized Backbones by first two letters of miRNA_s
+    """
     query = ("SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,"
              " loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max, "
              "miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link "
@@ -84,17 +114,12 @@ def get_by_miRNA_s(letters):
     return get_multirow_by_query(query, (letters.upper() + "%",))
 
 
-def get_multirow_by_query(query, var=None):
-    data = execute_with_response(query, var)
-    backbones = []
-    for row in data:
-        backbones.append(serialize(*row))
-    return backbones
-
-
 def serialize(name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,
               loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max,
               miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link):
+    """
+    Function which serialize data from database to dictionary
+    """
     return {
         'name': name,
         'flanks3_s': flanks3_s,

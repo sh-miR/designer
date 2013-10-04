@@ -1,3 +1,7 @@
+"""
+Module for decorators
+"""
+
 from flask import request
 
 import json

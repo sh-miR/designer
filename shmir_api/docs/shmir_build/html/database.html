@@ -27,7 +27,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="sh-miR api 1.0 documentation" href="index.html" />
     <link rel="next" title="decorators Module" href="decorators.html" />
-    <link rel="prev" title="Welcome to ..’s documentation!" href="index.html" /> 
+    <link rel="prev" title="Welcome to sh-miR api’s documentation!" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,7 +43,7 @@
           <a href="decorators.html" title="decorators Module"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to ..’s documentation!"
+          <a href="index.html" title="Welcome to sh-miR api’s documentation!"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">sh-miR api 1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -58,45 +58,48 @@
 <h1>database Package<a class="headerlink" href="#database-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-database.database">
 <span id="database-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">database</span></tt> Module<a class="headerlink" href="#module-database.database" title="Permalink to this headline">¶</a></h2>
+<p>Module for communicating with database</p>
 <dl class="function">
 <dt id="database.database.add">
 <tt class="descclassname">database.database.</tt><tt class="descname">add</tt><big>(</big><em>name</em>, <em>flanks3_s</em>, <em>flanks3_a</em>, <em>flanks5_s</em>, <em>flanks5_a</em>, <em>loop_s</em>, <em>loop_a</em>, <em>miRNA_s</em>, <em>mirRNA_a</em>, <em>miRNA_length</em>, <em>miRNA_min</em>, <em>miRNA_max</em>, <em>miRNA_end_5</em>, <em>miRNA_end_3</em>, <em>structure</em>, <em>homogeneity</em>, <em>miRBase_link</em><big>)</big><a class="reference internal" href="_modules/database/database.html#add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.add" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Function which adds another flank to database without closing server</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="database.database.disconnect">
 <tt class="descclassname">database.database.</tt><tt class="descname">disconnect</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/database/database.html#disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="database.database.execute">
-<tt class="descclassname">database.database.</tt><tt class="descname">execute</tt><big>(</big><em>query</em>, <em>var=None</em><big>)</big><a class="reference internal" href="_modules/database/database.html#execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.execute" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Global disconnector</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="database.database.execute_with_one_response">
 <tt class="descclassname">database.database.</tt><tt class="descname">execute_with_one_response</tt><big>(</big><em>query</em>, <em>var=None</em><big>)</big><a class="reference internal" href="_modules/database/database.html#execute_with_one_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.execute_with_one_response" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Executes query and returns only first response</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="database.database.execute_with_response">
 <tt class="descclassname">database.database.</tt><tt class="descname">execute_with_response</tt><big>(</big><em>query</em>, <em>var=None</em><big>)</big><a class="reference internal" href="_modules/database/database.html#execute_with_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.execute_with_response" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Executes query and returns all responses</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="database.database.get_all">
 <tt class="descclassname">database.database.</tt><tt class="descname">get_all</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/database/database.html#get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.get_all" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Function which gets all serialized Backbones in database</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="database.database.get_by_miRNA_s">
 <tt class="descclassname">database.database.</tt><tt class="descname">get_by_miRNA_s</tt><big>(</big><em>letters</em><big>)</big><a class="reference internal" href="_modules/database/database.html#get_by_miRNA_s"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.get_by_miRNA_s" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Function which gets serialized Backbones by first two letters of miRNA_s</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="database.database.get_by_name">
 <tt class="descclassname">database.database.</tt><tt class="descname">get_by_name</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/database/database.html#get_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.get_by_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Function which gets one serialized Backbone by name</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="database.database.get_db">
@@ -107,12 +110,14 @@
 <dl class="function">
 <dt id="database.database.get_multirow_by_query">
 <tt class="descclassname">database.database.</tt><tt class="descname">get_multirow_by_query</tt><big>(</big><em>query</em>, <em>var=None</em><big>)</big><a class="reference internal" href="_modules/database/database.html#get_multirow_by_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.get_multirow_by_query" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns serialized data from database</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="database.database.serialize">
 <tt class="descclassname">database.database.</tt><tt class="descname">serialize</tt><big>(</big><em>name</em>, <em>flanks3_s</em>, <em>flanks3_a</em>, <em>flanks5_s</em>, <em>flanks5_a</em>, <em>loop_s</em>, <em>loop_a</em>, <em>miRNA_s</em>, <em>miRNA_a</em>, <em>miRNA_length</em>, <em>miRNA_min</em>, <em>miRNA_max</em>, <em>miRNA_end_5</em>, <em>miRNA_end_3</em>, <em>structure</em>, <em>homogeneity</em>, <em>miRBase_link</em><big>)</big><a class="reference internal" href="_modules/database/database.html#serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.database.serialize" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Function which serialize data from database to dictionary</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-database.handlers">
@@ -138,7 +143,7 @@
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to ..&#8217;s documentation!</a></p>
+                        title="previous chapter">Welcome to sh-miR api&#8217;s documentation!</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="decorators.html"
                         title="next chapter">decorators Module</a></p>
@@ -177,7 +182,7 @@
           <a href="decorators.html" title="decorators Module"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to ..’s documentation!"
+          <a href="index.html" title="Welcome to sh-miR api’s documentation!"
              >previous</a> |</li>
         <li><a href="index.html">sh-miR api 1.0 documentation</a> &raquo;</li> 
       </ul>

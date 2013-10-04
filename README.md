@@ -23,9 +23,10 @@ or
 ./main seq
 ```
 Where seq1 and seq2 are strands in 5'-3' orientation
-If you use only one strand program will create another complementary to the first.
+If you use only one strand program will generate another complementary to the first.
 
 You can also use it on our [website](http://shmir.pycircle.org) what is much easier.
+[Instruction video](http://youtu.be/bZrlwx_D_8s)
 
 What if you would like to make own mfold/database server?
 =========================================================
@@ -35,4 +36,5 @@ You need to do it:
 * postgresql
 * flask
 * psycopg2
+
 [How?](shmir_api/README.md)

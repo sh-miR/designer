@@ -8,6 +8,9 @@ from flask.json import dumps
 
 @require_json(require_data=False)
 def get_all(**kwargs):
+    """
+    Gets all data from database
+    """
     return dumps(database.get_all())
 
 

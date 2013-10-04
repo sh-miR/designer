@@ -1,4 +1,8 @@
 #!/usr/bin/env python3.3
+"""
+Flask server which provide RESTful api for database and mfold
+"""
+
 
 DEBUG = True
 
