@@ -9,7 +9,7 @@ Welcome to sh-miR Designer's documentation!
 Biological documentation:
 
    * :download:`sh-miR biological documentation<shmir_static/Documentation-1.pdf>`
-   * :download:`sh-miR next version plans <shmir_static/Documentation-2.pdf>`
+   * :download:`sh-miR next version plans<shmir_static/Documentation-2.pdf>`
 
 Contents:
 
