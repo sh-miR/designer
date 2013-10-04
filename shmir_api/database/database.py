@@ -1,5 +1,5 @@
 """
-Module for communicating with database
+Module for communication with database
 """
 
 import psycopg2
