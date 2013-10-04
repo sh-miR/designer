@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+Main application file
+"""
 from utils import check_input
 from utils import get_frames
 from utils import reverse_complement
@@ -13,7 +16,9 @@ import sys
 def main(input_str):
 
     """
-Main function takes string input and return the best results depending on scoring. Single score include sh-miR sequence, score and link to 2D structure from mfold program 
+    Main function takes string input and return the best results depending
+    on scoring. Single score include sh-miR sequence,
+    score and link to 2D structure from mfold program
     """
     sequence = check_input(input_str)
     seq1, seq2, shift_left, shift_right = sequence

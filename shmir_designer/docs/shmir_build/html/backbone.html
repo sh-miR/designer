@@ -56,18 +56,21 @@
             
   <div class="section" id="module-backbone">
 <span id="backbone-module"></span><h1>backbone Module<a class="headerlink" href="#module-backbone" title="Permalink to this headline">¶</a></h1>
+<p>Module handling pri-miRNA objects</p>
 <dl class="class">
 <dt id="backbone.Backbone">
 <em class="property">class </em><tt class="descclassname">backbone.</tt><tt class="descname">Backbone</tt><big>(</big><em>name</em>, <em>flanks3_s</em>, <em>flanks3_a</em>, <em>flanks5_s</em>, <em>flanks5_a</em>, <em>loop_s</em>, <em>loop_a</em>, <em>miRNA_s</em>, <em>miRNA_a</em>, <em>miRNA_length</em>, <em>miRNA_min</em>, <em>miRNA_max</em>, <em>miRNA_end_5</em>, <em>miRNA_end_3</em>, <em>structure</em>, <em>homogeneity</em>, <em>miRBase_link</em><big>)</big><a class="reference internal" href="_modules/backbone.html#Backbone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#backbone.Backbone" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><p>pri-miRNA class</p>
+<dl class="method">
 <dt id="backbone.Backbone.serialize">
 <tt class="descname">serialize</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/backbone.html#Backbone.serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#backbone.Backbone.serialize" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Makes dictionary of object variables</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="backbone.Backbone.template">
 <tt class="descname">template</tt><big>(</big><em>siRNAstrand_1</em>, <em>siRNAstrand_2</em><big>)</big><a class="reference internal" href="_modules/backbone.html#Backbone.template"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#backbone.Backbone.template" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the template of DNA</p>
+<dd><p>Returns the template of DNA (sh-miR)</p>
 </dd></dl>
 
 </dd></dl>
@@ -75,26 +78,25 @@
 <dl class="function">
 <dt id="backbone.get_all">
 <tt class="descclassname">backbone.</tt><tt class="descname">get_all</tt><big>(</big><em>data=None</em><big>)</big><a class="reference internal" href="_modules/backbone.html#get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#backbone.get_all" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Takes all objects from database</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="backbone.get_by_mirna_s">
 <tt class="descclassname">backbone.</tt><tt class="descname">get_by_mirna_s</tt><big>(</big><em>data=None</em><big>)</big><a class="reference internal" href="_modules/backbone.html#get_by_mirna_s"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#backbone.get_by_mirna_s" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Takes object from database depending on the sequence of miRNA_s</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="backbone.get_by_name">
 <tt class="descclassname">backbone.</tt><tt class="descname">get_by_name</tt><big>(</big><em>data=None</em><big>)</big><a class="reference internal" href="_modules/backbone.html#get_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#backbone.get_by_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Takes object from database depending on the given name</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="backbone.qbackbone">
 <tt class="descclassname">backbone.</tt><tt class="descname">qbackbone</tt><big>(</big><em>data=None</em>, <em>url=None</em><big>)</big><a class="reference internal" href="_modules/backbone.html#qbackbone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#backbone.qbackbone" title="Permalink to this definition">¶</a></dt>
-<dd><p>Acceptable methods:
-- get_all
-- get_by_name
-- get_by_miRNA_s
-If you use get_by, you should specify data as a string.
+<dd><p>Interface to query on database
 Returns serialized json data</p>
 </dd></dl>
 

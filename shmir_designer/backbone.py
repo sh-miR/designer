@@ -1,3 +1,6 @@
+"""
+Module handling pri-miRNA objects
+"""
 import urllib2
 import json
 
@@ -63,14 +66,8 @@ class Backbone:
 
 
 def qbackbone(data=None, url=None):
-    """
-    Acceptable methods:
-    - get_all
-    - get_by_name
-    - get_by_miRNA_s
-    If you use get_by, you should specify data as a string.
-    Returns serialized json data
-    """
+    """Interface to query on database
+    Returns serialized json data"""
 
     json_data = {}
     if data:
@@ -88,10 +85,10 @@ def get_all(data=None):
 
 
 def get_by_name(data=None):
-    """takes object from database depending on the given name"""
+    """Takes object from database depending on the given name"""
     return qbackbone(data=data, url=URL_BY_NAME)
 
 
 def get_by_mirna_s(data=None):
-    """takes object from database depending on the sequence of miRNA_s"""
+    """Takes object from database depending on the sequence of miRNA_s"""
     return qbackbone(data=data, url=URL_BY_MIRNA_S)

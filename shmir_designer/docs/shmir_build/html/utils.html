@@ -52,10 +52,16 @@
             
   <div class="section" id="module-utils">
 <span id="utils-module"></span><h1>utils Module<a class="headerlink" href="#module-utils" title="Permalink to this headline">¶</a></h1>
+<p>All functions to operate on strands</p>
 <dl class="function">
 <dt id="utils.add_shifts">
 <tt class="descclassname">utils.</tt><tt class="descname">add_shifts</tt><big>(</big><em>start</em>, <em>end</em>, <em>frame_ss</em>, <em>value</em>, <em>current</em><big>)</big><a class="reference internal" href="_modules/utils.html#add_shifts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.add_shifts" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The numbers assigned to the nucleotides have to be verified,
+because flanking sequences can be shortened or extended during insertion.
+Moreover, the length of the siRNA insert can differ from the natural one.
+input: start, end, frame_ss, value, current
+The function has no output</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="utils.check_complementary">
@@ -83,13 +89,18 @@ starting with first nucleotide or -2,-1,
 </li>
 </ol>
 <p>output: &#8216;first sequence&#8217; (19-21nt), &#8216;second sequence&#8217; (19-21nt), left_end
-{-4,-3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}</p>
+{-4,-3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
+input: string, string
+output: tuple (string, string, int, int)</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="utils.check_complementary_single">
 <tt class="descclassname">utils.</tt><tt class="descname">check_complementary_single</tt><big>(</big><em>seq1</em>, <em>seq2</em><big>)</big><a class="reference internal" href="_modules/utils.html#check_complementary_single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.check_complementary_single" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The function checks complementary of two sequences
+input: string, string
+output: int</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="utils.check_input">
@@ -102,7 +113,7 @@ mismatches,
 if the sequence is correct input returns &#8216;first sequence&#8217; (19-21nt), &#8216;second
 sequence&#8217; (19-21nt), left_end{-4,-3,-2,-1,0,1,2,3,4},
 rigth_end{-4,-3,-2,-1,0,1,2,3,4}
-messages (moga byc potem zmienione numerycznie i komunikaty w programie):
+messages:
 &#8220;correct sequence&#8221;
 &#8220;changed &#8216;u&#8217; to &#8216;t&#8217;&#8221;
 &#8220;cut &#8216;uu&#8217; or &#8216;tt&#8217; ends&#8221;
@@ -112,13 +123,18 @@ errors:
 &#8220;too long&#8221;
 &#8220;insert only one siRNA sequence or both strands of one siRNA at a time;
 check if both stands are in 5&#8217;-3&#8217; orientation&#8221;
-&#8220;sequence can contain only {actgu} letters</p>
+&#8220;sequence can contain only {actgu} letters
+input: string
+output: output of check_complementary</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="utils.check_input_single">
 <tt class="descclassname">utils.</tt><tt class="descname">check_input_single</tt><big>(</big><em>seq</em><big>)</big><a class="reference internal" href="_modules/utils.html#check_input_single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.check_input_single" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for check sequence from input</p>
+<dd><p>Function for check sequence from input
+if a single siRNA strand have only actgu letters and is 19-21 nucleotides long. Also rigth end of siRNA is cut if contain &#8216;uu&#8217; or &#8216;tt&#8217;
+input: string
+The function has no output</p>
 </dd></dl>
 
 <dl class="function">
@@ -151,13 +167,17 @@ TTTCCCCGAAAATTcctcagaatct (-2, +2)
 After
 AAAGGGGCTTTTagtcttaga
 TTTCCCCGAAAAtcagaatct
-Returns list of tuples (frame, sequence_1 sequence_2)</p>
+Returns list of tuples (frame, sequence_1 sequence_2)
+input: string, string, int, int, pri-miRNA objects
+output: List of list of Backbone object, 1st strand 2nd strand</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="utils.reverse_complement">
 <tt class="descclassname">utils.</tt><tt class="descname">reverse_complement</tt><big>(</big><em>sequence</em><big>)</big><a class="reference internal" href="_modules/utils.html#reverse_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.reverse_complement" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates reverse complement sequence to given</p>
+<dd><p>Generates reverse complement sequence to given
+input: string
+output: string</p>
 </dd></dl>
 
 <dl class="function">
@@ -165,19 +185,25 @@ Returns list of tuples (frame, sequence_1 sequence_2)</p>
 <tt class="descclassname">utils.</tt><tt class="descname">score_frame</tt><big>(</big><em>frame</em>, <em>frame_ss_file</em>, <em>orginal_frame</em><big>)</big><a class="reference internal" href="_modules/utils.html#score_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.score_frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>frame is a tuple of object Backbone and two sequences
 frame_ss_file is file from mfold
-orignal_frame is object Backbone from database (not changed)</p>
+orignal_frame is object Backbone from database (not changed)
+input: sh-miR object, ss_file, ss_file
+output: int</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="utils.score_homogeneity">
 <tt class="descclassname">utils.</tt><tt class="descname">score_homogeneity</tt><big>(</big><em>original_frame</em><big>)</big><a class="reference internal" href="_modules/utils.html#score_homogeneity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.score_homogeneity" title="Permalink to this definition">¶</a></dt>
-<dd><p>We are taking value homogenity from database and multiply it 4 times</p>
+<dd><p>We are taking value homogenity from database and multiply it 4 times
+input: sh-miR object
+output: sh-miR object with modified homogeneity</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="utils.two_same_strands_score">
 <tt class="descclassname">utils.</tt><tt class="descname">two_same_strands_score</tt><big>(</big><em>seq1</em>, <em>original_frame</em><big>)</big><a class="reference internal" href="_modules/utils.html#two_same_strands_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.two_same_strands_score" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>input: string, pri-miRNA object
+The function has no output.</p>
+</dd></dl>
 
 </div>
 

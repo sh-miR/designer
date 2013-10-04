@@ -23,7 +23,6 @@ DB_PORT = '5432'
 ```
 ./main.py
 ```
-
 RESTful API will be available at http://127.0.0.1:5000/
 
 Methods - all require POST request and answer with JSON data:
@@ -33,11 +32,13 @@ Methods - all require POST request and answer with JSON data:
 * /mfold/data
 
 5. Set up new urls in:
-* shmir_designer/mfold.py:
+    * shmir_designer/mfold.py:
 ```
 URL = 'http://127.0.0.1:5000/mfold'
 ```
-* shmir_designer/backbone.py:
+    * shmir_designer/backbone.py:
 ```
 HOST = 'http://127.0.0.1:5000/'
 ```
+
+[Back](../README.md)

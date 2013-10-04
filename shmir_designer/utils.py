@@ -1,3 +1,6 @@
+"""
+All functions to operate on strands
+"""
 import re
 import math
 import string
@@ -14,23 +17,23 @@ import logging
 
 
 def check_complementary_single(seq1, seq2):
-    """The funtion checks complementary of two sequences
-       input: string, string
-       output: int"""
-        seq1, seq2 = seq1.lower(), seq2.lower()
-        tran = { "a":"t",
-                 "t":"a",
-                 "u":"a",
-                 "c":"g",
-                 "g":"c"}
-        seq2 = seq2[::-1]
-        mini = float(min(len(seq1), len(seq2)))
-        count = 0
-        for mol1, mol2 in zip(seq1, seq2):
-            if tran[mol1] == mol2:
-                count += 1
-        proc = (count/mini)*100
-        return math.floor(proc)
+    """The function checks complementary of two sequences
+    input: string, string
+    output: int"""
+    seq1, seq2 = seq1.lower(), seq2.lower()
+    tran = { "a":"t",
+             "t":"a",
+             "u":"a",
+             "c":"g",
+             "g":"c"}
+    seq2 = seq2[::-1]
+    mini = float(min(len(seq1), len(seq2)))
+    count = 0
+    for mol1, mol2 in zip(seq1, seq2):
+        if tran[mol1] == mol2:
+            count += 1
+    proc = (count/mini)*100
+    return math.floor(proc)
 
 
 def check_complementary(seq1, seq2):
@@ -56,8 +59,7 @@ def check_complementary(seq1, seq2):
     output: 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end
     {-4,-3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
     input: string, string
-    output: tuple (string, string, int, int)
-    """
+    output: tuple (string, string, int, int)"""
     nr_offset = 5
     tab = []
     end_offset = len(seq1)-len(seq2)
@@ -168,8 +170,7 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
     TTTCCCCGAAAAtcagaatct
     Returns list of tuples (frame, sequence_1 sequence_2)
     input: string, string, int, int, pri-miRNA objects
-    output:
-    """
+    output: List of list of Backbone object, 1st strand 2nd strand"""
     frames = []
     for elem in all_frames:
         frame = Backbone(**elem)
@@ -250,13 +251,11 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
 
 
 def score_frame(frame, frame_ss_file, orginal_frame):
-    """
-    frame is a tuple of object Backbone and two sequences
+    """frame is a tuple of object Backbone and two sequences
     frame_ss_file is file from mfold
     orignal_frame is object Backbone from database (not changed)
     input: sh-miR object, ss_file, ss_file
-    output: int
-    """
+    output: int"""
     import math
     structure, seq1, seq2 = frame
     structure_ss = parse_ss(frame_ss_file)
@@ -292,7 +291,9 @@ def score_frame(frame, frame_ss_file, orginal_frame):
 
 
 def add_shifts(start, end, frame_ss, value, current):
-    """The numbers assigned to the nucleotides have to be verified, because flanking sequences can be shortened or extended during insertion. Moreover, the length of the siRNA insert can differ from the natural one.
+    """The numbers assigned to the nucleotides have to be verified,
+    because flanking sequences can be shortened or extended during insertion.
+    Moreover, the length of the siRNA insert can differ from the natural one.
     input: start, end, frame_ss, value, current
     The function has no output"""
     for num in range(end):
@@ -310,8 +311,7 @@ def score_homogeneity(original_frame):
 
 
 def two_same_strands_score(seq1, original_frame):
-    """ 
-    input: string, pri-miRNA object
+    """input: string, pri-miRNA object
     The function has no output."""
     miRNA_s = original_frame.miRNA_s[:2].lower()
     seq = seq1[:2].lower()

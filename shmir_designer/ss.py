@@ -16,9 +16,7 @@ def parse_ss(file_name):
 
 
 def to_normal():
-    """
-    Creates files with parsed data from all templates
-    """
+    """Creates files with parsed data from all templates"""
     for name in ('miR-122', 'miR-155', 'miR-21', 'miR-30a', 'miR-31'):
         with open(name, "w") as new_file:
             for elem in parse_ss(name + ".ss"):
@@ -26,11 +24,9 @@ def to_normal():
 
 
 def parse_score(name):
-    """
-    Parses files with score to list of tuple and score value
+    """Parses files with score to list of tuple and score value
     input: string
-    output: float, list of three element lists
-    """
+    output: float, list of three element lists"""
     data = []
     with open(name) as score_file:
         max_score = float(score_file.readline())
@@ -38,13 +34,11 @@ def parse_score(name):
             number, pair, score = line.split()
             data.append([map(int, [number, pair]), int(score)])
     return max_score, data
-    
+
 def max_score(name):
-    """
-    Parses files with score to list of tuple and score value
+    """Parses files with score to list of tuple and score value
     input: string
-    output: int   
-    """
+    output: int"""
     score = 0
     with open(name) as score_file:
         for line in score_file:
