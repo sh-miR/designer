@@ -14,7 +14,7 @@ def require_json(require_data=True, required_data_words=None,
     """
     Accepts only json requests and sends parsed data to handlers
 
-    :param require_data: checking whether request json has 'data' attribute
+    :param require_data: checking whether json request has 'data' attribute
     """
     def decorator(f):
 
