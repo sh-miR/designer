@@ -7,7 +7,7 @@ Biological documentation:
 * :download:`sh-miR next version plans<shmir_static/Documentation-2.pdf>`
 
 Related to:
-.. _shmiR API: http://shmir-api.readthedocs.org/
+   .. _shmiR API: http://shmir-api.readthedocs.org/
 
 
 Contents:
