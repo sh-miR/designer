@@ -5,8 +5,8 @@ sh-miR Designer is a software aimed for fast and efficient design of effective R
 
 Documentation:
 ==============
-    * [sh-miR Designer](http://shmir-desinger.rtfd.org)
-    * [sh-miR Api](http://shmir-api.rtfd.org)
+* [sh-miR Designer](http://shmir-desinger.rtfd.org)
+* [sh-miR Api](http://shmir-api.rtfd.org)
 
 What you need to use it?
 ========================
