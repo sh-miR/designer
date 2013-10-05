@@ -179,8 +179,9 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
     TTTCCCCGAAAAtcagaatct
 
     Returns list of tuples (frame, sequence_1 sequence_2)
+
     input: string, string, int, int, pri-miRNA objects
-    output: List of list of Backbone object, 1st strand 2nd strand"""
+    output: List of list of Backbone object, 1st strand 2nd strand   """
     frames = []
     for elem in all_frames:
         frame = Backbone(**elem)
