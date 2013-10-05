@@ -18,6 +18,7 @@ import logging
 
 def check_complementary_single(seq1, seq2):
     """The function checks complementary of two sequences
+
     input: string, string
     output: int"""
     seq1, seq2 = seq1.lower(), seq2.lower()
@@ -112,16 +113,17 @@ def check_input(seq_to_be_check):
     sequence' (19-21nt), left_end{-4,-3,-2,-1,0,1,2,3,4},
     rigth_end{-4,-3,-2,-1,0,1,2,3,4}
     messages:
-    "correct sequence"
-    "changed 'u' to 't'"
-    "cut 'uu' or 'tt' ends"
+    *"correct sequence"
+    *"changed 'u' to 't'"
+    *"cut 'uu' or 'tt' ends"
     errors:
-    "too short"
-    "insert your siRNA sequence"
-    "too long"
-    "insert only one siRNA sequence or both strands of one siRNA at a time;
+    *"too short"
+    *"insert your siRNA sequence"
+    *"too long"
+    *"insert only one siRNA sequence or both strands of one siRNA at a time;
     check if both stands are in 5'-3' orientation"
-    "sequence can contain only {actgu} letters
+    *"sequence can contain only {actgu} letters
+
     input: string
     output: output of check_complementary"""
     sequence = seq_to_be_check.split(" ")
@@ -141,6 +143,7 @@ def check_input(seq_to_be_check):
 
 def reverse_complement(sequence):
     """Generates reverse complement sequence to given
+
     input: string
     output: string"""
     sequence = str(sequence)
@@ -265,6 +268,7 @@ def score_frame(frame, frame_ss_file, orginal_frame):
     """frame is a tuple of object Backbone and two sequences
     frame_ss_file is file from mfold
     orignal_frame is object Backbone from database (not changed)
+
     input: sh-miR object, ss_file, ss_file
     output: int"""
     import math
@@ -305,6 +309,7 @@ def add_shifts(start, end, frame_ss, value, current):
     """The numbers assigned to the nucleotides have to be verified,
     because flanking sequences can be shortened or extended during insertion.
     Moreover, the length of the siRNA insert can differ from the natural one.
+
     input: start, end, frame_ss, value, current
     The function has no output"""
     for num in range(end):
@@ -316,6 +321,7 @@ def add_shifts(start, end, frame_ss, value, current):
 
 def score_homogeneity(original_frame):
     """We are taking value homogenity from database and multiply it 4 times
+
     input: sh-miR object
     output: sh-miR object with modified homogeneity"""
     return original_frame.homogeneity*3
