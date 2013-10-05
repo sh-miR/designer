@@ -1,7 +1,7 @@
-database Module
+database.database Module
 ============
 
-.. automodule:: utils
+.. automodule:: database.database
     :members:
     :undoc-members:
     :show-inheritance:

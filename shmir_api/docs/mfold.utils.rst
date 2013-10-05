@@ -1,7 +1,7 @@
-utils Module
+mfold.handlers Module
 ============
 
-.. automodule:: utils
+.. automodule:: mfold.handlers
     :members:
     :undoc-members:
     :show-inheritance:

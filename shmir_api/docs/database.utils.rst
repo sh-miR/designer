@@ -1,7 +1,7 @@
-utils Module
+database.handlers Module
 ============
 
-.. automodule:: utils
+.. automodule:: datbase.handlers
     :members:
     :undoc-members:
     :show-inheritance:

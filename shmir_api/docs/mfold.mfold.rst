@@ -1,7 +1,7 @@
-mfold Module
+mfold.mfold Module
 ============
 
-.. automodule:: utils
+.. automodule:: mfold.mfold
     :members:
     :undoc-members:
     :show-inheritance:
