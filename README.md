@@ -22,7 +22,7 @@ or
 Where seq1 and seq2 are strands in 5'-3' orientation
 If you use only one strand program will generate another complementary to the first.
 
-You can also use it on our [website](http://shmir.pycircle.org) what is much easier.
+You can also use it on our [website](http://shmir.pl) what is much easier.
 [Instruction video](http://youtu.be/bZrlwx_D_8s)
 
 ##What if you would like to make own mfold/database server?
