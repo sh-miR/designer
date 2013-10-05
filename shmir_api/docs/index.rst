@@ -12,7 +12,6 @@ Contents:
    decorators
    main
    mfold
-   settings
    utils
 
 
