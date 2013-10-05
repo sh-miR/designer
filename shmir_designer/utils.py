@@ -38,7 +38,7 @@ def check_complementary_single(seq1, seq2):
 
 
 def check_complementary(seq1, seq2):
-    """test for complementary, if both strands are in 5'-3' orientation
+    """Test for complementary, if both strands are in 5'-3' orientation
     class perform only when there are two strands given; should take as input
     both strand,
     input:
@@ -84,8 +84,8 @@ def check_complementary(seq1, seq2):
 def check_input_single(seq):
     """Function for check sequence from input
     if a single siRNA strand have only actgu letters and is 19-21 nucleotides long.
-    Also rigth end of siRNA is cut if contain 'uu' or 'tt'
-    input: string
+    Also rigth end of siRNA is cut if contain 'uu' or 'tt'.
+    Input: string;
     The function has no output"""
     seq = seq.lower().replace('u','t')
     pattern = re.compile(r'^[acgt]{19,21}$')
@@ -158,7 +158,7 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
     sequences flanks5_s + first_sequence + loop_s + second_sequence + flanks3_s.
     If any end is different function has to modify end of the insert:
     Right end:
-    if miRNA_end_5<first_end
+    if miRNA_end_5 < first_end
     add to right site of second sequence additional nucleotides
     (as many as |miRNA_end_5 - first_end|)
     like (dots are nucleotides to add, big letter are flanking sequences, small are input):
@@ -166,7 +166,7 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
     AAAGGGGCTTTTagtcttaga
     TTTCCCCGAA....agaatct
 
-    if miRNA_end_5>first_end
+    if miRNA_end_5 > first_end
     cut nucleotides from rigth site of flanks3_s and/or from right site of
     second sequence
 
@@ -262,7 +262,7 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
 
 
 def score_frame(frame, frame_ss_file, orginal_frame):
-    """frame is a tuple of object Backbone and two sequences
+    """Frame is a tuple of object Backbone and two sequences
     frame_ss_file is file from mfold
     orignal_frame is object Backbone from database (not changed)
 
@@ -307,7 +307,7 @@ def add_shifts(start, end, frame_ss, value, current):
     because flanking sequences can be shortened or extended during insertion.
     Moreover, the length of the siRNA insert can differ from the natural one.
 
-    input: start, end, frame_ss, value, current
+    input: start, end, frame_ss, value, current.
     The function has no output"""
     for num in range(end):
         if num >= start:
@@ -325,7 +325,7 @@ def score_homogeneity(original_frame):
 
 
 def two_same_strands_score(seq1, original_frame):
-    """input: string, pri-miRNA object
+    """Input: string, pri-miRNA object.
     The function has no output."""
     miRNA_s = original_frame.miRNA_s[:2].lower()
     seq = seq1[:2].lower()

@@ -65,7 +65,7 @@ class Backbone:
 
 
 def qbackbone(data=None, url=None):
-    """Interface to query on database
+    """Interface to query on database.
     Returns serialized json data"""
 
     json_data = {}

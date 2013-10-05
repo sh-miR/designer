@@ -10,8 +10,7 @@ from zipfile import ZipFile
 
 def mfold(input):
     """
-    Executing mfold to create appropriate files
-
+    Executes mfold in order to generate appropriate files
     """
     current_datetime = datetime.now().strftime('%H:%M:%S-%d-%m-%y')
 

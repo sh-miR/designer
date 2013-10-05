@@ -12,7 +12,7 @@ from utils import json_error
 def require_json(require_data=True, required_data_words=None,
                  required_data_characters=None):
     """
-    Accepts only json requests and sends parsed data to handlers
+    Accepts only json requests and sends parsed data to the handlers
 
     :param require_data: checking whether json request has 'data' attribute
     """
