@@ -4,9 +4,10 @@ Module for communication with database
 
 import psycopg2
 from flask import g
-
-from settings import DB_NAME, DB_USER, DB_PASS, DB_HOST, DB_PORT
-
+try:
+    from settings import DB_NAME, DB_USER, DB_PASS, DB_HOST, DB_PORT
+except ImportError:
+    print('Create settings.py')
 
 def get_db():
     """
