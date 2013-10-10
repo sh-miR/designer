@@ -23,7 +23,7 @@ def mfold(data=None):
 
     req = urllib2.Request(URL, json.dumps(json_data), HEADERS)
 
-    directory = "mfold_files"
+    directory = "mfold_files/"
     current_datetime = datetime.now().strftime('%H:%M:%S-%d-%m-%y')
     new_zip = os.path.join(
         os.path.dirname(__file__), directory, 'newzip_'+current_datetime+'.zip')
@@ -37,7 +37,7 @@ def mfold(data=None):
     except urllib2.URLError:
         logging.error('Connection to mfold server refused')
         return {'error': 'Connection to mfold server refused'}
-    files = get_list(new_zip, "mfold_files/")
+    files = get_list(new_zip, directory)
     os.remove(new_zip)
     return sorted(files)
 
