@@ -180,6 +180,9 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
 
     Returns list of tuples (frame, sequence_1 sequence_2)
 
+    Nucleotides are always added to the right side of sequences.
+    We cut off nucleotides only from flanking sequences or loop.
+
     input: string, string, int, int, pri-miRNA objects
     output: List of list of Backbone object, 1st strand 2nd strand   """
     frames = []

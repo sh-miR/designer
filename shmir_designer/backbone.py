@@ -4,7 +4,9 @@ Module handling pri-miRNA objects
 import urllib2
 import json
 
-HOST = 'http://150.254.78.155:5000/'
+#HOST = 'http://150.254.78.155:5000/'
+HOST = 'http://127.0.0.1:5000/'
+
 URL_ALL = HOST + 'database/get_all'
 URL_BY_NAME = HOST + 'database/get_by_name'
 URL_BY_MIRNA_S = HOST + 'database/get_by_mirna_s'
