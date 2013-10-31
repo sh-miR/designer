@@ -292,8 +292,8 @@ def score_frame(frame, frame_ss_file, orginal_frame):
     else:
         add_shifts(position, structure_len,\
                     structure_ss, flanks5, current)
-    for diff, nucleotides in [(insertion1, seq1), (loop, structure.loop_s),\
-                                (insertion2, seq2), (flanks3, '')]:
+    for diff, nucleotides in [(insertion1, seq1), (loop, structure.loop_s),
+                             (insertion2, seq2), (flanks3, '')]:
         position += len(nucleotides)
         current = position + diff
         add_shifts(position, structure_len, structure_ss, diff, current)
