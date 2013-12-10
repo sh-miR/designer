@@ -41,4 +41,29 @@ URL = 'http://127.0.0.1:5000/mfold'
 HOST = 'http://127.0.0.1:5000/'
 ```
 
+## Deploying
+
+sh-miR API deploy is exatcly the same as in the other Flask based generic app.
+
+As in the development way, you should have dedicated virtualenv, install requirements, put sqldump to PostgreSQL. But you mustn't run main.py! Never use built-in servers in production.
+
+Instead of this, you should configure nginx to work with uwsgi:
+
+```
+location / { try_files $uri @yourapplication; }
+location @yourapplication {
+    include uwsgi_params;
+    uwsgi_pass unix:/<path_to_shmir_instance>/uwsgi.sock;
+}
+```
+
+Run uwsgi:
+```
+uwsgi -s uwsgi.sock -w main:app
+```
+give the proper rights to socket:
+```
+chmod 707 uwsgi.sock
+```
+
 [Back](../README.md)
