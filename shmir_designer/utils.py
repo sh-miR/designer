@@ -320,7 +320,7 @@ def add_shifts(start, end, frame_ss, value, current):
 
 
 def score_homogeneity(original_frame):
-    """We are taking value homogenity from database and multiply it 4 times
+    """We are taking value homogenity from database and multiply it 3 times
 
     input: sh-miR object
     output: sh-miR object with modified homogeneity"""
