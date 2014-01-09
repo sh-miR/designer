@@ -3,6 +3,9 @@
 """
 Test for shmiR application
 """
+import sys
+
+sys.path.append('../shmir_designer/')
 import unittest
 import utils
 
