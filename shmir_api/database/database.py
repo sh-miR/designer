@@ -9,6 +9,7 @@ try:
 except ImportError:
     print('Create settings.py')
 
+
 def get_db():
     """
     Global connector variable

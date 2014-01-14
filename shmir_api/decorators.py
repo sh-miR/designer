@@ -3,6 +3,7 @@ Module for decorators
 """
 
 from flask import request
+from flask.json import dumps
 
 import json
 
@@ -40,7 +41,9 @@ def require_json(require_data=True, required_data_words=None,
                         return json_error("Data must have %d characters!" %
                                           required_data_characters)
 
-                return f(data=data, request_json=request_json, *args, **kwargs)
+                return dumps(
+                    f(data=data, request_json=request_json, *args, **kwargs)
+                )
 
             return json_error('Data not provided')
 
