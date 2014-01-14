@@ -58,7 +58,7 @@ def get_multirow_by_query(query, var=None):
     for row in data:
         backbones.append(serialize(*row))
     return backbones
-	
+
 def get_multirow_by_query_immuno(query, var=None):
     """
     Returns serialized data from immuno table
@@ -124,7 +124,7 @@ def get_all_immuno():
 def get_by_miRNA_s(letters):
     """
     Function which gets serialized Backbones having first two letters of miRNA_s
-	same as letters given (first two nucleotides of siRNA strand)
+    same as letters given (first two nucleotides of siRNA strand)
     """
     query = ("SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,"
              " loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max, "
@@ -158,15 +158,15 @@ def serialize(name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,
         'structure': structure,
         'homogeneity': homogeneity,
         'miRBase_link': miRBase_link,
-		'active_strand' : active_strand
+        'active_strand' : active_strand
     }
-	
+
 def serialize_immuno (sequence, receptor, link):
-	"""
+    """
     Function which serialize data from immuno table to dictionary
     """
     return {
         'sequence' : sequence,
-		'receptor' : receptor,
-		'link' : link
+        'receptor' : receptor,
+        'link' : link
     }

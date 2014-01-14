@@ -13,12 +13,12 @@ def get_all(**kwargs):
     """
     return dumps(database.get_all())
 
-@require_json(require_data=False)	
+@require_json(require_data=False)
 def get_all_immuno(**kwargs):
-	"""
-	Gets all informations from immuno database.
-	"""
-	return dumps(immuno.get_all_immuno())
+    """
+    Gets all informations from immuno database.
+    """
+    return dumps(immuno.get_all_immuno())
 
 
 @require_json(required_data_words=1)
@@ -32,8 +32,8 @@ def get_by_name(data=None, **kwargs):
 @require_json(required_data_characters=2)
 def get_by_miRNA_s(data=None, **kwargs):
     """
-    Searching backbone database comparing first two nucleotides of 
-	endogenous miRNA with two nucleotides of siRNA strand. 
+    Searching backbone database comparing first two nucleotides of
+    endogenous miRNA with two nucleotides of siRNA strand.
     """
     return dumps(database.get_by_miRNA_s(data))
 
