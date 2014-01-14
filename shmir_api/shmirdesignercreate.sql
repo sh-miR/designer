@@ -23,31 +23,31 @@ CREATE TABLE backbone (
             /*homogeneity of products (length), 0 for very
              nonhomogenous, 5 for completely homogenous */
     miRBase_link varchar(200) NOT NULL,
-	active_strand integer NOT NULL
-			/*5 for 5' end, 3 for 3' end, 0 for equally active,
-			1 for not known*/
+    active_strand integer NOT NULL
+            /*5 for 5' end, 3 for 3' end, 0 for equally active,
+            1 for not known*/
 );
 
 CREATE TABLE immuno (
-	id serial PRIMARY KEY,
-	sequence varchar(10) NOT NULL,
-	receptor varchar(15),
-	link varchar(100) NOT NULL
+    id serial PRIMARY KEY,
+    sequence varchar(10) NOT NULL,
+    receptor varchar(15),
+    link varchar(100) NOT NULL
 );
 
 INSERT INTO immuno VALUES
-	(DEFAULT 'UGUGU', 'TLR7 and TLR8', 'http://www.ncbi.nlm.nih.gov/pubmed/16609928'
-	),
-	(DEFAULT 'GUCCUUCAA', 'TLR7 and TLR8', 'http://www.ncbi.nlm.nih.gov/pubmed/15723075'
-	),
-	(DEFAULT 'GU', 'TLR7 and TLR8', 'http://www.ncbi.nlm.nih.gov/pubmed/16609928'
-	),
-	(DEFAULT 'AU', 'TLR8', 'http://www.ncbi.nlm.nih.gov/pubmed/18322178'
-	),
-	(DEFAULT 'UGGC', '', 'http://www.ncbi.nlm.nih.gov/pubmed/16682561'
-	),
-	(DEFAULT 'UUUUU', '', 'http://www.ncbi.nlm.nih.gov/pubmed/15778705'
-	);
+    (DEFAULT 'UGUGU', 'TLR7 and TLR8', 'http://www.ncbi.nlm.nih.gov/pubmed/16609928'
+    ),
+    (DEFAULT 'GUCCUUCAA', 'TLR7 and TLR8', 'http://www.ncbi.nlm.nih.gov/pubmed/15723075'
+    ),
+    (DEFAULT 'GU', 'TLR7 and TLR8', 'http://www.ncbi.nlm.nih.gov/pubmed/16609928'
+    ),
+    (DEFAULT 'AU', 'TLR8', 'http://www.ncbi.nlm.nih.gov/pubmed/18322178'
+    ),
+    (DEFAULT 'UGGC', '', 'http://www.ncbi.nlm.nih.gov/pubmed/16682561'
+    ),
+    (DEFAULT 'UUUUU', '', 'http://www.ncbi.nlm.nih.gov/pubmed/15778705'
+    );
 /*Please use only uppercase letters in sequences*/
 INSERT INTO backbone VALUES
     (DEFAULT, 'miR-30a', 'TGCCTACTGCCTCGGACTTCAAGGGGCTACTTTAGGAGCA', 'TGCTCCTAAAGTAGCCCCTTGAAGTCCGAGGCAGTAGGCA',
