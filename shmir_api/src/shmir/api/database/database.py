@@ -2,6 +2,8 @@
 Module for communication with database
 """
 
+from __future__ import print_function
+
 import psycopg2
 from flask import g
 try:

@@ -9,9 +9,9 @@ DEBUG = True
 
 from flask import Flask
 
-from database.database import disconnect
-import database.handlers
-import mfold.handlers
+from shmir.api.database.database import disconnect
+from shmir.api.database import handlers as db_handlers
+from shmir.api.mfold import handlers as mfold_handlers
 
 
 app = Flask(__name__)
@@ -23,13 +23,16 @@ def close_connection(exception):
 
 
 app.add_url_rule('/database/get_all', 'database.get_all',
-                 database.handlers.get_all)
+                 db_handlers.get_all)
 app.add_url_rule('/database/get_by_name', 'database.get_by_name',
-                 database.handlers.get_by_name)
+                 db_handlers.get_by_name)
 app.add_url_rule('/database/get_by_mirna_s', 'database.get_by_miRNA_s',
-                 database.handlers.get_by_miRNA_s)
-app.add_url_rule('/mfold', 'mfold', mfold.handlers.get_mfold)
+                 db_handlers.get_by_miRNA_s)
+app.add_url_rule('/mfold', 'mfold', mfold_handlers.get_mfold)
 
+
+def run():
+    app.run()
 
 if __name__ == '__main__':
-    app.run()
+    run()

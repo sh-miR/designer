@@ -3,7 +3,7 @@ Handlers to communicate with database
 """
 
 from . import database
-from decorators import require_json
+from shmir.api.decorators import require_json
 from flask.json import dumps
 
 @require_json(require_data=False)
