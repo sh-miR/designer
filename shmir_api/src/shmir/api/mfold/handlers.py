@@ -9,7 +9,7 @@ from shmir.api.decorators import require_json
 from .mfold import mfold
 
 
-@require_json()
+@require_json(jsonify=False)
 def get_mfold(data=None, **kwargs):
     filename = mfold(data)
 

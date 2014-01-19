@@ -22,3 +22,4 @@ ftp_files
 htmlcov
 coverage.xml
 output.xml
+.ropeproject

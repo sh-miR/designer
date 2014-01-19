@@ -11,7 +11,7 @@ from shmir.api.utils import json_error
 
 
 def require_json(require_data=True, required_data_words=None,
-                 required_data_characters=None):
+                 required_data_characters=None, jsonify=True):
     """
     Accepts only json requests and sends parsed data to the handlers
 
@@ -31,19 +31,26 @@ def require_json(require_data=True, required_data_words=None,
             elif 'data' in request_json.keys():
                 data = str(request_json['data']).strip()
 
-                if required_data_words:
-                    if len(data.split()) != required_data_words:
-                        return json_error("Data must have %d word(s)!" %
-                                          required_data_words)
+                if (
+                    required_data_words
+                    and len(data.split()) != required_data_words
+                ):
+                    return json_error("Data must have %d word(s)!" %
+                                      required_data_words)
 
-                if required_data_characters:
-                    if len(data) != required_data_characters:
-                        return json_error("Data must have %d characters!" %
-                                          required_data_characters)
+                if (
+                    required_data_characters
+                    and len(data) != required_data_characters
+                ):
+                    return json_error("Data must have %d characters!" %
+                                      required_data_characters)
 
-                return dumps(
-                    f(data=data, request_json=request_json, *args, **kwargs)
-                )
+                if jsonify:
+                    return dumps(
+                        f(data=data, request_json=request_json, *args,
+                          **kwargs)
+                    )
+                return f(data=data, request_json=request_json, *args, **kwargs)
 
             return json_error('Data not provided')
 
