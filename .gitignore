@@ -10,6 +10,7 @@ mfold_files
 __pycache__
 *.egg
 *.egg-info
+settings.cfg
 local.cfg
 build
 .installed.cfg

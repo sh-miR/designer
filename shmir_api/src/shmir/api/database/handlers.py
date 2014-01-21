@@ -3,10 +3,10 @@ Handlers to communicate with database
 """
 
 from . import database
-from shmir.api.decorators import require_json
+from shmir.api.decorators import jsonify, require_json
 
 
-@require_json(require_data=False)
+@jsonify
 def get_all(**kwargs):
     """
     Gets all data from database

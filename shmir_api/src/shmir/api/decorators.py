@@ -17,9 +17,9 @@ def require_json(require_data=True, required_data_words=None,
 
     :param require_data: checking whether json request has 'data' attribute
     """
-    def decorator(f):
+    def wrapper(f):
 
-        def decorated(*args, **kwargs):
+        def wrapped(*args, **kwargs):
             data = request.data.decode('utf-8')
             try:
                 request_json = json.loads(data)
@@ -54,5 +54,11 @@ def require_json(require_data=True, required_data_words=None,
 
             return json_error('Data not provided')
 
-        return decorated
-    return decorator
+        return wrapped
+    return wrapper
+
+
+def jsonify(f):
+    def wrapped(*args, **kwargs):
+        return dumps(f(*args, **kwargs))
+    return wrapped

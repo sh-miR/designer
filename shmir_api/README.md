@@ -7,21 +7,23 @@ How to use it:
 ```
 sudo -u postgres psql < shmirdesignercreate.sql
 ```
-### Install requirements:
+### Create file named local.cfg which contains following stuff and your real password instead of **mypassword**:
 ```
-pip install -r requirements.txt
+[buildout]
+extends = buildout.cfg
+
+[settings_database]
+password = mypassword
 ```
-### Create file named settings.py which contains global variables: DB_NAME, DB_USER, DB_PASS, DB_HOST, DB_PORT:
+### Build application
+Run these commands to build API serving data from database and mfold results:
 ```
-DB_NAME = 'shmird'
-DB_USER = 'postgres'
-DB_PASS = 'mypassword'
-DB_HOST = '127.0.0.1'
-DB_PORT = '5432'
+python3.3 bootstrap.py
+bin/buildout -c local.cfg
 ```
 ### Run server:
 ```
-./main.py
+bin/runserver
 ```
 RESTful API will be available at http://127.0.0.1:5000/
 
@@ -59,11 +61,11 @@ location @yourapplication {
 
 Run uwsgi:
 ```
-uwsgi -s uwsgi.sock -w main:app
+bin/uwsgi --xml parts/uwsgi/uwsgi.xml
 ```
 give the proper rights to socket:
 ```
-chmod 707 uwsgi.sock
+chmod 707 /tmp/uwsgi.sock
 ```
 
 [Back](../README.md)

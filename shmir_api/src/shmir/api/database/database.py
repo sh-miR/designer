@@ -2,14 +2,12 @@
 Module for communication with database
 """
 
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 
 import psycopg2
 from flask import g
-try:
-    from settings import DB_NAME, DB_USER, DB_PASS, DB_HOST, DB_PORT
-except ImportError:
-    print('Create settings.py')
+
+from shmir.api.settings import DB_NAME, DB_USER, DB_PASS, DB_HOST, DB_PORT
 
 
 def get_db():
@@ -51,6 +49,7 @@ def execute_with_response(query, var=None):
         data = cur.fetchall()
         cur.close()
     return data
+
 
 def get_multirow_by_query(query, var=None):
     """
