@@ -3,11 +3,13 @@ Backbone RNA database
 
 How to use it:
 
-### Add data to PostgreSQL:
+### Installation & configuration
+
+*Add data to PostgreSQL:*
 ```
 sudo -u postgres psql < shmirdesignercreate.sql
 ```
-### Create file named local.cfg which contains following stuff and your real password instead of **mypassword**:
+*Create file named local.cfg which contains following stuff and your real password instead of **mypassword**:*
 ```
 [buildout]
 extends = buildout.cfg
@@ -15,13 +17,13 @@ extends = buildout.cfg
 [settings_database]
 password = mypassword
 ```
-### Build application
+*Build application*
 Run these commands to build API serving data from database and mfold results:
 ```
 python3.3 bootstrap.py
 bin/buildout -c local.cfg
 ```
-### Run server:
+*Run server:*
 ```
 bin/runserver
 ```
@@ -33,7 +35,7 @@ Methods - all require POST request and answer with JSON data:
 * /get_by_mirna_s/data - only two first letters
 * /mfold/data
 
-### Set up new urls in:
+*Set up new urls in:*
 * shmir_designer/mfold.py:
 ```
 URL = 'http://127.0.0.1:5000/mfold'
@@ -43,7 +45,7 @@ URL = 'http://127.0.0.1:5000/mfold'
 HOST = 'http://127.0.0.1:5000/'
 ```
 
-## Deploying
+### Deploying
 
 sh-miR API deploy is exatcly the same as in the other Flask based generic app.
 
