@@ -59,6 +59,9 @@ def require_json(require_data=True, required_data_words=None,
 
 
 def jsonify(f):
+    """
+    Returns JSON
+    """
     def wrapped(*args, **kwargs):
         return dumps(f(*args, **kwargs))
     return wrapped
