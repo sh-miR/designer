@@ -5,7 +5,7 @@ How to use it:
 
 ### Installation & configuration
 
-*Add data to PostgreSQL:*
+Add data to PostgreSQL:
 ```
 sudo -u postgres psql < shmirdesignercreate.sql
 ```
