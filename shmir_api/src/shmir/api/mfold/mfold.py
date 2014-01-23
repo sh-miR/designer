@@ -1,7 +1,8 @@
-from os import chdir, execlp, fork, waitpid, path, makedirs
+from os import chdir, fork, waitpid, path, makedirs, execl
 
 from os.path import dirname
 from os.path import join
+from os.path import realpath
 
 from datetime import datetime
 
@@ -25,8 +26,11 @@ def mfold(input):
         f.write(input)
 
     pid = fork()
+
     if pid == 0:
-        execlp("mfold", "mfold", "SEQ=%s" % current_datetime)
+        execl(join(dirname(realpath(__file__)), "mfold"),
+              'mfold', 'SEQ=%s P=1' % current_datetime)
+
     waitpid(pid, 0)
 
     zipname = "%s.zip" % current_datetime

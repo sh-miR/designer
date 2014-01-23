@@ -34,3 +34,12 @@ You need to do it:
 * psycopg2
 
 [How?](shmir_api/README.md)
+
+
+##How to test?
+All tests are located in folder tests. To run all tests type in every location in virtualenv:
+* nosetests tests
+
+To run specific test type:
+* nosetests tests.module:ClassName.function_name
+* for example: nosetests tests.test_shmir_designer:TestShmir.test_input

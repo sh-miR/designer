@@ -3,21 +3,24 @@
 """
 Test for shmiR application
 """
+import os
+import sys
+
 import unittest
-import utils
+import shmir_designer.utils as utils
 
-import errors
+import shmir_designer.errors as errors
 
 
-class ShmiRTest(unittest.TestCase):
+class TestShmiR(unittest.TestCase):
     """Tests for shmiR designer application"""
     def test_input(self):
         """Tests for check_input function"""
         tests = [
-            ('acggctTggaacttctggtac', ['acggcttggaacttctggtac', '', 0, 0]),
-            ('acggcttGGaacttctggtac gtaccagaagttccaagccgt', [utils.check_complementary('acggcttggaacttctggtac', 'gtaccagaagttccaagccgt')]),
-            ('acggcttggAActuctggtac gtaccagaagttccaagccgt', [utils.check_complementary('acggcttggaacttctggtac', 'gtaccagaagttccaagccgt')]),
-            ('acggctTggaacttctggtTT', ['acggcttggaacttctggt', '', 0, 0])]
+            ('acggctTggaacttctggtac', ('acggcttggaacttctggtac', '', 0, 0)),
+            ('acggcttGGaacttctggtac gtaccagaagttccaagccgt', (utils.check_complementary('acggcttggaacttctggtac', 'gtaccagaagttccaagccgt'))),
+            ('acggcttggAActuctggtac gtaccagaagttccaagccgt', (utils.check_complementary('acggcttggaacttctggtac', 'gtaccagaagttccaagccgt'))),
+            ('acggctTggaacttctggtTT', ('acggcttggaacttctggt', '', 0, 0))]
         for list1, expected in tests:
             self.failUnlessEqual(utils.check_input(list1), expected)
 
@@ -94,5 +97,5 @@ class ShmiRTest(unittest.TestCase):
 
 
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()
