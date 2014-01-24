@@ -36,17 +36,17 @@ CREATE TABLE immuno (
 );
 
 INSERT INTO immuno VALUES
-    (DEFAULT 'UGUGU', 'TLR7 and TLR8', 'http://www.ncbi.nlm.nih.gov/pubmed/16609928'
+    (DEFAULT, 'UGUGU', 'TLR7 and TLR8', 'http://www.ncbi.nlm.nih.gov/pubmed/16609928'
     ),
-    (DEFAULT 'GUCCUUCAA', 'TLR7 and TLR8', 'http://www.ncbi.nlm.nih.gov/pubmed/15723075'
+    (DEFAULT, 'GUCCUUCAA', 'TLR7 and TLR8', 'http://www.ncbi.nlm.nih.gov/pubmed/15723075'
     ),
-    (DEFAULT 'GU', 'TLR7 and TLR8', 'http://www.ncbi.nlm.nih.gov/pubmed/16609928'
+    (DEFAULT, 'GU', 'TLR7 and TLR8', 'http://www.ncbi.nlm.nih.gov/pubmed/16609928'
     ),
-    (DEFAULT 'AU', 'TLR8', 'http://www.ncbi.nlm.nih.gov/pubmed/18322178'
+    (DEFAULT, 'AU', 'TLR8', 'http://www.ncbi.nlm.nih.gov/pubmed/18322178'
     ),
-    (DEFAULT 'UGGC', '', 'http://www.ncbi.nlm.nih.gov/pubmed/16682561'
+    (DEFAULT, 'UGGC', '', 'http://www.ncbi.nlm.nih.gov/pubmed/16682561'
     ),
-    (DEFAULT 'UUUUU', '', 'http://www.ncbi.nlm.nih.gov/pubmed/15778705'
+    (DEFAULT, 'UUUUU', '', 'http://www.ncbi.nlm.nih.gov/pubmed/15778705'
     );
 /*Please use only uppercase letters in sequences*/
 INSERT INTO backbone VALUES

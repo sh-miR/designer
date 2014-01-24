@@ -5,7 +5,7 @@ Handlers to comunicate with mfold
 
 from flask import send_file
 
-from shmir.api.decorators import require_json
+from shmir_api.decorators import require_json
 from .mfold import mfold
 
 

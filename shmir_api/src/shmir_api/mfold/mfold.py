@@ -1,8 +1,7 @@
-from os import chdir, fork, waitpid, path, makedirs, execl
+from os import chdir, environ, fork, waitpid, path, makedirs, execl
 
 from os.path import dirname
 from os.path import join
-from os.path import realpath
 
 from datetime import datetime
 
@@ -28,8 +27,7 @@ def mfold(input):
     pid = fork()
 
     if pid == 0:
-        execl(join(dirname(realpath(__file__)), "mfold"),
-              'mfold', 'SEQ=%s P=1' % current_datetime)
+        execl(environ['MFOLD_PATH'], 'mfold', 'SEQ=%s P=1' % current_datetime)
 
     waitpid(pid, 0)
 

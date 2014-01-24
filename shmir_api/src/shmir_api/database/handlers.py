@@ -2,8 +2,8 @@
 Handlers to communicate with database
 """
 
-from shmir.api import database
-from shmir.api.decorators import jsonify, require_json
+from shmir_api.database import database
+from shmir_api.decorators import jsonify, require_json
 
 
 @jsonify

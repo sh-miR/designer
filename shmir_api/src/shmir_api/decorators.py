@@ -7,7 +7,7 @@ from flask.json import dumps
 
 import json
 
-from shmir.api.utils import json_error
+from shmir_api.utils import json_error
 
 
 def require_json(require_data=True, required_data_words=None,
@@ -31,17 +31,13 @@ def require_json(require_data=True, required_data_words=None,
             elif 'data' in request_json.keys():
                 data = str(request_json['data']).strip()
 
-                if (
-                    required_data_words
-                    and len(data.split()) != required_data_words
-                ):
+                if required_data_words and len(data.split()) != \
+                        required_data_words:
                     return json_error("Data must have %d word(s)!" %
                                       required_data_words)
 
-                if (
-                    required_data_characters
-                    and len(data) != required_data_characters
-                ):
+                if required_data_characters and len(data) != \
+                        required_data_characters:
                     return json_error("Data must have %d characters!" %
                                       required_data_characters)
 

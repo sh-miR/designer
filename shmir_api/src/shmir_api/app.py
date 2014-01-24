@@ -9,9 +9,9 @@ DEBUG = True
 
 from flask import Flask
 
-from shmir.api.database.database import disconnect
-from shmir.api.database import handlers as db_handlers
-from shmir.api.mfold import handlers as mfold_handlers
+from shmir_api.database.database import disconnect
+from shmir_api.database import handlers as db_handlers
+from shmir_api.mfold import handlers as mfold_handlers
 
 
 app = Flask(__name__)
