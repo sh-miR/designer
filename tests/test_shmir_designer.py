@@ -24,27 +24,23 @@ class TestShmiR(unittest.TestCase):
         for list1, expected in tests:
             self.failUnlessEqual(utils.check_input(list1), expected)
 
+    def multiple_input(self, data, error):
+        for strand in data:
+            with self.assertRaises(errors.InputException) as err:
+                utils.check_input(strand)
+            self.assertEqual(error, str(err.exception))
+
     def test_input_exceptions(self):
         """Tests for check_input Exceptions"""
-        with self.assertRaises(errors.InputException) as err:
-            utils.check_input('acggcttggaactuct')
-        self.assertEqual(errors.len_error, str(err.exception))
-        with self.assertRaises(errors.InputException) as err:
-            utils.check_input('')
-        self.assertEqual(errors.len_error, str(err.exception))
-        with self.assertRaises(errors.InputException) as err:
-            utils.check_input('acttctggtacTTUUUUUUuuuuuuGGG')
-        self.assertEqual(errors.len_error, str(err.exception))
-        with self.assertRaises(errors.InputException) as err:
-            utils.check_input('acggcttGGaacttctggtac gtaccagaagttccaagccgt '\
-                'acggcttGGaacttctggtac')
-        self.assertEqual(errors.error, str(err.exception))
-        with self.assertRaises(errors.InputException) as err:
-            utils.check_input('acggcttGGaacttctggtac tgccgaaccttgaagaccatg')
-        self.assertEqual(errors.error, str(err.exception))
-        with self.assertRaises(errors.InputException) as err:
-            utils.check_input('acggctTggactggtwacTT')
-        self.assertEqual(errors.patt_error, str(err.exception))
+        len_data = ['acggcttggaactuct', '', 'acttctggtacTTUUUUUUuuuuuuGGG']
+        error_data = ['acggcttGGaacttctggtac gtaccagaagttccaagccgt '\
+                      'acggcttGGaacttctggtac',
+                      'acggcttGGaacttctggtac tgccgaaccttgaagaccatg']
+        patt_data = ['acggctTggactggtwacTT']
+
+        self.multiple_input(len_data, errors.len_error)
+        self.multiple_input(error_data, errors.error)
+        self.multiple_input(patt_data, errors.patt_error)
 
     def test_check_complementary(self):
         """Tests for check_complementary function"""
