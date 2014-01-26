@@ -19,7 +19,7 @@ class Backbone:
     def __init__(self, name, flanks3_s, flanks3_a, flanks5_s, flanks5_a,
                  loop_s, loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min,
                  miRNA_max, miRNA_end_5, miRNA_end_3, structure, homogeneity,
-                 miRBase_link):
+                 miRBase_link, active_strand):
         self.name = name
         self.flanks3_s = flanks3_s
         self.flanks3_a = flanks3_a
@@ -37,28 +37,11 @@ class Backbone:
         self.structure = structure
         self.homogeneity = homogeneity
         self.miRBase_link = miRBase_link
+        self.active_strand = active_strand
 
     def serialize(self):
         """Makes dictionary of object variables"""
-        return {
-            'name': self.name,
-            'flanks3_s': self.flanks3_s,
-            'flanks3_a': self.flanks3_a,
-            'flanks5_s': self.flanks5_s,
-            'flanks5_a': self.flanks5_a,
-            'loop_s': self.loop_s,
-            'loop_a': self.loop_a,
-            'miRNA_s': self.miRNA_s,
-            'miRNA_a': self.miRNA_a,
-            'miRNA_length': self.miRNA_length,
-            'miRNA_min': self.miRNA_min,
-            'miRNA_max': self.miRNA_max,
-            'miRNA_end_5': self.miRNA_end_5,
-            'miRNA_end_3': self.miRNA_end_3,
-            'structure': self.structure,
-            'homogeneity': self.homogeneity,
-            'miRBase_link': self.miRBase_link
-        }
+        return vars(self)
 
     def template(self, siRNAstrand_1, siRNAstrand_2):
         """Returns the template of DNA (sh-miR)"""
