@@ -33,13 +33,13 @@ def require_json(require_data=True, required_data_words=None,
 
                 if required_data_words and len(data.split()) != \
                         required_data_words:
-                    return json_error("Data must have %d word(s)!" %
-                                      required_data_words)
+                    return json_error("Data must have {0} word(s)!".format(
+                                      required_data_words))
 
                 if required_data_characters and len(data) != \
                         required_data_characters:
-                    return json_error("Data must have %d characters!" %
-                                      required_data_characters)
+                    return json_error("Data must have {0} characters!".format(
+                                      required_data_characters))
 
                 if jsonify:
                     return dumps(
