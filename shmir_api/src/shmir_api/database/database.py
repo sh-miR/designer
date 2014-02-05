@@ -2,12 +2,13 @@
 Module for communication with database
 """
 
+from __future__ import print_function, unicode_literals
+
 import psycopg2
 from flask import g
-try:
-    from settings import DB_NAME, DB_USER, DB_PASS, DB_HOST, DB_PORT
-except ImportError:
-    print('Create settings.py')
+
+from shmir_api.settings import DB_NAME, DB_USER, DB_PASS, DB_HOST, DB_PORT
+
 
 def get_db():
     """
@@ -49,6 +50,7 @@ def execute_with_response(query, var=None):
         cur.close()
     return data
 
+
 def get_multirow_by_query(query, var=None):
     """
     Returns serialized data from backbone table
@@ -58,6 +60,7 @@ def get_multirow_by_query(query, var=None):
     for row in data:
         backbones.append(serialize(*row))
     return backbones
+
 
 def get_multirow_by_query_immuno(query, var=None):
     """
@@ -74,7 +77,8 @@ def add(name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s, loop_a,
         miRNA_s, mirRNA_a, miRNA_length, miRNA_min, miRNA_max, miRNA_end_5,
         miRNA_end_3, structure, homogeneity, miRBase_link, active_strand):
     """
-    Function which adds another miRNA backbone record to database without closing server
+    Function which adds another miRNA backbone record to database without
+    closing server
     """
 
     query = ("INSERT INTO backbone VALUES(DEFAULT, %s, %s, %s, %s, %s, %s, %s,"
@@ -84,7 +88,8 @@ def add(name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s, loop_a,
            miRNA_s, mirRNA_a, miRNA_length, miRNA_min, miRNA_max, miRNA_end_5,
            miRNA_end_3, structure, homogeneity, miRBase_link, active_strand)
 
-    execute(query, var)
+    with get_db().cursor() as cur:
+        cur.execute(query, var)
 
 
 def get_by_name(name):
@@ -93,8 +98,8 @@ def get_by_name(name):
     """
     query = ("SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,"
              " loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max, "
-             "miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link, active_strand"
-             "FROM backbone WHERE LOWER(name) = LOWER(%s);")
+             "miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link, "
+             "active_strand FROM backbone WHERE LOWER(name) = LOWER(%s);")
 
     data = execute_with_one_response(query, (name,))
 
@@ -107,10 +112,11 @@ def get_all():
     """
     query = ("SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,"
              " loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max, "
-             "miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link, active_strand"
-             "FROM backbone;")
+             "miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link, "
+             "active_strand FROM backbone;")
 
     return get_multirow_by_query(query)
+
 
 def get_all_immuno():
     """
@@ -121,22 +127,24 @@ def get_all_immuno():
 
     return get_multirow_by_query_immuno(query)
 
+
 def get_by_miRNA_s(letters):
     """
-    Function which gets serialized Backbones having first two letters of miRNA_s
-    same as letters given (first two nucleotides of siRNA strand)
+    Function which gets serialized Backbones having first two letters of
+    miRNA_s same as letters given (first two nucleotides of siRNA strand)
     """
     query = ("SELECT name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,"
              " loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max, "
-             "miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link, active_strand "
-             "FROM backbone WHERE miRNA_s LIKE %s;")
+             "miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link, "
+             "active_strand FROM backbone WHERE miRNA_s LIKE %s;")
 
     return get_multirow_by_query(query, (letters.upper() + "%",))
 
 
 def serialize(name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,
               loop_a, miRNA_s, miRNA_a, miRNA_length, miRNA_min, miRNA_max,
-              miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link, active_strand):
+              miRNA_end_5, miRNA_end_3, structure, homogeneity, miRBase_link,
+              active_strand):
     """
     Function which serialize data from database to dictionary
     """
@@ -158,15 +166,16 @@ def serialize(name, flanks3_s, flanks3_a, flanks5_s, flanks5_a, loop_s,
         'structure': structure,
         'homogeneity': homogeneity,
         'miRBase_link': miRBase_link,
-        'active_strand' : active_strand
+        'active_strand': active_strand
     }
 
-def serialize_immuno (sequence, receptor, link):
+
+def serialize_immuno(sequence, receptor, link):
     """
     Function which serialize data from immuno table to dictionary
     """
     return {
-        'sequence' : sequence,
-        'receptor' : receptor,
-        'link' : link
+        'sequence': sequence,
+        'receptor': receptor,
+        'link': link
     }

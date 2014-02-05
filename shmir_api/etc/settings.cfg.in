@@ -1,0 +1,6 @@
+[database]
+name = ${settings_database:name}
+user = ${settings_database:user}
+password = ${settings_database:password}
+host = ${settings_database:host}
+port = ${settings_database:port}

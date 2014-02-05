@@ -3,25 +3,29 @@ Backbone RNA database
 
 How to use it:
 
-### Add data to PostgreSQL:
+### Installation & configuration
+
+Add data to PostgreSQL:
 ```
 sudo -u postgres psql < shmirdesignercreate.sql
 ```
-### Install requirements:
+Create file named local.cfg which contains following stuff and your real password instead of *mypassword*:
 ```
-pip install -r requirements.txt
+[buildout]
+extends = buildout.cfg
+
+[settings_database]
+password = mypassword
 ```
-### Create file named settings.py which contains global variables: DB_NAME, DB_USER, DB_PASS, DB_HOST, DB_PORT:
+Build application
+Run these commands to build API serving data from database and mfold results:
 ```
-DB_NAME = 'shmird'
-DB_USER = 'postgres'
-DB_PASS = 'mypassword'
-DB_HOST = '127.0.0.1'
-DB_PORT = '5432'
+python3.3 bootstrap.py
+bin/buildout -c local.cfg
 ```
-### Run server:
+Run server:
 ```
-./main.py
+bin/runserver
 ```
 RESTful API will be available at http://127.0.0.1:5000/
 
@@ -31,7 +35,7 @@ Methods - all require POST request and answer with JSON data:
 * /get_by_mirna_s/data - only two first letters
 * /mfold/data
 
-### Set up new urls in:
+Set up new urls in:
 * shmir_designer/mfold.py:
 ```
 URL = 'http://127.0.0.1:5000/mfold'
@@ -41,7 +45,7 @@ URL = 'http://127.0.0.1:5000/mfold'
 HOST = 'http://127.0.0.1:5000/'
 ```
 
-## Deploying
+### Deploying
 
 sh-miR API deploy is exatcly the same as in the other Flask based generic app.
 
@@ -59,11 +63,11 @@ location @yourapplication {
 
 Run uwsgi:
 ```
-uwsgi -s uwsgi.sock -w main:app
+bin/uwsgi --xml parts/uwsgi/uwsgi.xml
 ```
 give the proper rights to socket:
 ```
-chmod 707 uwsgi.sock
+chmod 707 /tmp/uwsgi.sock
 ```
 
 [Back](../README.md)
