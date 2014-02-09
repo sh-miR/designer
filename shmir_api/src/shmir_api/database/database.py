@@ -43,7 +43,7 @@ def disconnect():
 
 def serialized_all_by_query(query):
     """
-    Function which returns serialized query, serialize is a function
+    Function which returns serialized query
     """
     return [elem.serialize() for elem in query.all()]
 
