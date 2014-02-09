@@ -7,7 +7,7 @@ Flask server which provide RESTful api for database and mfold
 DEBUG = True
 
 
-from flask import Flask, redirect, url_for
+from flask import Flask
 
 from shmir_api.database.database import disconnect
 from shmir_api.database import handlers as db_handlers
