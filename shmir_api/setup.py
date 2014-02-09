@@ -11,6 +11,10 @@ setup(
     install_requires=[
         'Flask==0.10.1',
         'psycopg2==2.5.2',
-        'SQLSoup==0.9.0'
+        'sqlalchemy==0.9.2',
+        'sqlsoup',
+    ],
+    dependency_links=[
+        'https://bitbucket.org/zzzeek/sqlsoup/get/5b0cd0a5842f.zip#egg=sqlsoup',
     ]
 )
