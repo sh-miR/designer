@@ -22,11 +22,11 @@ def check_complementary_single(seq1, seq2):
     input: string, string
     output: int"""
     seq1, seq2 = seq1.lower(), seq2.lower()
-    tran = { "a":"t",
-             "t":"a",
-             "u":"a",
-             "c":"g",
-             "g":"c"}
+    tran = {"a": "t",
+            "t": "a",
+            "u": "a",
+            "c": "g",
+            "g": "c"}
     seq2 = seq2[::-1]
     mini = float(min(len(seq1), len(seq2)))
     count = 0
@@ -87,7 +87,7 @@ def check_input_single(seq):
     Also rigth end of siRNA is cut if contain 'uu' or 'tt'.
     Input: string;
     The function has no output"""
-    seq = seq.lower().replace('u','t')
+    seq = seq.lower().replace('u', 't')
     pattern = re.compile(r'^[acgt]{19,21}$')
     cut_warn = "cut 'uu' or 'tt'"
 
@@ -147,6 +147,7 @@ def reverse_complement(sequence):
     sequence = str(sequence)
     return sequence.translate(string.maketrans("atcgATCG", "tagcTAGC"))[::-1]
 
+
 def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
     """Take output of check_input function and insert into flanking sequences.
     take from database all miRNA results and check if ends of input is suitable
@@ -158,8 +159,8 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
     Right end:
     if miRNA_end_5 < first_end
     add to right site of second sequence additional nucleotides
-    (as many as |miRNA_end_5 - first_end|)
-    like (dots are nucleotides to add, big letter are flanking sequences, small are input):
+    (as many as |miRNA_end_5 - first_end|) like
+    (dots are nucleotides to add, big letter are flanking sequences, small are input):
 
     AAAGGGGCTTTTagtcttaga
     TTTCCCCGAA....agaatct
@@ -281,17 +282,17 @@ def score_frame(frame, frame_ss_file, orginal_frame):
     insertion2 = len(orginal_frame.miRNA_a) - len(seq2)
     flanks3 = len(orginal_frame.flanks3_s) - len(structure.flanks3_s)
 
-    position = len(structure.flanks5_s) #position in sequence (list)
+    position = len(structure.flanks5_s)  # position in sequence (list)
     structure_len = len(structure.template(seq1, seq2))
-    current = position + flanks5 #current position (after changes)
+    current = position + flanks5  # current position (after changes)
 
     if flanks5 < 0:
         add_shifts(0, structure_len, structure_ss, flanks5, 0)
     else:
-        add_shifts(position, structure_len,\
-                    structure_ss, flanks5, current)
+        add_shifts(position, structure_len,
+                   structure_ss, flanks5, current)
     for diff, nucleotides in [(insertion1, seq1), (loop, structure.loop_s),
-                             (insertion2, seq2), (flanks3, '')]:
+                              (insertion2, seq2), (flanks3, '')]:
         position += len(nucleotides)
         current = position + diff
         add_shifts(position, structure_len, structure_ss, diff, current)
@@ -322,7 +323,7 @@ def score_homogeneity(original_frame):
 
     input: sh-miR object
     output: sh-miR object with modified homogeneity"""
-    return original_frame.homogeneity*3
+    return original_frame.homogeneity * 3
 
 
 def two_same_strands_score(seq1, original_frame):

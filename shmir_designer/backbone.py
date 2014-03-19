@@ -45,8 +45,8 @@ class Backbone:
 
     def template(self, siRNAstrand_1, siRNAstrand_2):
         """Returns the template of DNA (sh-miR)"""
-        return (self.flanks5_s + siRNAstrand_1 + self.loop_s +\
-            siRNAstrand_2 + self.flanks3_s).upper()
+        return (self.flanks5_s + siRNAstrand_1 + self.loop_s +
+                siRNAstrand_2 + self.flanks3_s).upper()
 
 
 def qbackbone(data=None, url=None):

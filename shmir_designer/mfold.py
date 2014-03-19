@@ -26,8 +26,8 @@ def mfold(data=None):
 
     directory = "mfold_files/"
     current_datetime = datetime.now().strftime('%H:%M:%S-%d-%m-%y')
-    new_zip = os.path.join(
-        os.path.dirname(__file__), directory, 'newzip_'+current_datetime+'.zip')
+    new_zip = os.path.join(os.path.dirname(__file__), directory,
+                           'newzip_'+current_datetime+'.zip')
 
     if not os.path.exists(directory):
         os.makedirs(directory)
