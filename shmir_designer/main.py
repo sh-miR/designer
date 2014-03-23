@@ -6,8 +6,8 @@
 """
 
 from validators import check_input
-from score import get_frames
-from score import reverse_complement
+from utils import get_frames
+from utils import reverse_complement
 from score import score_frame
 from score import score_homogeneity
 from score import score_two_same_strands
