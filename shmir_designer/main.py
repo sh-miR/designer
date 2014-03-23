@@ -1,13 +1,16 @@
 #!/usr/bin/env python
+
 """
-Main application file
+.. module:: main
+    :synopsis: provides the executable program
 """
-from utils import check_input
-from utils import get_frames
-from utils import reverse_complement
-from utils import score_frame
-from utils import score_homogeneity
-from utils import two_same_strands_score
+
+from validators import check_input
+from score import get_frames
+from score import reverse_complement
+from score import score_frame
+from score import score_homogeneity
+from score import score_two_same_strands
 from backbone import get_all
 from backbone import Backbone
 from mfold import mfold
@@ -42,7 +45,7 @@ def main(input_str):
         pdf, ss = mfold_data[0], mfold_data[1]
         score += score_frame(frame_tuple, ss, original)
         score += score_homogeneity(original)
-        score += two_same_strands_score(seq1, original)
+        score += score_two_same_strands(seq1, original)
         frames_with_score.append((score, frame.template(insert1, insert2),
                                   frame.name, pdf))
 

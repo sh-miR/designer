@@ -3,13 +3,14 @@
 """
 Test for shmiR application
 """
-import os
+
 import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import unittest
-import shmir_designer.utils as utils
-
-import shmir_designer.errors as errors
+from shmir_designer import validators
+from shmir_designer import errors
 
 
 class TestShmiR(unittest.TestCase):
@@ -18,22 +19,22 @@ class TestShmiR(unittest.TestCase):
         """Tests for check_input function"""
         tests = [
             ('acggctTggaacttctggtac', ('acggcttggaacttctggtac', '', 0, 0)),
-            ('acggcttGGaacttctggtac gtaccagaagttccaagccgt', (utils.check_complementary('acggcttggaacttctggtac', 'gtaccagaagttccaagccgt'))),
-            ('acggcttggAActuctggtac gtaccagaagttccaagccgt', (utils.check_complementary('acggcttggaacttctggtac', 'gtaccagaagttccaagccgt'))),
+            ('acggcttGGaacttctggtac gtaccagaagttccaagccgt', (validators.check_complementary('acggcttggaacttctggtac', 'gtaccagaagttccaagccgt'))),
+            ('acggcttggAActuctggtac gtaccagaagttccaagccgt', (validators.check_complementary('acggcttggaacttctggtac', 'gtaccagaagttccaagccgt'))),
             ('acggctTggaacttctggtTT', ('acggcttggaacttctggt', '', 0, 0))]
         for list1, expected in tests:
-            self.failUnlessEqual(utils.check_input(list1), expected)
+            self.failUnlessEqual(validators.check_input(list1), expected)
 
     def multiple_input(self, data, error):
         for strand in data:
             with self.assertRaises(errors.InputException) as err:
-                utils.check_input(strand)
+                validators.check_input(strand)
             self.assertEqual(error, str(err.exception))
 
     def test_input_exceptions(self):
         """Tests for check_input Exceptions"""
         len_data = ['acggcttggaactuct', '', 'acttctggtacTTUUUUUUuuuuuuGGG']
-        error_data = ['acggcttGGaacttctggtac gtaccagaagttccaagccgt '\
+        error_data = ['acggcttGGaacttctggtac gtaccagaagttccaagccgt '
                       'acggcttGGaacttctggtac',
                       'acggcttGGaacttctggtac tgccgaaccttgaagaccatg']
         patt_data = ['acggctTggactggtwacTT']
@@ -88,10 +89,4 @@ class TestShmiR(unittest.TestCase):
             ('gcacggcttggaacttctggt', 'gtaccagaagttccaagcc', ('gcacggcttggaacttctggt', 'gtaccagaagttccaagcc', 4, -2))
             ]
         for seq1, seq2, expected in tests:
-            self.failUnlessEqual(utils.check_complementary(seq1, seq2), expected)
-
-
-
-
-# if __name__ == '__main__':
-#     unittest.main()
+            self.failUnlessEqual(validators.check_complementary(seq1, seq2), expected)
