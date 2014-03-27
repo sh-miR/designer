@@ -3,6 +3,7 @@
     :synopsis: This module provides searching sequences.
 """
 
+from itertools import chain
 import re
 
 
@@ -22,7 +23,7 @@ def findall_overlapping(pattern, string):
         result = regex.search(string, pos)
         if not result:
             break
-        results.append(result.group(0))
+        results.append(result.group())
         pos = result.start() + 1
     return results
 
@@ -36,6 +37,6 @@ def find_by_patterns(patterns, mRNA):
     :returns: dict -- all sequences found by patterns.
     """
     return {
-        key: findall_overlapping(pattern, mRNA)
-        for key, pattern in patterns.items()
+        key: list(chain(*(findall_overlapping(pattern, mRNA) for pattern in patterns)))
+        for key, patterns in patterns.items()
     }
