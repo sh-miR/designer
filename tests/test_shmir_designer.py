@@ -7,11 +7,12 @@ Test for shmiR application
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../shmir_api/src/")))
 import unittest
 from shmir_designer import validators
 from shmir_designer import errors
 from shmir_designer import search
+from shmir_api.database import database
 
 
 class TestShmiR(unittest.TestCase):
@@ -94,44 +95,33 @@ class TestShmiR(unittest.TestCase):
 
 
 
-#    def test_create_regular(self):
-#        """Tests for create_regular function"""
-#        tests=[
-#            ('UGUAAACAUCCUCGACUGGAAG', {1: [r'[UT][UAGC]{18}', r'[UT][UAGC]{19}', r'[UT][UAGC]{20}'],  
-#            2: [r'[UT][UAGC]{17}[G]', r'[UT][UAGC]{18}[G]', r'[UT][UAGC]{19}[G]'
-#            r'[UT][G][UAGC]{17}', r'[UT][G][UAGC]{18}', r'[UT][G][UAGC]{19}'],
-#            3: [r'[UT][G][UAGC]{16}[G]', r'[UT][G][UAGC]{17}[G]', r'[UT][G][UAGC]{18}[G]'], 
-#            4: [r'[UT][G][UAGC]{15}[A][G]', r'[UT][G][UAGC]{16}[A][G]', r'[UT][G][UAGC]{17}[A][G]']}),
-#            ('CTTCCAGTCGAGGATGTTTGCAGC', {1:[r'[C][UAGC]{18}', r'[C][UAGC]{19}', r'[C][UAGC]{20}'], 
-#            2: [r'[C][UAGC]{17}[C]', r'[C][UAGC]{18}[C]', r'[C][UAGC]{19}[C]',
-#            r'[C][T][UAGC]{17}', r'[C][T][UAGC]{18}', r'[C][T][UAGC]{19}'], 
-#            3: [r'[C][UT][UAGC]{16}[C]', r'[C][UT][UAGC]{17}[C]', r'[C][UT][UAGC]{18}[C]'], 
-#            4: [r'[C][UT][UAGC]{15}[G][C]', r'[C][UT][UAGC]{16}[G][C]', r'[C][UT][UAGC]{17}[G][C]']}),
-#            ('AGGCTTGCTGTAGGCTGTATGCTG', {1: [r'[A][UAGC]{18}', r'[A][UAGC]{19}', r'[A][UAGC]{20}'], 
-#           2: [r'[A][UAGC]{19}[G]', r'[A][UAGC]{18}[G]', r'[A][UAGC]{19}[G]', 
-#            r'[A][G][UAGC]{17}', r'[A][G][UAGC]{18}', r'[A][G][UAGC]{19}'], 
-#            3: [r'[A][G][UAGC]{16}[G]', r'[A][G][UAGC]{17}[G]', r'[A][G][UAGC]{18}[G]'], 
-#            4: [r'[A][G][UAGC]{15}[TU][G]', r'[A][G][UAGC]{16}[TU][G]', r'[A][G][UAGC]{17}[TU][G]']}),
-#            ('UGGAGUGUGACAAUGGUGUUUG', {1: [r'[UT][UAGC]{18}', r'[UT][UAGC]{19}', r'[UT][UAGC]{20}'], 
-#            2: [r'[UT][UAGC]{17}[G]', r'[UT][UAGC]{18}[G]', r'[UT][UAGC]{19}[G]', 
-#            r'[UT][G][UAGC]{17}', r'[UT][G][UAGC]{18}', r'[UT][G][UAGC]{19}'], 
-#            3: [r'[UT][G][UAGC]{16}[G]', r'[UT][G][UAGC]{17}[G]', r'[UT][G][UAGC]{18}[G]'], 
-#            4: [r'[UT][G][UAGC]{15}[UT][G]', r'[UT][G][UAGC]{16}[UT][G]', r'[UT][G][UAGC]{17}[UT][G]']}),
-#            ('AGGCAAGAUGCUGGCAUAGCU', {1: [r'[A][UAGC]{18}', r'[A][UAGC]{19}', r'[A][UAGC]{20}'], 
-#            2: [r'[A][UAGC]{17}[UT]', r'[A][UAGC]{18}[UT]', r'[A][UAGC]{19}[UT]',
-#            r'[A][G][UAGC]{17}', r'[A][G][UAGC]{18}', r'[A][G][UAGC]{19}'], 
-#            3: [r'[A][G][UAGC]{16}[TU]', r'[A][G][UAGC]{17}[TU]', r'[A][G][UAGC]{18}[TU]'], 
-#            4: [r'[A][G][UAGC]{15}[C][TU]', r'[A][G][UAGC]{16}[C][TU]', r'[A][G][UAGC]{17}[C][TU]']})
-#       ]
+    def test_create_regular(self):
+        """Tests for create_regular function"""
+        tests=[
+            ('UGUAAACAUCCUCGACUGGAAG', {1: [r'[UT][UTAC][UTAGC]{15}[UTCG][UTCA]', r'[UT][UTAC][UTAGC]{16}[UTCG][UTCA]', r'[UT][UTAC][UTAGC]{17}[UTCG][UTCA]'],  
+            2: [r'[UT][UTAC][UTAGC]{15}[UTCG][G]', r'[UT][UTAC][UTAGC]{16}[UTCG][G]', r'[UT][UTAC][UTAGC]{17}[UTCG][G]'
+            r'[UT][G][UTAGC]{15}[UTCG][UTCA]', r'[UT][G][UTAGC]{16}[UTCG][UTCA]', r'[UT][G][UTAGC]{17}[UTCG][UTCA]'],
+            3: [r'[UT][G][UTAGC]{15}[UTCG][G]', r'[UT][G][UTAGC]{16}[UTCG][G]', r'[UT][G][UTAGC]{17}[UTCG][G]'], 
+            4: [r'[UT][G][UTAGC]{15}[A][G]', r'[UT][G][UTAGC]{16}[A][G]', r'[UT][G][UTAGC]{17}[A][G]']}),
+            ('CTTCCAGTCGAGGATGTTTGCAGC', {1:[r'[C][AGC][UTAGC]{15}[UTAC][UTAG]', r'[C][AGC][UTAGC]{16}[UTAC][UTAG]', r'[C][AGC][UTAGC]{17}[UTAC][UTAG]'], 
+            2: [r'[C][AGC][UTAGC]{15}[UTAC][C]', r'[C][AGC][UTAGC]{16}[UTAC][C]', r'[C][AGC][UTAGC]{17}[UTAC][C]',
+            r'[C][T][UTAGC]{15}[UTAC][UTAG]', r'[C][T][UTAGC]{16}[UTAC][UTAG]', r'[C][T][UTAGC]{17}[UTAC][UTAG]'], 
+            3: [r'[C][UT][UTAGC]{15}[UTAC][C]', r'[C][UT][UTAGC]{16}[UTAC][C]', r'[C][UT][UTAGC]{17}[UTAC][C]'], 
+            4: [r'[C][UT][UTAGC]{15}[G][C]', r'[C][UT][UTAGC]{16}[G][C]', r'[C][UT][UTAGC]{17}[G][C]']}),
+            ('AGGCTTGCTGTAGGCTGTATGCTG', {1: [r'[A][UTAC][UTAGC]{15}[AGC][UTAC]', r'[A][UTAC][UTAGC]{16}[AGC][UTAC]', r'[A][UTAC][UTAGC]{17}[AGC][UTAC]'], 
+           2: [r'[A][UTAC][UTAGC]{15}[AGC][G]', r'[A][UTAC][UTAGC]{16}[AGC][G]', r'[A][UTAC][UTAGC]{17}[AGC][G]', 
+            r'[A][G][UTAGC]{15}[AGC][UTAC]', r'[A][G][UTAGC]{16}[AGC][UTAC]', r'[A][G][UTAGC]{17}[AGC][UTAC]'], 
+            3: [r'[A][G][UTAGC]{15}[AGC][G]', r'[A][G][UTAGC]{16}[AGC][G]', r'[A][G][UAGC]{17}[AGC][G]'], 
+            4: [r'[A][G][UTAGC]{15}[TU][G]', r'[A][G][UTAGC]{16}[TU][G]', r'[A][G][UAGC]{17}[TU][G]']}),
+       ]
 
-#        for test in tests:
-#            test[1].items().sort()
-#            for k, v in test[1].iteritems():
-#                v.sort()
-#        for seq, expected in tests:
-#            self.failUnlessEqual(search.create_regular(seq), expected)
-            
-            
+        for test in tests:
+            test[1].items().sort()
+            for k, v in test[1].items():
+                v.sort()
+        for seq, expected in tests:
+            self.failUnlessEqual(database.create_regular(seq), expected)
+
     def test_find_regular(self):
         """Tests for finding regular expressions with importance number"""
         tests=[
@@ -143,8 +133,6 @@ class TestShmiR(unittest.TestCase):
         {2: ['CG', 'TCG', 'CCG', 'GCG', 'GAG', 'AG', 'AGG', 'GG', 'GGG'], 3: ['GG', 'GGG']}),      
         ]
         for test in tests:
-            test[0].items().sort()
-            test[1].items().sort()
             for k, v in test[0].items():
                 v.sort()
             for k, v in test[1].items():
@@ -167,19 +155,19 @@ class TestShmiR(unittest.TestCase):
         for actual, expected in tests:
             self.failUnlessEqual(actual, expected)   
             
-#    def test_find_immuno(self):
-#        """Tests for finding immunostimulatory sequences"""
-#        tests=[
-#        ('UGUGUCTCGCCGCGAGG', ['UGUGU', 'GU']),
-#        ('UUUUUGUGUCTCGCCGCGAGG', ['UGUGU', 'GU', 'UUUUU']),
-#        ('GTTGCCGGGACGGGCCCGUCCUUCAAAUGGCGTTGCCGGGACGGGCCC', ['GUCCUUCAA', 'GU', 'AU', 'UGGC']),
-#        ('GTTGCCGGGACGGGCCC', []),
-#        ('', [])
-#        ]
-#        for test in tests:
-#            test[1].sort()
-#        for sequence, expected in tests:
-#            self.failUnlessEqual(search.find_immuno(sequence).sort(), expected)
+    def test_find_immuno(self):
+        """Tests for finding immunostimulatory sequences"""
+        tests=[
+        ('UGUGUCTCGCCGCGAGG', ['UGUGU', 'GU']),
+        ('UUUUUGUGUCTCGCCGCGAGG', ['UGUGU', 'GU', 'UUUUU']),
+        ('GTTGCCGGGACGGGCCCGUCCUUCAAAUGGCGTTGCCGGGACGGGCCC', ['GUCCUUCAA', 'GU', 'AU', 'UGGC']),
+        ('GTTGCCGGGACGGGCCC', []),
+        ('', [])
+        ]
+        for test in tests:
+            test[1].sort()
+        for sequence, expected in tests:
+            self.failUnlessEqual(search.find_immuno(sequence).sort(), expected)
             
 if __name__ == '__main__':
     unittest.main()
