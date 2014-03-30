@@ -10,3 +10,6 @@ DB_USER = config['user']
 DB_PASS = config['password']
 DB_HOST = config['host']
 DB_PORT = config['port']
+
+#nucleotide type for ncbi database
+NUCLEOTIDE_DB = 'nucleotide'
