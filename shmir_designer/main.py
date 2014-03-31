@@ -46,8 +46,9 @@ def main(input_str):
         score += score_frame(frame_tuple, ss, original)
         score += score_homogeneity(original)
         score += score_two_same_strands(seq1, original)
-        frames_with_score.append((score, frame.template(insert1, insert2),
-                                  frame.name, pdf))
+        frames_with_score.append(
+            (score, frame.template(insert1, insert2), frame.name, pdf)
+        )
 
     sorted_frames = [elem for elem in sorted(frames_with_score,
                      key=lambda x: x[0], reverse=True) if elem[0] > 60]
