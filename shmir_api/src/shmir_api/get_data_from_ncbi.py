@@ -10,6 +10,9 @@ from Bio import Entrez
 def make_authorize_for_ncbi(email):
     """
     Function which makes authorization in ncbi database with given email.
+
+    :param email: Email to authorization with ncbi.
+    :type email: str.
     """
     Entrez.email = email
 
@@ -18,6 +21,14 @@ def get_ids_of_searched_term(email, transcript, database):
     """
     Function for retrieve list of ids for searched transcript
     (transcript should be URL encoded) from given ncbi database.
+
+    :param email: Email to authorization with ncbi.
+    :type email: str.
+    :param transcript: Transcript to search.
+    :type transcript: str.
+    :param database: Name of database from ncbi.
+    :type database: str.
+
     List of avaible ncbi database:
         ['pubmed', 'protein', 'nucleotide', 'nuccore', 'nucgss', 'nucest',
          'structure', 'genome', 'books', 'cancerchromosomes', 'cdd', 'gap',
@@ -39,6 +50,13 @@ def get_ids_of_searched_term(email, transcript, database):
 def get_data(email, database, ids):
     """
     Function for return data from given ncbi database by given list of ids.
+
+    :param email: Email to authorization with ncbi.
+    :type email: str.
+    :param database: Name of database from ncbi.
+    :type database: str.
+    :param ids: List of ids to search.
+    :type ids: list/str.
     """
     make_authorize_for_ncbi(email)
 
