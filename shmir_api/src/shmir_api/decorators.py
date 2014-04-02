@@ -2,6 +2,8 @@
 Module for decorators
 """
 
+from __future__ import unicode_literals
+
 from flask import request
 from flask.json import dumps
 

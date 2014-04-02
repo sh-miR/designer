@@ -1,12 +1,13 @@
-from configparser import ConfigParser
+from ConfigParser import ConfigParser
 from os import environ
 
 config = ConfigParser()
-config.readfp(open(environ['SHMIR_API_SETTINGS']))
-config = config['database']
+config.read(environ['SHMIR_API_SETTINGS'])
 
-DB_NAME = config['name']
-DB_USER = config['user']
-DB_PASS = config['password']
-DB_HOST = config['host']
-DB_PORT = config['port']
+get_db_config = lambda option: config.get('database', option)
+
+DB_NAME = get_db_config('name')
+DB_USER = get_db_config('user')
+DB_PASS = get_db_config('password')
+DB_HOST = get_db_config('host')
+DB_PORT = get_db_config('port')
