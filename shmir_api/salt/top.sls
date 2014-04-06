@@ -1,4 +1,0 @@
-base:
-  '*':
-    - nginx
-    - supervisor

@@ -24,3 +24,4 @@ htmlcov
 coverage.xml
 output.xml
 .ropeproject
+.vagrant

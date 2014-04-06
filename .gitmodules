@@ -1,0 +1,6 @@
+[submodule "shmir_api/puppet/modules/supervisor"]
+	path = shmir_api/puppet/modules/supervisor
+	url = git@github.com:plathrop/puppet-module-supervisor.git
+[submodule "shmir_api/puppet/modules/epel"]
+	path = shmir_api/puppet/modules/epel
+	url = git@github.com:stahnma/puppet-module-epel.git
