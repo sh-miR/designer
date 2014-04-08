@@ -23,9 +23,10 @@ CREATE TABLE backbone (
             /*homogeneity of products (length), 0 for very
              nonhomogenous, 5 for completely homogenous */
     "miRBase_link" varchar(200) NOT NULL,
-    "active_strand" integer NOT NULL
+    "active_strand" integer NOT NULL,
             /*5 for 5' end, 3 for 3' end, 0 for equally active,
             1 for not known*/
+    "regexp" varchar(1000)
 );
 
 CREATE TABLE immuno (
