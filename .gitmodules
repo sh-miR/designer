@@ -13,3 +13,6 @@
 [submodule "shmir_api/puppet/modules/nginx"]
 	path = shmir_api/puppet/modules/nginx
 	url = git@github.com:jfryman/puppet-nginx.git
+[submodule "shmir_api/puppet/modules/supervisor"]
+	path = shmir_api/puppet/modules/supervisor
+	url = git@github.com:haf/puppet-supervisor.git

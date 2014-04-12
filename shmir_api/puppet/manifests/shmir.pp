@@ -72,7 +72,7 @@ nginx::resource::vhost { 'localhost':
 
 supervisor::service { 'shmir':
     ensure      => present,
-    command     => '/usr/bin/shmir',
+    command     => '/bin/cat',
     user        => 'vagrant',
     group       => 'vagrant',
     require     => [ Exec['setup'], File['/etc/shmir.conf'] ]
