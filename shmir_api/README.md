@@ -26,6 +26,10 @@ password = shmir_dev
 host = 127.0.0.1
 port = 5432
 ```
+and you can run shmir by:
+```
+shmir
+```
 will automatize it ASAP
 
 Backbone RNA database
