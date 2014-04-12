@@ -70,9 +70,9 @@ nginx::resource::vhost { 'localhost':
     proxy => 'http://127.0.0.1:8080'
 }
 
-supervisor::service { 'shmir':
+supervisor::program { 'shmir':
     ensure      => present,
-    command     => '/bin/cat',
+    command     => '/usr/bin/shmir',
     user        => 'vagrant',
     group       => 'vagrant',
     require     => [ Exec['setup'], File['/etc/shmir.conf'] ]
