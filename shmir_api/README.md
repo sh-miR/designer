@@ -2,6 +2,7 @@ Current changes
 ===============
 
 ```
+git submodule update --init
 cd shmir_api
 vagrant up
 ```
