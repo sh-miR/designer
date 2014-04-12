@@ -11,7 +11,7 @@ vagrant ssh
 ```
 and inside vagrantbox configure portgres db:
 ```
-sudo -u postgres psql < shmirdesignercreate.sql
+sudo -u postgres psql < /home/shmir/shmir/shmirdesignercreate.sql
 ```
 and into file:
 ```
