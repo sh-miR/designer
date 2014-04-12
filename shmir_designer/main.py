@@ -16,8 +16,21 @@ from backbone import Backbone
 from mfold import mfold
 import sys
 
+def fold_and_score(frame_tuple, original):
+    score = 0
+    frame, insert1, insert2 = frame_tuple
+    mfold_data = mfold(frame.template(insert1, insert2))
+    if 'error' in mfold_data:
+        return mfold_data
+    pdf, ss = mfold_data[0], mfold_data[1]
+    score += score_frame(frame_tuple, ss, original)
+    score += score_homogeneity(original)
+    score += score_two_same_strands(seq1, original)
+    return (score, frame.template(insert1, insert2), frame.name, pdf)
 
-def main(input_str):
+
+
+def design_and_score(input_str):
     """
     Main function takes string input and returns the best results depending
     on scoring. Single result include sh-miR sequence,
@@ -37,19 +50,7 @@ def main(input_str):
 
     frames_with_score = []
     for frame_tuple, original in zip(frames, original_frames):
-        score = 0
-        frame, insert1, insert2 = frame_tuple
-        mfold_data = mfold(frame.template(insert1, insert2))
-        if 'error' in mfold_data:
-            return mfold_data
-        pdf, ss = mfold_data[0], mfold_data[1]
-        score += score_frame(frame_tuple, ss, original)
-        score += score_homogeneity(original)
-        score += score_two_same_strands(seq1, original)
-        frames_with_score.append(
-            (score, frame.template(insert1, insert2), frame.name, pdf)
-        )
-
+        frames_with_score.append(fold_and_score(frame_tuple, original))
     sorted_frames = [elem for elem in sorted(frames_with_score,
                      key=lambda x: x[0], reverse=True) if elem[0] > 60]
     return {'result': sorted_frames[:3]}
