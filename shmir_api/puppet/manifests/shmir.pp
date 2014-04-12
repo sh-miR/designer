@@ -1,4 +1,4 @@
-include supervisor
+include nginx, supervisor
 
 class { 'postgresql::server':
     postgres_password => 'shmir_dev'
@@ -17,7 +17,7 @@ package { 'ius-release':
     require => Package['epel-release']
 }
 
-$packages = [ 'python27', 'python27-distribute', 'python27-devel', 'gcc', 'postgresql-devel' ]
+$packages = [ 'python27', 'python27-distribute', 'python27-devel', 'gcc', 'postgresql-devel', 'vim-minimal' ]
 package { $packages:
     ensure      => installed,
     require     => Package['ius-release']
@@ -29,6 +29,13 @@ user { 'shmir':
     shell  => '/bin/bash'
 }
 
+exec { 'python-packages':
+    command => 'easy_install-2.7 ipdb',
+    path    => ['/usr/bin', '/usr/sbin', '/bin'],
+    user    => 'root',
+    require => Package[$packages]
+}
+
 exec { 'setup':
     command => 'python2.7 setup.py install',
     cwd     => '/home/shmir/shmir',
@@ -37,10 +44,36 @@ exec { 'setup':
     require => Package[$packages]
 }
 
-#supervisor::service {
-#  'shmir':
-#    ensure      => present,
-#    command     => '/home/vagrant/shmir/bin/uwsgi --xml /home/vagrant/shmir/parts/uwsgi/uwsgi.xml',
-#    user        => 'vagrant',
-#    group       => 'vagrant',
-#}
+exec { 'create-database':
+    command => 'psql < shmirdesignercreate.sql',
+    cwd     => '/home/shmir/shmir',
+    path    => ['/usr/bin', '/usr/sbin', '/bin'],
+    user    => 'postgres',
+    require => [ Package[$packages], Class['postgresql::server'] ]
+}
+
+file { '/etc/shmir.conf':
+    mode => 644,
+    owner => root,
+    group => root,
+    content => "[database]
+name = shmird
+user = postgres
+password = shmir_dev
+host = 127.0.0.1
+port = 5432",
+    require => Exec['setup']
+}
+
+
+nginx::resource::vhost { 'localhost':
+    proxy => 'http://127.0.0.1:8080'
+}
+
+supervisor::service { 'shmir':
+    ensure      => present,
+    command     => '/usr/bin/shmir',
+    user        => 'vagrant',
+    group       => 'vagrant',
+    require     => [ Exec['setup'], File['/etc/shmir.conf'] ]
+}
