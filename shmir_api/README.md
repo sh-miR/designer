@@ -1,3 +1,33 @@
+Current changes
+===============
+
+```
+cd shmir_api
+vagrant up
+```
+then:
+```
+vagrant ssh
+```
+and inside vagrantbox configure portgres db:
+```
+sudo -u postgres psql < shmirdesignercreate.sql
+```
+and into file:
+```
+/usr/lib/python2.7/site-packages/shmir_api-2.0-py2.7.egg/shmir.conf
+```
+put content:
+```
+[database]
+name = shmird
+user = postgres
+password = shmir_dev
+host = 127.0.0.1
+port = 5432
+```
+will automatize it ASAP
+
 Backbone RNA database
 ==========================
 
