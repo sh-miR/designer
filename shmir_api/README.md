@@ -2,6 +2,7 @@ Current changes
 ===============
 
 ```
+git submodule update --init
 cd shmir_api
 vagrant up
 ```
@@ -31,6 +32,8 @@ and you can run shmir by:
 shmir
 ```
 will automatize it ASAP
+
+finally it will be served on http://127.0.0.1:8080
 
 Backbone RNA database
 ==========================
