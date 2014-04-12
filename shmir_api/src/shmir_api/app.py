@@ -2,9 +2,12 @@
 Flask server which provide RESTful api for database and mfold
 """
 
+import sys
+
 from twisted.internet import reactor
 from twisted.web.server import Site
 from twisted.web.wsgi import WSGIResource
+from twisted.python import log
 
 from flask import Flask
 
@@ -46,6 +49,8 @@ app.add_url_rule('/mfold', 'mfold', mfold_handlers.get_mfold)
 
 
 def run():
+    log.startLogging(sys.stdout)
+
     resource = WSGIResource(reactor, reactor.getThreadPool(), app)
     site = Site(resource)
 

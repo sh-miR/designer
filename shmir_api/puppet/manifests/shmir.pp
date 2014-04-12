@@ -1,6 +1,8 @@
 include supervisor
 
-class { 'postgresql::server': }
+class { 'postgresql::server':
+    postgres_password => 'shmir_dev'
+}
 
 package { 'epel-release':
     ensure => installed,

@@ -1,8 +1,9 @@
 from ConfigParser import ConfigParser
-from os import environ
+from pkg_resources import resource_filename, Requirement
 
 config = ConfigParser()
-config.read(environ['SHMIR_API_SETTINGS'])
+print resource_filename(Requirement.parse('shmir_api'), 'shmir.conf')
+config.read(resource_filename(Requirement.parse('shmir_api'), 'shmir.conf'))
 
 get_db_config = lambda option: config.get('database', option)
 
