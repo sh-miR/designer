@@ -37,4 +37,13 @@ class Backbone(Base):
         return (self.flanks5_s + siRNAstrand_1 + self.loop_s +
                 siRNAstrand_2 + self.flanks3_s).upper()
 
-# class Immuno(Base):
+
+class Immuno(Base):
+    """
+    Immuno motives class
+    """
+    __tablename__ = 'immuno'
+    id = Column(Integer, primary_key=True)
+    sequence = Column(Unicode(10), nullable=False)
+    receptor = Column(Unicode(15))
+    link = Column(Unicode(100), nullable=False)

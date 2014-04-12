@@ -28,7 +28,7 @@ class TestModelBase(unittest.TestCase):
         self.db_session.commit()
 
     def get_all(self, model):
-        return self.db_session.query(getattr(models, model)).all()
+        return self.db_session.query(model).all()
 
 
 def create_backbone():
