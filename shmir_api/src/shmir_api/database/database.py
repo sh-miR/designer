@@ -2,14 +2,17 @@
 Module for communication with database
 """
 
+from __future__ import unicode_literals
+
+from sqlalchemy import func
+from sqlsoup import SQLSoup
+
 from flask import g
 
-from sqlsoup import SQLSoup
-from sqlalchemy import func
 from shmir_api.settings import DB_NAME, DB_USER, DB_PASS, DB_HOST, DB_PORT
 
 
-class SerializeMixin:
+class SerializeMixin(object):
     """
     Mixin to serialize attributes which do not start with _ or are not id
     """
@@ -24,7 +27,8 @@ def get_db():
     """
     db = getattr(g, '_database', None)
     if db is None:
-        conn_str = "postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}"
+        conn_str = ("postgresql+psycopg2://{user}:{password}@{host}:{port}/"
+                    "{dbname}")
         fconn = conn_str.format(dbname=DB_NAME, user=DB_USER,
                                 password=DB_PASS, host=DB_HOST, port=DB_PORT)
         db = g._database = SQLSoup(fconn, SerializeMixin)

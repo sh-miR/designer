@@ -1,0 +1,15 @@
+[submodule "shmir_api/puppet/modules/supervisor"]
+	path = shmir_api/puppet/modules/supervisor
+	url = git@github.com:plathrop/puppet-module-supervisor.git
+[submodule "shmir_api/puppet/modules/epel"]
+	path = shmir_api/puppet/modules/epel
+	url = git@github.com:stahnma/puppet-module-epel.git
+[submodule "shmir_api/puppet/modules/postgresql"]
+	path = shmir_api/puppet/modules/postgresql
+	url = git@github.com:puppetlabs/puppetlabs-postgresql.git
+[submodule "shmir_api/puppet/modules/stdlib"]
+	path = shmir_api/puppet/modules/stdlib
+	url = git@github.com:puppetlabs/puppetlabs-stdlib.git
+[submodule "shmir_api/puppet/modules/concat"]
+	path = shmir_api/puppet/modules/concat
+	url = git@github.com:puppetlabs/puppetlabs-concat.git
