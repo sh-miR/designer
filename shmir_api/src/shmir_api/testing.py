@@ -6,8 +6,8 @@ from sqlalchemy.orm import (
     sessionmaker
 )
 from sqlalchemy import create_engine
-from database import models
 from settings import Base
+from data import models
 import unittest
 
 

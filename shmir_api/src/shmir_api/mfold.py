@@ -8,7 +8,7 @@ from datetime import datetime
 from zipfile import ZipFile
 
 
-def mfold(input):
+def delegate_mfold(input):
     """
     Executes mfold in order to generate appropriate files
     """
