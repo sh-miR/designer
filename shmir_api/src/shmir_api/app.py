@@ -11,20 +11,13 @@ from twisted.python import log
 
 from flask import Flask
 
-from shmir_api.database.database import disconnect
-from shmir_api.database import handlers as db_handlers
-from shmir_api.mfold import handlers as mfold_handlers
+import views
 
 
 app = Flask(__name__)
 
 
-@app.teardown_appcontext
-def close_connection(exception):
-    disconnect()
-
-
-app.add_url_rule('/mfold', 'mfold', mfold_handlers.get_mfold)
+app.add_url_rule('/mfold', 'mfold', views.get_mfold)
 
 
 def run():

@@ -6,7 +6,7 @@ Handlers
 from flask import send_file
 
 from shmir_api.decorators import require_json
-from mfold.mfold import delegate_mfold
+from mfold import delegate_mfold
 
 
 @require_json(jsonify=False)
