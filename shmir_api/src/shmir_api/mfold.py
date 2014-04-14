@@ -5,10 +5,8 @@ from os.path import join
 
 from datetime import datetime
 
-from zipfile import ZipFile
 
-
-def mfold(input):
+def delegate_mfold(input):
     """
     Executes mfold in order to generate appropriate files
     """
@@ -31,10 +29,13 @@ def mfold(input):
 
     waitpid(pid, 0)
 
-    zipname = "%s.zip" % current_datetime
+    # zipname = "%s.zip" % current_datetime
 
-    with ZipFile(zipname, 'w') as mfold_zip:
-        mfold_zip.write("%s_1.pdf" % current_datetime)
-        mfold_zip.write("%s_1.ss" % current_datetime)
+    # with ZipFile(zipname, 'w') as mfold_zip:
+    #     mfold_zip.write("%s_1.pdf" % current_datetime)
+    #     mfold_zip.write("%s_1.ss" % current_datetime)
 
-    return join(tmp_dirname, zipname)
+    return map(
+        lambda path: join(tmp_dirname, path.format(current_datetime)),
+        ["{}_1.pdf", "{}_1.ss"]
+    )
