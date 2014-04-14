@@ -1,4 +1,5 @@
 from ConfigParser import ConfigParser
+
 from sqlalchemy.orm import (
     scoped_session,
     sessionmaker
@@ -6,11 +7,14 @@ from sqlalchemy.orm import (
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 
+# Parsing config file
+
 config = ConfigParser()
 config.read('/etc/shmir.conf')
 
 get_db_config = lambda option: config.get('database', option)
 
+# SQLAlchemy engine
 
 conn_str = "postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}"
 fconn = conn_str.format(
