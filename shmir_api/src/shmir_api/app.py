@@ -1,5 +1,5 @@
 """
-Flask server which provide RESTful api for database and mfold
+Flask server which provide RESTful api for mfold and shmiR designer
 """
 
 import sys
