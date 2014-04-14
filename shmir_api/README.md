@@ -1,3 +1,19 @@
+The most current
+================
+```
+git submodule update --init
+cd shmir_api
+vagrant up
+```
+
+And server is running. If you want to restart server do:
+```
+vagrant ssh
+restart
+exit
+```
+
+
 Current changes
 ===============
 

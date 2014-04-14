@@ -1,9 +1,11 @@
-from os import chdir, environ, fork, waitpid, path, makedirs, execl
+from os import chdir, fork, waitpid, path, makedirs, execl
 
 from os.path import dirname
 from os.path import join
 
 from datetime import datetime
+
+from settings import MFOLD_PATH
 
 
 def delegate_mfold(input):
@@ -25,15 +27,9 @@ def delegate_mfold(input):
     pid = fork()
 
     if pid == 0:
-        execl(environ['MFOLD_PATH'], 'mfold', 'SEQ=%s P=1' % current_datetime)
+        execl(MFOLD_PATH, 'mfold', 'SEQ=%s P=1' % current_datetime)
 
     waitpid(pid, 0)
-
-    # zipname = "%s.zip" % current_datetime
-
-    # with ZipFile(zipname, 'w') as mfold_zip:
-    #     mfold_zip.write("%s_1.pdf" % current_datetime)
-    #     mfold_zip.write("%s_1.ss" % current_datetime)
 
     return map(
         lambda path: join(tmp_dirname, path.format(current_datetime)),

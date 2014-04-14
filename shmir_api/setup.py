@@ -15,7 +15,6 @@ setup(
         'sqlalchemy==0.9.2',
         'sqlsoup==0.9.0',
         'Twisted==13.2.0',
-        'mock',
     ],
     test_suite='shmir_api.tests',
 )

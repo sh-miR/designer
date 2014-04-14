@@ -17,7 +17,7 @@ package { 'ius-release':
     require => Package['epel-release']
 }
 
-$packages = [ 'python27', 'python27-distribute', 'python27-devel', 'gcc', 'gcc-c++', 'postgresql-devel', 'vim-minimal', 'gcc-gfortran' ]
+$packages = [ 'python27', 'python27-distribute', 'python27-devel', 'gcc', 'gcc-c++', 'postgresql-devel', 'vim-minimal', 'gcc-gfortran', 'texlive-utils' ]
 package { $packages:
     ensure      => installed,
     require     => Package['ius-release']
@@ -57,6 +57,13 @@ exec { 'create-database':
     path    => ['/usr/bin', '/usr/sbin', '/bin'],
     user    => 'postgres',
     require => [ Package[$packages], Class['postgresql::server'] ]
+}
+
+exec { 'add-restart':
+  command   => 'echo "alias restart=\'sudo supervisorctl restart all\'" >> .bashrc',
+  path    => ['/usr/bin', '/usr/sbin', '/bin'],
+  cwd       => '/home/vagrant',
+  unless    => 'grep -Fxq "alias restart=\'sudo supervisorctl restart all\'" .bashrc',
 }
 
 file { '/etc/shmir.conf':
