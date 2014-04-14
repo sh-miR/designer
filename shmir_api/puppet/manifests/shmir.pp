@@ -17,7 +17,7 @@ package { 'ius-release':
     require => Package['epel-release']
 }
 
-$packages = [ 'python27', 'python27-distribute', 'python27-devel', 'gcc', 'postgresql-devel', 'vim-minimal' ]
+$packages = [ 'python27', 'python27-distribute', 'python27-devel', 'gcc', 'gcc-c++', 'postgresql-devel', 'vim-minimal', 'gcc-gfortran' ]
 package { $packages:
     ensure      => installed,
     require     => Package['ius-release']
@@ -27,6 +27,13 @@ user { 'shmir':
     ensure => 'present',
     home   => '/home/shmir',
     shell  => '/bin/bash'
+}
+
+exec { 'mfold-setup':
+    command => 'sh /home/shmir/shmir/scripts/mfold.sh',
+    path    => ['/usr/bin', '/usr/sbin', '/bin'],
+    user    => 'root',
+    require => Package[$packages]
 }
 
 exec { 'python-packages':
