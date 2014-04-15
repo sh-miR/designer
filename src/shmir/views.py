@@ -5,7 +5,7 @@ Handlers
 
 from flask import send_file
 
-from shmir_api.decorators import require_json
+from shmir.decorators import require_json
 from mfold import zipped_mfold
 
 

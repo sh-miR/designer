@@ -111,7 +111,7 @@ supervisor::program { 'shmir':
 
 supervisor::program { 'shmir-dev':
     ensure  => present,
-    command => '/usr/bin/python2.7 /home/shmir/shmir/src/shmir_api/app.py',
+    command => '/usr/bin/python2.7 /home/shmir/shmir/src/shmir/app.py',
     user    => 'vagrant',
     group   => 'vagrant',
     require => [ Exec['setup'], File['/etc/shmir.conf'] ]

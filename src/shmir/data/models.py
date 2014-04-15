@@ -1,9 +1,26 @@
-from settings import Base
 from sqlalchemy import (
+    create_engine,
     Column,
     Integer,
     Unicode
 )
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import (
+    scoped_session,
+    sessionmaker
+)
+
+from settings import (
+    FCONN
+)
+
+
+engine = create_engine(FCONN)
+
+db_session = scoped_session(sessionmaker(
+    autocommit=False, autoflush=False, bind=engine
+))
+Base = declarative_base()
 
 
 class Backbone(Base):
