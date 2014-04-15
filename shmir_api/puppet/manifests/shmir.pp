@@ -66,6 +66,23 @@ exec { 'add-restart':
   unless    => 'grep -Fxq "alias restart=\'sudo supervisorctl restart all\'" .bashrc',
 }
 
+file { '/home/vagrant/.bashrc':
+    mode    => 644,
+    owner   => vagrant,
+    group   => vagrant,
+    content => "# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
+
+# User specific aliases and functions
+alias restart='sudo supervisorctl restart all'
+alias sctl='sudo supervisorctl'",
+    require => Exec['setup']
+}
+
 file { '/etc/shmir.conf':
     mode => 644,
     owner => root,
@@ -90,4 +107,12 @@ supervisor::program { 'shmir':
     user        => 'vagrant',
     group       => 'vagrant',
     require     => [ Exec['setup'], File['/etc/shmir.conf'] ]
+}
+
+supervisor::program { 'shmir-dev':
+    ensure  => present,
+    command => '/usr/bin/python2.7 /home/shmir/shmir/src/shmir_api/app.py',
+    user    => 'vagrant',
+    group   => 'vagrant',
+    require => [ Exec['setup'], File['/etc/shmir.conf'] ]
 }

@@ -49,12 +49,19 @@ shmir
 ```
 will automatize it ASAP
 
-finally it will be served on http://127.0.0.1:8080
+finally it will be served on two instances
+
+- with nginx and setuptools: http://127.0.0.1:8080
+- developer instance only with Twisted: http://127.0.0.1:8090
 
 exaple curl:
 
 ```
-curl -i -X POST -H 'Content-Type: application/json; charset=utf-8' http://127.0.0.1:8080/database/backbone/get_all
+curl -i -X POST -H 'Content-Type: application/json; charset=utf-8' -d '{"data": "UTGCCAAA"}' http://127.0.0.1:8080/mfold
+```
+or
+```
+curl -i -X POST -H 'Content-Type: application/json; charset=utf-8' -d '{"data": "UTGCCAAA"}' http://127.0.0.1:8090/mfold
 ```
 
 Backbone RNA database
