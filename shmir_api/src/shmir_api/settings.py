@@ -30,8 +30,10 @@ db_session = scoped_session(sessionmaker(
 ))
 Base = declarative_base()
 
-# Mfold script path
-MFOLD_PATH = '/home/shmir/shmir/mfold/mfold'
+# Mfold
+MFOLD_PATH = '/home/shmir/shmir/mfold/mfold'  # script path
+MFOLD_FILES = '/tmp/mfold_files'  # Path where mfold fiels are generated
+
 
 # nucleotide type for ncbi database
 NUCLEOTIDE_DB = 'nucleotide'
