@@ -12,7 +12,7 @@ from zipfile import ZipFile
 
 
 # URL = 'http://150.254.78.155:5000/mfold'
-URL = 'http://127.0.0.1:5000/mfold'
+URL = 'http://127.0.0.1:8080/mfold'
 
 HEADERS = {'content-type': 'application/json'}
 

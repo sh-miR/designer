@@ -9,3 +9,4 @@ cd mfold-3.6
 ./configure --prefix=/usr/local
 make all
 sudo make install
+sudo ln -s /usr/local/bin/* /usr/bin
