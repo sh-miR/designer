@@ -4,8 +4,8 @@
 """
 
 from math import ceil
-from ss import parse_ss
-from ss import parse_score
+from .ss import parse_ss
+from .ss import parse_score
 
 
 def score_frame(frame, frame_ss_file, orginal_frame):

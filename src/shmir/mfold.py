@@ -1,9 +1,17 @@
-from os import chdir, fork, waitpid, path, makedirs, execl
-
-from os.path import dirname
-from os.path import join
-from os.path import basename
-
+from os import (
+    chdir,
+    fork,
+    waitpid,
+    path,
+    makedirs,
+    execl,
+    getcwd,
+)
+from os.path import (
+    dirname,
+    join,
+    basename,
+)
 from datetime import datetime
 
 from zipfile import ZipFile
@@ -17,10 +25,11 @@ def delegate_mfold(input, current_datetime=None):
     """
     Executes mfold in order to generate appropriate files
     """
+    programm_path = getcwd()
     if not current_datetime:
         current_datetime = datetime.now().strftime('%H:%M:%S-%d-%m-%y')
 
-    tmp_dirname = join(dirname(__file__), MFOLD_FILES, current_datetime)
+    tmp_dirname = join(MFOLD_FILES, current_datetime)
 
     if not path.exists(tmp_dirname):
         makedirs(tmp_dirname)
@@ -35,6 +44,8 @@ def delegate_mfold(input, current_datetime=None):
         execl(MFOLD_PATH, 'mfold', 'SEQ={} P=1'.format(current_datetime))
 
     waitpid(pid, 0)
+
+    chdir(programm_path)
 
     return map(
         lambda path: join(tmp_dirname, path.format(current_datetime)),

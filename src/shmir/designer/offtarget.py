@@ -3,7 +3,7 @@ import cStringIO
 
 
 
-def Blast_offtarget(fasta_string):
+def blast_offtarget(fasta_string):
     result_handle = NCBIWWW.qblast("blastn", "refseq_rna", fasta_string, entrez_query="txid9606 [ORGN]", megablast=True)
     blast_results = result_handle.read()
     blast_in = cStringIO.StringIO(blast_results)
@@ -23,6 +23,6 @@ def Blast_offtarget(fasta_string):
                      print "  Match: %s..." % hsp.match[:57]
                      print "  Sbjct: %s..." % hsp.sbjct[:57]
     print "Done"
-    
-    
+
+
 fasta_string="TTGCTGTGTGAGGCAGAACCTGCGGGGGCAGGGGCGGGCTGGTTCCCTGGCCAGCCATTGGCAGAGTCCG"

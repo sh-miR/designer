@@ -4,7 +4,7 @@
 """
 
 from string import maketrans
-from backbone import Backbone
+# from backbone import Backbone
 
 
 def reverse_complement(sequence):
@@ -53,8 +53,8 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
     input: string, string, int, int, pri-miRNA objects
     output: List of list of Backbone object, 1st strand 2nd strand   """
     frames = []
-    for elem in all_frames:
-        frame = Backbone(**elem)
+    for frame in all_frames:
+        # frame = Backbone(**elem)
         if shift_left == frame.miRNA_end_5 and shift_right == frame.miRNA_end_5:
             frames.append([frame, seq1, seq2])
         else:
