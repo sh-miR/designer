@@ -1,23 +1,15 @@
 from os import (
-    chdir,
     fork,
     waitpid,
-    path,
-    makedirs,
     execl,
-    getcwd,
-)
-from os.path import (
-    dirname,
-    join,
-    basename,
+    path
 )
 from datetime import datetime
 
+from contextmanagers import mfold_path
 from zipfile import ZipFile
 from settings import (
     MFOLD_PATH,
-    MFOLD_FILES,
 )
 
 
@@ -25,43 +17,41 @@ def delegate_mfold(input, current_datetime=None):
     """
     Executes mfold in order to generate appropriate files
     """
-    programm_path = getcwd()
     if not current_datetime:
         current_datetime = datetime.now().strftime('%H:%M:%S-%d-%m-%y')
 
-    tmp_dirname = join(MFOLD_FILES, current_datetime)
+    with mfold_path(current_datetime) as tmp_dirname:
+        with open(current_datetime, "w") as f:
+            f.write(input)
 
-    if not path.exists(tmp_dirname):
-        makedirs(tmp_dirname)
-    chdir(tmp_dirname)
+        pid = fork()
 
-    with open(current_datetime, "w") as f:
-        f.write(input)
+        if pid == 0:
+            execl(MFOLD_PATH, 'mfold', 'SEQ={} P=1'.format(current_datetime))
 
-    pid = fork()
+        waitpid(pid, 0)
 
-    if pid == 0:
-        execl(MFOLD_PATH, 'mfold', 'SEQ={} P=1'.format(current_datetime))
+        result = map(
+            lambda mfold_path: path.join(
+                tmp_dirname, mfold_path.format(current_datetime)
+            ),
+            ["{}_1.pdf", "{}_1.ss"]
+        )
 
-    waitpid(pid, 0)
-
-    chdir(programm_path)
-
-    return map(
-        lambda path: join(tmp_dirname, path.format(current_datetime)),
-        ["{}_1.pdf", "{}_1.ss"]
-    )
+    return result
 
 
 def zipped_mfold(input):
     current_datetime = datetime.now().strftime('%H:%M:%S-%d-%m-%y')
     files = delegate_mfold(input, current_datetime)
-    tmp_dirname = dirname(files[0])
 
-    zipname = "{}.zip".format(current_datetime)
+    with mfold_path(current_datetime) as tmp_dirname:
+        zipname = "{}.zip".format(current_datetime)
 
-    with ZipFile(zipname, 'w') as mfold_zip:
-        for filename in map(basename, files):
-            mfold_zip.write(filename)
+        with ZipFile(zipname, 'w') as mfold_zip:
+            for filename in map(path.basename, files):
+                mfold_zip.write(filename)
 
-    return join(tmp_dirname, zipname)
+        result = path.join(tmp_dirname, zipname)
+
+    return result
