@@ -13,8 +13,8 @@ setup(
         'Flask==0.10.1',
         'psycopg2==2.5.2',
         'sqlalchemy==0.9.2',
-        'sqlsoup==0.9.0',
         'Twisted==13.2.0',
+        'celery==3.1.11'
     ],
     test_suite='shmir.tests',
 )

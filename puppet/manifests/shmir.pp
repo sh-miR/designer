@@ -1,4 +1,5 @@
-include nginx, supervisor
+include nginx
+include supervisor
 
 class { 'postgresql::server':
     postgres_password => 'shmir_dev'
@@ -17,11 +18,29 @@ package { 'ius-release':
     require => Package['epel-release']
 }
 
-$packages = [ 'python27', 'python27-distribute', 'python27-devel', 'gcc', 'gcc-c++', 'postgresql-devel', 'vim-minimal', 'gcc-gfortran', 'texlive-utils' ]
+$packages = [
+    'python27',
+    'python27-distribute',
+    'python27-devel',
+    'gcc',
+    'gcc-c++',
+    'erlang',
+    'postgresql-devel',
+    'vim-minimal',
+    'gcc-gfortran',
+    'texlive-utils'
+]
 package { $packages:
     ensure      => installed,
     require     => Package['ius-release']
 }
+
+class { '::rabbitmq':
+    port              => '5672',
+    require           => Package[$packages]
+}
+
+class { 'redis': }
 
 user { 'shmir':
     ensure => 'present',
