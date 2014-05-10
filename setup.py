@@ -8,7 +8,7 @@ setup(
     package_dir={'': 'src'},
     packages=find_packages('src'),
     entry_points=('[console_scripts]\n'
-                  'shmir = shmir.app:run'),
+                  'shmir = shmir:run'),
     install_requires=[
         'Flask==0.10.1',
         'psycopg2==2.5.2',

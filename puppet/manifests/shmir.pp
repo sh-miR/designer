@@ -120,6 +120,14 @@ nginx::resource::vhost { 'localhost':
     proxy => 'http://127.0.0.1:8080'
 }
 
+supervisor::program { 'shmir-celery':
+    ensure  => present,
+    command => 'celery -A shmir.celery.celery worker',
+    user    => 'vagrant',
+    group   => 'vagrant',
+    require     => [ Exec['setup'], File['/etc/shmir.conf'] ]
+}
+
 supervisor::program { 'shmir':
     ensure      => present,
     command     => '/usr/bin/shmir',
@@ -130,7 +138,7 @@ supervisor::program { 'shmir':
 
 supervisor::program { 'shmir-dev':
     ensure  => present,
-    command => '/usr/bin/python2.7 /home/shmir/shmir/src/shmir/app.py',
+    command => '/usr/bin/python2.7 /home/shmir/shmir/src/shmir/__init__.py',
     user    => 'vagrant',
     group   => 'vagrant',
     require => [ Exec['setup'], File['/etc/shmir.conf'] ]
