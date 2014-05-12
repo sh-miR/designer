@@ -22,8 +22,6 @@ app = Flask(__name__)
 # pylint: disable=W0611
 import shmir.views
 
-#app.add_url_rule('/mfold', 'mfold', views.get_mfold)
-
 
 def run_twisted(port):
     log.startLogging(sys.stdout)

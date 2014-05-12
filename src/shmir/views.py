@@ -3,7 +3,10 @@ Handlers
 
 """
 
-from flask import send_file
+from flask import (
+    jsonify,
+    send_file
+)
 
 from shmir import app
 from shmir.celery import get_async_result
@@ -21,14 +24,19 @@ def mfold_d(data=None, **kwargs):
     return {'task_id': resource.task_id}
 
 
-@app.route("/mfold/result/<task_id>")
+@app.route('/mfold/result/<task_id>')
 def mfold_result(task_id):
-    retval = get_async_result(delegate_mfold, task_id)
-    return repr(retval)
+    return jsonify(get_async_result(delegate_mfold, task_id))
 
-'''@app.route('/mfold', methods=['POST'])
-@require_json(jsonify=False)
-def get_mfold(data=None, **kwargs):
-    filename = zipped_mfold(data)
 
-    return send_file(filename)'''
+@app.route('/mfold/file/<task_id>')
+def mfold_files(task_id):
+    try:
+        files = get_async_result(delegate_mfold, task_id)['data']
+    except KeyError:
+        return jsonify({
+            'status': 'error', 'error': 'Task is not ready or has failed'
+        })
+    zip_file = zipped_mfold(task_id, files)
+
+    return send_file(zip_file)

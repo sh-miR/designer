@@ -41,9 +41,15 @@ celery = make_celery(app)
 
 def get_async_result(task, task_id, timeout=1.0):
     """
-    Gets AsyncResult of task, excepting TimeoutError
+    Gets AsyncResult of task, excepting TimeoutError and handling failures
     """
+    if task.AsyncResult(task_id).failed():
+        return {'status': 'fail'}
+
     try:
-        return task.AsyncResult(task_id).get(timeout=timeout)
+        return {
+            'status': 'ok',
+            'data': task.AsyncResult(task_id).get(timeout=timeout)
+        }
     except TimeoutError:
-        return None
+        return {'status': 'in progress'}
