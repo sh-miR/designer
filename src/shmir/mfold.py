@@ -25,7 +25,6 @@ def delegate_mfold(self, input, current_datetime=None):
         pid = fork()
 
         if pid == 0:
-            #execl(MFOLD_PATH, 'mfold', 'SEQ={} P=1'.format(self.request.id))
             execl(MFOLD_PATH, 'mfold', 'SEQ=sequence')
 
         waitpid(pid, 0)

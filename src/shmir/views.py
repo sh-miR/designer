@@ -17,15 +17,15 @@ from shmir.mfold import (
 )
 
 
-@app.route('/mfold', methods=['POST'])
+@app.route('/mfold/', methods=['POST'])
 @require_json()
-def mfold_d(data=None, **kwargs):
+def mfold_data_handler(data=None, **kwargs):
     resource = delegate_mfold.delay(data)
     return {'task_id': resource.task_id}
 
 
 @app.route('/mfold/result/<task_id>')
-def mfold_result(task_id):
+def mfold_task_result(task_id):
     return jsonify(get_async_result(delegate_mfold, task_id))
 
 
