@@ -35,7 +35,3 @@ def run_twisted(port):
 
 def run():
     run_twisted(8080)
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8090)
