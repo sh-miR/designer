@@ -9,6 +9,8 @@ from twisted.web.server import Site
 from twisted.web.wsgi import WSGIResource
 from twisted.python import log
 
+from data.models import Backbone
+
 from flask import Flask
 
 import views
@@ -35,4 +37,5 @@ def run():
 
 
 if __name__ == '__main__':
+    Backbone.generate_regexp_all()
     app.run(host='0.0.0.0', port=8090)

@@ -23,9 +23,10 @@ CREATE TABLE backbone (
             /*homogeneity of products (length), 0 for very
              nonhomogenous, 5 for completely homogenous */
     "miRBase_link" varchar(200) NOT NULL,
-    "active_strand" integer NOT NULL
+    "active_strand" integer NOT NULL,
             /*5 for 5' end, 3 for 3' end, 0 for equally active,
             1 for not known*/
+    "regexp" varchar(1000)
 );
 
 CREATE TABLE immuno (
@@ -74,5 +75,3 @@ INSERT INTO backbone VALUES
     'CATAACAACGAAGAGGGATGGTATTGCTCCTGTAACTCGGAACTGGAGAGG', 'CCTCTCCAGTTCCGAGTTACAGGAGCAATACCATCCCTCTTCGTTGTTATG',
     'GTTGAACTGGGAACC', 'GGTTCCCAGTTCAAC', 'AGGCAAGAUGCUGGCAUAGCU', 'UGCUAUGCCAACAUAUUGCCAU',
     21, 19, 23, -1, 1,  '/structures/miR-31', 4, 'http://www.mirbase.org/cgi-bin/mirna_entry.pl?acc=MI0000089', 5);
-
-
