@@ -24,11 +24,18 @@ There will be two apps running:
 sh-miR designer REST-ful API will serve following URL-s:
 
 - */mfold/* - delegates task for mfold with given sequence, requires JSON with *data* paramerer
+
 example:
+
 ```curl -i -X POST -H 'Content-Type: application/json; charset=utf-8' -d '{"data": "UTGCCAAA"}' http://127.0.0.1:8080/mfold/```
 - */mfold/result/<task_id>* - getting info about delegated task
+
 example:
+
 ```curl -i -X GET http://127.0.0.1:8080/mfold/result/f3591b31-49d9-47da-ae78-898792db26a5```
+
 - */mfold/file/<task_id>* - getting the zip file with results if task is completed
+
 example:
+
 ```curl -i -X GET http://127.0.0.1:8080/mfold/file/f3591b31-49d9-47da-ae78-898792db26a5```
