@@ -9,7 +9,7 @@ from shmir.settings import (
     CELERY_RESULT_BACKEND
 )
 
-__all__ = ['celery', 'get_async_result']
+__all__ = ['celery', 'get_async_result', 'task']
 
 
 def make_celery(app_obj):
@@ -37,9 +37,10 @@ def make_celery(app_obj):
 
 
 celery = make_celery(app)
+task = celery.task
 
 
-def get_async_result(task, task_id, timeout=1.0):
+def get_async_result(task, task_id, timeout=1.0, only_status=False):
     """
     Gets AsyncResult of task, excepting TimeoutError and handling failures
     """
@@ -47,9 +48,13 @@ def get_async_result(task, task_id, timeout=1.0):
         return {'status': 'fail'}
 
     try:
-        return {
-            'status': 'ok',
-            'data': task.AsyncResult(task_id).get(timeout=timeout)
-        }
+        data = task.AsyncResult(task_id).get(timeout=timeout)
     except TimeoutError:
         return {'status': 'in progress'}
+
+    result = {'status': 'ok'}
+
+    if not only_status:
+        result['data'] = data
+
+    return result

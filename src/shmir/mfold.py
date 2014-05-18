@@ -7,13 +7,14 @@ from os import (
 from zipfile import ZipFile
 
 from shmir.contextmanagers import mfold_path
-from shmir.celery import celery
+#from shmir.celery import celery
+from shmir.celery import task
 from shmir.settings import (
     MFOLD_PATH,
 )
 
 
-@celery.task(bind=True)
+@task(bind=True)
 def delegate_mfold(self, input, current_datetime=None):
     """
     Executes mfold in order to generate appropriate files
