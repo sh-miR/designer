@@ -1,15 +1,15 @@
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from testing import create_backbone, TestModelBase
 from sqlalchemy import Column, Integer
-import settings
+
+from shmir.data import models
+from shmir.testing import (
+    create_backbone,
+    TestModelBase
+)
 
 
 class TestModelBaseCase(TestModelBase):
 
-    class TestModel(settings.Base):
+    class TestModel(models.Base):
         __tablename__ = 'test_table'
 
         id = Column(Integer, primary_key=True)
