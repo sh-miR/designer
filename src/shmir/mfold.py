@@ -14,12 +14,8 @@ from shmir.settings import (
 )
 
 
-@task(bind=True)
-def delegate_mfold(self, input, current_datetime=None):
-    """
-    Executes mfold in order to generate appropriate files
-    """
-    with mfold_path(self.request.id) as tmp_dirname:
+def execute_mfold(path_id, input):
+    with mfold_path(path_id) as tmp_dirname:
         with open('sequence', "w") as f:
             f.write(input)
 
@@ -38,6 +34,14 @@ def delegate_mfold(self, input, current_datetime=None):
         )
 
     return result
+
+
+@task(bind=True)
+def delegate_mfold(self, input, current_datetime=None):
+    """
+    Executes mfold in order to generate appropriate files
+    """
+    return execute_mfold(self.request.id, input)
 
 
 def zipped_mfold(current_datetime, files):

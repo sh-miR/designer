@@ -6,6 +6,7 @@ setup(
     author=('Sylwester Brzeczkowski, Mateusz Flieger, Piotr Rogulski, '
             'Michal Rostecki, Martyna Urbanek'),
     package_dir={'': 'src'},
+    package_data={'': ['structures/*']},
     packages=find_packages('src'),
     entry_points=('[console_scripts]\n'
                   'shmir = shmir:run'),

@@ -7,7 +7,7 @@ class { 'postgresql::server':
 
 package { 'epel-release':
     ensure => installed,
-    source => 'http://ftp.pbone.net/pub/fedora/epel/6/x86_64/epel-release-6-8.noarch.rpm',
+    source => 'http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm',
     provider => rpm
 }
 
@@ -20,7 +20,7 @@ package { 'ius-release':
 
 $packages = [
     'python27',
-    'python27-distribute',
+    'python27-setuptools',
     'python27-devel',
     'gcc',
     'gcc-c++',

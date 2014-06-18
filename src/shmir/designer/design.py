@@ -8,8 +8,6 @@
 import sys
 from copy import deepcopy
 
-from celery.task.sets import subtask
-
 from .validators import check_input
 from .utils import (
     get_frames,
@@ -26,19 +24,16 @@ from shmir.data.models import (
     db_session,
 )
 from shmir.mfold import (
-    delegate_mfold,
+    execute_mfold,
     zipped_mfold
 )
 
 
-def fold_and_score(seq1, seq2, frame_tuple, original):
+def fold_and_score(path_id, seq1, seq2, frame_tuple, original):
     score = 0
     frame, insert1, insert2 = frame_tuple
 
-    mfold_resource = subtask(delegate_mfold).delay(
-        frame.template(insert1, insert2)
-    )
-    mfold_data = mfold_resource.get(timeout=1)
+    mfold_data = execute_mfold(path_id, frame.template(insert1, insert2))
 
     if 'error' in mfold_data:
         return mfold_data
@@ -49,8 +44,8 @@ def fold_and_score(seq1, seq2, frame_tuple, original):
     return (score, frame.template(insert1, insert2), frame.name, pdf)
 
 
-@task()
-def design_and_score(input_str):
+@task(bind=True)
+def design_and_score(self, input_str):
     """
     Main function takes string input and returns the best results depending
     on scoring. Single result include sh-miR sequence,
@@ -71,7 +66,7 @@ def design_and_score(input_str):
     frames_with_score = []
     for frame_tuple, original in zip(frames, original_frames):
         frames_with_score.append(
-            fold_and_score(seq1, seq2, frame_tuple, original)
+            fold_and_score(self.request.id, seq1, seq2, frame_tuple, original)
         )
     sorted_frames = [elem for elem in sorted(frames_with_score,
                      key=lambda x: x[0], reverse=True) if elem[0] > 60]

@@ -50,7 +50,7 @@ def designer_task_status(task_id):
 
 @app.route('/designer/result/<task_id>')
 def designer_task_result(task_id):
-    return jsonify()
+    return jsonify(get_async_result(design_and_score, task_id))
 
 
 @app.route('/designer/<data>')
