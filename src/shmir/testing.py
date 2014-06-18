@@ -1,13 +1,15 @@
 """
 Module to help testing
 """
+import unittest
+
+from sqlalchemy import create_engine
 from sqlalchemy.orm import (
     scoped_session,
     sessionmaker
 )
-from sqlalchemy import create_engine
+
 from shmir.data import models
-import unittest
 
 
 class TestModelBase(unittest.TestCase):

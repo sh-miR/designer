@@ -1,4 +1,13 @@
-from sqlalchemy import Column, Integer
+import sys
+import os
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+)
+
+from sqlalchemy import (
+    Column,
+    Integer
+)
 
 from shmir.data import models
 from shmir.testing import (
