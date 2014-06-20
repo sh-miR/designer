@@ -22,7 +22,7 @@ def mfold_task_status(task_id):
     return jsonify(get_async_result(delegate_mfold, task_id, only_status=True))
 
 
-@app.route('/mfold/file/<task_id>')
+@app.route('/mfold/result/<task_id>')
 def mfold_files(task_id):
     try:
         files = get_async_result(delegate_mfold, task_id)['data']
