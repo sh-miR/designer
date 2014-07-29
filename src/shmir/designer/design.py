@@ -6,6 +6,7 @@
 """
 
 import sys
+import uuid
 from copy import deepcopy
 
 from .validators import check_input
@@ -29,7 +30,8 @@ from shmir.mfold import (
 )
 
 
-def fold_and_score(path_id, seq1, seq2, frame_tuple, original):
+def fold_and_score(seq1, seq2, frame_tuple, original):
+    path_id = unicode(uuid.uuid1())
     score = 0
     frame, insert1, insert2 = frame_tuple
 
@@ -66,7 +68,7 @@ def design_and_score(self, input_str):
     frames_with_score = []
     for frame_tuple, original in zip(frames, original_frames):
         frames_with_score.append(
-            fold_and_score(self.request.id, seq1, seq2, frame_tuple, original)
+            fold_and_score(seq1, seq2, frame_tuple, original)
         )
     sorted_frames = [elem for elem in sorted(frames_with_score,
                      key=lambda x: x[0], reverse=True) if elem[0] > 60]
