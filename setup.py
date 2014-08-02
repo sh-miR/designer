@@ -15,7 +15,8 @@ setup(
         'psycopg2==2.5.2',
         'sqlalchemy==0.9.2',
         'Twisted==13.2.0',
-        'celery==3.1.11'
+        'celery==3.1.11',
+        'flower==0.7.2'
     ],
     test_suite='shmir.tests',
 )

@@ -4,6 +4,8 @@ Flask server which provide RESTful api for mfold and shmiR designer
 
 import sys
 
+from kombu import Queue
+
 from twisted.internet import reactor
 from twisted.web.server import Site
 from twisted.web.wsgi import WSGIResource
@@ -19,6 +21,14 @@ __all__ = ['app', 'run']
 
 app = Flask(__name__)
 
+
+# TODO move config to proper place
+app.config['CELERYD_FORCE_EXECV'] = True
+# app.config['CELERY_QUEUES'] = (
+#     Queue('celery', routing_key='celery'),
+#     Queue('transient', routing_key='transient',
+#           delivery_mode=1),
+# )
 
 # Import which is needed to register views
 # pylint: disable=W0611

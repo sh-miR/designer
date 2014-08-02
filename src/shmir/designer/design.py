@@ -9,6 +9,8 @@ import sys
 import uuid
 from copy import deepcopy
 
+from celery import group
+
 from .validators import check_input
 from .utils import (
     get_frames,
@@ -30,8 +32,13 @@ from shmir.mfold import (
 )
 
 
-def fold_and_score(seq1, seq2, frame_tuple, original):
-    path_id = unicode(uuid.uuid1())
+@task(bind=True)
+def fold_and_score(
+    self,
+    seq1, seq2, frame_tuple, original
+):
+    path_id = self.request.id
+    #path_id = unicode(uuid.uuid1())
     score = 0
     frame, insert1, insert2 = frame_tuple
 
@@ -65,15 +72,17 @@ def design_and_score(self, input_str):
                         shift_left, shift_right,
                         deepcopy(original_frames))
 
-    frames_with_score = []
-    for frame_tuple, original in zip(frames, original_frames):
-        frames_with_score.append(
-            fold_and_score(seq1, seq2, frame_tuple, original)
-        )
+    #frames_with_score = []
+    #for frame_tuple, original in zip(frames, original_frames):
+    #    frames_with_score.append(
+    #        fold_and_score(seq1, seq2, frame_tuple, original)
+    #    )
+
+    frames_with_score = group([
+        fold_and_score.s(seq1, seq2, frame_tuple, original)
+        for frame_tuple, original in zip(frames, original_frames)
+    ]).apply_async().get()
+
     sorted_frames = [elem for elem in sorted(frames_with_score,
                      key=lambda x: x[0], reverse=True) if elem[0] > 60]
     return {'result': sorted_frames[:3]}
-
-
-if __name__ == '__main__':
-    print(design_and_score(" ".join(sys.argv[1:])))
