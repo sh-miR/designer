@@ -2,7 +2,7 @@ from os import (
     fork,
     waitpid,
     execl,
-    path
+    path,
 )
 from sys import stderr
 from zipfile import ZipFile
@@ -59,7 +59,7 @@ def zipped_mfold(task_id, files):
 
         with ZipFile(zipname, 'w') as mfold_zip:
             for filename in files:
-                mfold_zip.write(filename)
+                mfold_zip.write(filename, "results/{}".format(path.basename(filename)))
 
         result = path.join(tmp_dirname, zipname)
 
