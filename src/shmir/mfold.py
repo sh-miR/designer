@@ -4,6 +4,7 @@ from os import (
     execl,
     path
 )
+from sys import stderr
 from zipfile import ZipFile
 
 from shmir.contextmanagers import mfold_path
@@ -14,39 +15,47 @@ from shmir.settings import (
 )
 
 
-def execute_mfold(path_id, input):
+def execute_mfold(path_id, sequence):
     with mfold_path(path_id) as tmp_dirname:
         with open('sequence', "w") as f:
-            f.write(input)
+            f.write(sequence)
 
         pid = fork()
 
         if pid == 0:
             execl(MFOLD_PATH, 'mfold', 'SEQ=sequence')
 
-        waitpid(pid, 0)
+        process_id, status = waitpid(pid, 0)
+        # Status in 0 - 255
+        status = (status & 0xff00) >> 8
 
-        result = map(
-            lambda mfold_path: path.join(
-                tmp_dirname, mfold_path.format('sequence')
-            ),
-            ["{}_1.pdf", "{}_1.ss"]
-        )
+        if status == 0:
+            result = map(
+                lambda mfold_path: path.join(
+                    tmp_dirname, mfold_path.format('sequence')
+                ),
+                ["{}_1.pdf", "{}_1.ss"]
+            )
+            result = [] #wat?
+        else:
+            result = {
+                'error': stderr.read()
+            }
 
     return result
 
 
 @task(bind=True)
-def delegate_mfold(self, input, current_datetime=None):
+def delegate_mfold(self, sequence):
     """
     Executes mfold in order to generate appropriate files
     """
-    return execute_mfold(self.request.id, input)
+    return execute_mfold(self.request.id, sequence)
 
 
-def zipped_mfold(current_datetime, files):
-    with mfold_path(current_datetime) as tmp_dirname:
-        zipname = "{}.zip".format(current_datetime)
+def zipped_mfold(task_id, files):
+    with mfold_path(task_id) as tmp_dirname:
+        zipname = "{}.zip".format(task_id)
 
         with ZipFile(zipname, 'w') as mfold_zip:
             for filename in files:

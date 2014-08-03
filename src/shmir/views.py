@@ -24,6 +24,8 @@ def mfold_task_status(task_id):
 
 @app.route('/mfold/result/<task_id>')
 def mfold_files(task_id):
+    import pdb; pdb.set_trace()
+
     try:
         files = get_async_result(delegate_mfold, task_id)['data']
     except KeyError:
