@@ -81,7 +81,7 @@ def design_and_score(self, input_str):
     frames_with_score = group([
         fold_and_score.s(seq1, seq2, frame_tuple, original)
         for frame_tuple, original in zip(frames, original_frames)
-    ]).apply_async().get()
+    ]).apply_async(queue='subtasks').get()
 
     sorted_frames = [elem for elem in sorted(frames_with_score,
                      key=lambda x: x[0], reverse=True) if elem[0] > 60]

@@ -33,6 +33,10 @@ def make_celery(app_obj):
 
     celery.Task = ContextTask
 
+    celery.control.add_consumer(
+        'subtasks', reply=True, destination=['subtasks@example.com']
+    )
+
     return celery
 
 

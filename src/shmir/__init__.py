@@ -24,11 +24,11 @@ app = Flask(__name__)
 
 # TODO move config to proper place
 app.config['CELERYD_FORCE_EXECV'] = True
-# app.config['CELERY_QUEUES'] = (
-#     Queue('celery', routing_key='celery'),
-#     Queue('transient', routing_key='transient',
-#           delivery_mode=1),
-# )
+app.config['CELERY_QUEUES'] = (
+    Queue('celery', routing_key='celery'),
+    Queue('subtasks', routing_key='transient',
+          delivery_mode=1),
+)
 
 # Import which is needed to register views
 # pylint: disable=W0611
