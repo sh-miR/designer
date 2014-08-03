@@ -36,10 +36,10 @@ def execute_mfold(path_id, sequence):
                 ),
                 ["{}_1.pdf", "{}_1.ss"]
             )
-            result = [] #wat?
         else:
             result = {
-                'error': stderr.read()
+                'status': 'error',
+                'error': "No foldings",
             }
 
     return result

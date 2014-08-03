@@ -24,16 +24,16 @@ def mfold_task_status(task_id):
 
 @app.route('/mfold/result/<task_id>')
 def mfold_files(task_id):
-    import pdb; pdb.set_trace()
-
     try:
         files = get_async_result(delegate_mfold, task_id)['data']
     except KeyError:
         return jsonify({
             'status': 'error', 'error': 'Task is not ready or has failed'
         })
-    zip_file = zipped_mfold(task_id, files)
+    if 'error' in files:
+        return jsonify(files)
 
+    zip_file = zipped_mfold(task_id, files)
     return send_file(zip_file)
 
 
