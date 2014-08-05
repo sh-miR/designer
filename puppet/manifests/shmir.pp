@@ -97,7 +97,7 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # User specific aliases and functions
-alias restart='sudo supervisorctl restart all'
+alias restart='sudo supervisorctl restart all && celery purge && sudo service rabbitmq-server restart'
 alias sctl='sudo supervisorctl'",
     require => Exec['setup']
 }
