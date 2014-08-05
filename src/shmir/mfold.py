@@ -59,7 +59,7 @@ def zipped_mfold(task_id, files):
 
         with ZipFile(zipname, 'w') as mfold_zip:
             for filename in files:
-                mfold_zip.write(filename, "results/{}/{}".format(*filename.split('/')[-2:]))
+                mfold_zip.write(filename, "{}/{}".format(*filename.split('/')[-2:]))
 
         result = path.join(tmp_dirname, zipname)
 
