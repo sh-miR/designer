@@ -15,6 +15,7 @@ setup(
         'psycopg2==2.5.2',
         'sqlalchemy==0.9.2',
         'Twisted==13.2.0',
+        'redis==2.10.2',
         'celery==3.1.11',
         'flower==0.7.2'
     ],

@@ -33,10 +33,7 @@ from shmir.mfold import (
 
 
 @task(bind=True)
-def fold_and_score(
-    self,
-    seq1, seq2, frame_tuple, original
-):
+def fold_and_score(self, seq1, seq2, frame_tuple, original):
     path_id = self.request.id
     #path_id = unicode(uuid.uuid1())
     score = 0
@@ -50,11 +47,14 @@ def fold_and_score(
     score += score_frame(frame_tuple, ss, original)
     score += score_homogeneity(original)
     score += score_two_same_strands(seq1, original)
-    return (score, frame.template(insert1, insert2), frame.name, pdf)
+    return (
+        score, frame.template(insert1, insert2), frame.name,
+        #pdf,
+        path_id
+    )
 
 
-@task(bind=True)
-def design_and_score(self, input_str):
+def design_and_score(input_str):
     """
     Main function takes string input and returns the best results depending
     on scoring. Single result include sh-miR sequence,
@@ -81,8 +81,12 @@ def design_and_score(self, input_str):
     frames_with_score = group([
         fold_and_score.s(seq1, seq2, frame_tuple, original)
         for frame_tuple, original in zip(frames, original_frames)
-    ]).apply_async(queue='subtasks').get()
+    ]).apply_async()
 
-    sorted_frames = [elem for elem in sorted(frames_with_score,
+    '''sorted_frames = [elem for elem in sorted(frames_with_score,
                      key=lambda x: x[0], reverse=True) if elem[0] > 60]
-    return {'result': sorted_frames[:3]}
+    return {'result': sorted_frames[:3]}'''
+
+    frames_with_score.save()
+
+    return frames_with_score.id

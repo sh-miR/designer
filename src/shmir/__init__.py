@@ -29,6 +29,7 @@ app.config['CELERY_QUEUES'] = (
     Queue('subtasks', routing_key='transient',
           delivery_mode=1),
 )
+app.config['DEBUG'] = True
 
 # Import which is needed to register views
 # pylint: disable=W0611

@@ -125,7 +125,16 @@ supervisor::program { 'shmir-celery':
     command => 'celery -A shmir.celery.celery worker',
     user    => 'vagrant',
     group   => 'vagrant',
-    require     => [ Exec['setup'], File['/etc/shmir.conf'] ]
+    require => [ Exec['setup'], File['/etc/shmir.conf'] ]
+}
+
+supervisor::program { 'shmir-celery-dev':
+    ensure    => present,
+    command   => 'celery -A shmir.celery.celery worker',
+    directory => '/home/shmir/shmir/src/',
+    user      => 'vagrant',
+    group     => 'vagrant',
+    require   => [ Exec['setup'], File['/etc/shmir.conf'] ]
 }
 
 supervisor::program { 'flower':

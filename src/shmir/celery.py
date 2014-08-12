@@ -9,7 +9,7 @@ from shmir.settings import (
     CELERY_RESULT_BACKEND
 )
 
-__all__ = ['celery', 'get_async_result', 'task']
+__all__ = ['celery', 'get_async_result', 'get_group_async_result', 'task']
 
 
 def make_celery(app_obj):
@@ -33,9 +33,9 @@ def make_celery(app_obj):
 
     celery.Task = ContextTask
 
-    celery.control.add_consumer(
-        'subtasks', reply=True
-    )
+    # celery.control.add_consumer(
+    #     'subtasks', reply=True
+    # )
 
     return celery
 
@@ -44,21 +44,38 @@ celery = make_celery(app)
 task = celery.task
 
 
+def _get_async_result(result, timeout=1.0, only_status=False):
+    """
+    Excepting TimeoutError and handling failures of every result
+    """
+    if result.failed():
+        return {'status': 'fail'}
+
+    try:
+        data = result.get(timeout=timeout)
+    except TimeoutError:
+        return {'status': 'in progress'}
+
+    response = {'status': 'ok'}
+
+    if not only_status:
+        response['data'] = data
+
+    return response
+
+
 def get_async_result(task, task_id, timeout=1.0, only_status=False):
     """
     Gets AsyncResult of task, excepting TimeoutError and handling failures
     """
-    if task.AsyncResult(task_id).failed():
-        return {'status': 'fail'}
+    result = task.AsyncResult(task_id)
+    return _get_async_result(result, timeout=timeout, only_status=only_status)
 
-    try:
-        data = task.AsyncResult(task_id).get(timeout=timeout)
-    except TimeoutError:
-        return {'status': 'in progress'}
 
-    result = {'status': 'ok'}
-
-    if not only_status:
-        result['data'] = data
-
-    return result
+def get_group_async_result(task_id, timeout=1.0, only_status=False):
+    """
+    Gets GroupResult of tasks group, excepting TimeoutError and handling
+    failures
+    """
+    result = celery.GroupResult.restore(task_id)
+    return _get_async_result(result, timeout=timeout, only_status=only_status)

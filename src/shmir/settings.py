@@ -21,7 +21,7 @@ def get_config(section, option):
 
 get_db_config = lambda option: get_config('database', option)
 # RabbitMQ will be default broker and result backend if they're not defined
-get_celery_config = lambda option: get_config('celery', option) or 'amqp://'
+# get_celery_config = lambda option: get_config('celery', option) or 'amqp://'
 
 # SQLAlchemy engine
 
@@ -33,8 +33,10 @@ FCONN = CONN_STR.format(
 )
 
 # Celery
-CELERY_BROKER = get_celery_config('broker')
-CELERY_RESULT_BACKEND = get_celery_config('result_backend')
+# CELERY_BROKER = get_celery_config('broker')
+# CELERY_RESULT_BACKEND = get_celery_config('result_backend')
+CELERY_BROKER = 'amqp://'
+CELERY_RESULT_BACKEND = 'redis://'
 
 # Mfold
 MFOLD_PATH = '/home/shmir/shmir/mfold/mfold'  # script path
