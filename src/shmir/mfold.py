@@ -50,7 +50,7 @@ def execute_mfold(path_id, sequence, zip_file=True):
             )
 
             if zip_file:
-                result = zipped_mfold(path_id, result)
+                result = zipped_mfold(path_id, result, tmp_dirname)
         else:
             result = {
                 'status': 'error',
