@@ -47,11 +47,10 @@ def fold_and_score(self, seq1, seq2, frame_tuple, original):
     score += score_two_same_strands(seq1, original)
 
     with mfold_path(self.request.id) as tmp_dirname:
-        zip_file = zipped_mfold(self.request.id, [pdf, ss], tmp_dirname)
+        zipped_mfold(self.request.id, [pdf, ss], tmp_dirname)
 
     return (
-        score, frame.template(insert1, insert2), frame.name, path_id,
-        zip_file
+        score, frame.template(insert1, insert2), frame.name, path_id
     )
 
 
