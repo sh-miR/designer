@@ -1,24 +1,17 @@
 from contextlib import contextmanager
-from os import (
-    chdir,
-    getcwd,
-    makedirs,
-    path
-)
+import os
 
-from settings import MFOLD_FILES
+from shmir import utils
 
 
 @contextmanager
-def mfold_path(current_datetime):
-    programm_path = getcwd()
+def mfold_path(task_id):
+    programm_path = os.getcwd()
 
-    tmp_dirname = path.join(MFOLD_FILES, current_datetime)
+    tmp_dirname = utils.get_dirname(task_id)
 
-    if not path.exists(tmp_dirname):
-        makedirs(tmp_dirname)
-    chdir(tmp_dirname)
+    os.chdir(tmp_dirname)
 
     yield tmp_dirname
 
-    chdir(programm_path)
+    os.chdir(programm_path)

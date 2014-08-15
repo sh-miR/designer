@@ -3,6 +3,8 @@ Handlers
 
 """
 
+import operator
+
 from flask import (
     jsonify,
     send_file
@@ -14,10 +16,8 @@ from shmir.celery import (
     get_group_async_result
 )
 from shmir.designer.design import design_and_score
-from shmir.mfold import (
-    delegate_mfold,
-    zipped_mfold
-)
+from shmir.mfold import delegate_mfold
+from shmir.utils import get_zip_path
 
 
 @app.route('/mfold/status/<task_id>')
@@ -27,17 +27,20 @@ def mfold_task_status(task_id):
 
 @app.route('/mfold/result/<task_id>')
 def mfold_files(task_id):
-    try:
-        files = get_async_result(delegate_mfold, task_id)['data']
-    except KeyError:
+    status = get_async_result(delegate_mfold, task_id, only_status=True)
+    if status['status'] == 'fail':
         return jsonify({
             'status': 'error', 'error': 'Task is not ready or has failed'
         })
-    if 'error' in files:
-        return jsonify(files)
 
-    zip_file = zipped_mfold(task_id, files)
-    return send_file(zip_file)
+    zip_file = get_zip_path(task_id)
+
+    try:
+        return send_file(zip_file)
+    except IOError:
+        return jsonify({
+            'status': 'error', 'error': 'File does not exist'
+        })
 
 
 @app.route('/mfold/<data>')
@@ -53,7 +56,15 @@ def designer_task_status(task_id):
 
 @app.route('/designer/result/<task_id>')
 def designer_task_result(task_id):
-    return jsonify(get_group_async_result(task_id))
+    result = get_group_async_result(task_id)
+
+    result['data'] = [
+        elem for elem in sorted(
+            result['data'], key=operator.itemgetter(0), reverse=True
+        ) if elem[0] > 60
+    ][:3]
+
+    return jsonify(result)
 
 
 @app.route('/designer/<data>')

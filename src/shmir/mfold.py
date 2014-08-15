@@ -4,18 +4,30 @@ from os import (
     execl,
     path,
 )
-from sys import stderr
 from zipfile import ZipFile
 
 from shmir.contextmanagers import mfold_path
-#from shmir.celery import celery
 from shmir.celery import task
 from shmir.settings import (
     MFOLD_PATH,
 )
 
 
-def execute_mfold(path_id, sequence):
+def zipped_mfold(task_id, files, tmp_dirname):
+    zipname = "{}.zip".format(task_id)
+
+    with ZipFile(zipname, 'w') as mfold_zip:
+        for filename in files:
+            mfold_zip.write(
+                filename, "{}/{}".format(*filename.split('/')[-2:])
+            )
+
+    result = path.join(tmp_dirname, zipname)
+
+    return result
+
+
+def execute_mfold(path_id, sequence, zip_file=True):
     with mfold_path(path_id) as tmp_dirname:
         with open('sequence', "w") as f:
             f.write(sequence)
@@ -36,6 +48,9 @@ def execute_mfold(path_id, sequence):
                 ),
                 ["{}_1.pdf", "{}_1.ss"]
             )
+
+            if zip_file:
+                result = zipped_mfold(path_id, result)
         else:
             result = {
                 'status': 'error',
@@ -51,16 +66,3 @@ def delegate_mfold(self, sequence):
     Executes mfold in order to generate appropriate files
     """
     return execute_mfold(self.request.id, sequence)
-
-
-def zipped_mfold(task_id, files):
-    with mfold_path(task_id) as tmp_dirname:
-        zipname = "{}.zip".format(task_id)
-
-        with ZipFile(zipname, 'w') as mfold_zip:
-            for filename in files:
-                mfold_zip.write(filename, "{}/{}".format(*filename.split('/')[-2:]))
-
-        result = path.join(tmp_dirname, zipname)
-
-    return result
