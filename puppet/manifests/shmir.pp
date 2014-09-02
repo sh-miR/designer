@@ -1,4 +1,5 @@
-include nginx, supervisor
+include nginx
+include supervisor
 
 class { 'postgresql::server':
     postgres_password => 'shmir_dev'
@@ -6,22 +7,40 @@ class { 'postgresql::server':
 
 package { 'epel-release':
     ensure => installed,
-    source => 'http://ftp.pbone.net/pub/fedora/epel/6/x86_64/epel-release-6-8.noarch.rpm',
+    source => 'http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm',
     provider => rpm
 }
 
 package { 'ius-release':
     ensure      => installed,
-    source      => 'http://dl.iuscommunity.org/pub/ius/stable/CentOS/6/x86_64/ius-release-1.0-11.ius.centos6.noarch.rpm',
+    source      => 'http://dl.iuscommunity.org/pub/ius/stable/CentOS/6/x86_64/ius-release-1.0-13.ius.centos6.noarch.rpm',
     provider    => rpm,
     require => Package['epel-release']
 }
 
-$packages = [ 'python27', 'python27-distribute', 'python27-devel', 'gcc', 'gcc-c++', 'postgresql-devel', 'vim-minimal', 'gcc-gfortran', 'texlive-utils' ]
+$packages = [
+    'python27',
+    'python27-setuptools',
+    'python27-devel',
+    'gcc',
+    'gcc-c++',
+    'erlang',
+    'postgresql-devel',
+    'vim-minimal',
+    'gcc-gfortran',
+    'texlive-utils'
+]
 package { $packages:
     ensure      => installed,
     require     => Package['ius-release']
 }
+
+class { '::rabbitmq':
+    port              => '5672',
+    require           => Package[$packages]
+}
+
+class { 'redis': }
 
 user { 'shmir':
     ensure => 'present',
@@ -78,7 +97,7 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # User specific aliases and functions
-alias restart='sudo supervisorctl restart all'
+alias restart='sudo supervisorctl restart all && celery purge && sudo service rabbitmq-server restart'
 alias sctl='sudo supervisorctl'",
     require => Exec['setup']
 }
@@ -101,6 +120,31 @@ nginx::resource::vhost { 'localhost':
     proxy => 'http://127.0.0.1:8080'
 }
 
+supervisor::program { 'shmir-celery':
+    ensure  => present,
+    command => 'celery -A shmir.celery.celery worker',
+    user    => 'vagrant',
+    group   => 'vagrant',
+    require => [ Exec['setup'], File['/etc/shmir.conf'] ]
+}
+
+supervisor::program { 'shmir-celery-dev':
+    ensure    => present,
+    command   => 'celery -A shmir.celery.celery worker',
+    directory => '/home/shmir/shmir/src/',
+    user      => 'vagrant',
+    group     => 'vagrant',
+    require   => [ Exec['setup'], File['/etc/shmir.conf'] ]
+}
+
+supervisor::program { 'flower':
+    ensure  => present,
+    command => 'celery -A shmir.celery.celery flower',
+    user    => 'vagrant',
+    group   => 'vagrant',
+    require => [ Exec['setup'], File['/etc/shmir.conf'] ]
+}
+
 supervisor::program { 'shmir':
     ensure      => present,
     command     => '/usr/bin/shmir',
@@ -111,7 +155,7 @@ supervisor::program { 'shmir':
 
 supervisor::program { 'shmir-dev':
     ensure  => present,
-    command => '/usr/bin/python2.7 /home/shmir/shmir/src/shmir/app.py',
+    command => '/usr/bin/python2.7 /home/shmir/shmir/src/shmir/__main__.py',
     user    => 'vagrant',
     group   => 'vagrant',
     require => [ Exec['setup'], File['/etc/shmir.conf'] ]
