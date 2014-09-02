@@ -13,7 +13,7 @@ package { 'epel-release':
 
 package { 'ius-release':
     ensure      => installed,
-    source      => 'http://dl.iuscommunity.org/pub/ius/stable/CentOS/6/x86_64/ius-release-1.0-11.ius.centos6.noarch.rpm',
+    source      => 'http://dl.iuscommunity.org/pub/ius/stable/CentOS/6/x86_64/ius-release-1.0-13.ius.centos6.noarch.rpm',
     provider    => rpm,
     require => Package['epel-release']
 }
