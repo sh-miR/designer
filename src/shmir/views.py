@@ -13,7 +13,7 @@ from flask import (
 from shmir import app
 from shmir.celery import (
     get_async_result,
-    get_group_async_result
+    # get_group_async_result
 )
 from shmir.designer.design import design_and_score
 from shmir.mfold import delegate_mfold
@@ -51,23 +51,27 @@ def mfold_data_handler(data):
 
 @app.route('/designer/status/<task_id>')
 def designer_task_status(task_id):
-    return jsonify(get_group_async_result(task_id, only_status=True))
+    return jsonify(get_async_result(
+        design_and_score, task_id, only_status=True)
+    )
 
 
 @app.route('/designer/result/<task_id>')
 def designer_task_result(task_id):
-    result = get_group_async_result(task_id)
+    result = get_async_result(design_and_score, task_id)
 
-    result['data'] = [
-        elem for elem in sorted(
-            result['data'], key=operator.itemgetter(0), reverse=True
-        ) if elem[0] > 60
-    ][:3]
+    # result['data'] = [
+    #     elem for elem in sorted(
+    #         result['data'], key=operator.itemgetter(0), reverse=True
+    #     ) if elem[0] > 60
+    # ][:3]
 
     return jsonify(result)
 
 
 @app.route('/designer/<data>')
 def design_handler(data):
-    tasks_id = design_and_score(data.upper())
-    return jsonify({'task_id': tasks_id})
+    # tasks_id = design_and_score(data.upper())
+    # return jsonify({'task_id': tasks_id})
+    resource = design_and_score.delay(data.upper())
+    return jsonify({'task_id': resource.task_id})

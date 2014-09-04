@@ -122,7 +122,7 @@ nginx::resource::vhost { 'localhost':
 
 supervisor::program { 'shmir-celery':
     ensure  => present,
-    command => 'celery -A shmir.celery.celery worker',
+    command => 'celery -A shmir.celery.celery worker -Ofair',
     user    => 'vagrant',
     group   => 'vagrant',
     require => [ Exec['setup'], File['/etc/shmir.conf'] ]
@@ -130,7 +130,7 @@ supervisor::program { 'shmir-celery':
 
 supervisor::program { 'shmir-celery-dev':
     ensure    => present,
-    command   => 'celery -A shmir.celery.celery worker',
+    command   => 'celery -A shmir.celery.celery worker -Ofair',
     directory => '/home/shmir/shmir/src/',
     user      => 'vagrant',
     group     => 'vagrant',

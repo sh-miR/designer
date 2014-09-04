@@ -3,6 +3,7 @@
     :synopsis: provides the executable program
 """
 
+import operator
 from copy import deepcopy
 
 from celery import group
@@ -54,6 +55,7 @@ def fold_and_score(self, seq1, seq2, frame_tuple, original):
     )
 
 
+@task
 def design_and_score(input_str):
     """
     Main function takes string input and returns the best results depending
@@ -75,7 +77,16 @@ def design_and_score(input_str):
     frames_with_score = group([
         fold_and_score.s(seq1, seq2, frame_tuple, original)
         for frame_tuple, original in zip(frames, original_frames)
-    ]).apply_async()
-    frames_with_score.save()
+    ]).apply_async().get()
 
-    return frames_with_score.id
+    sorted_frames = [
+        elem for elem in sorted(
+            frames_with_score, key=operator.itemgetter(0), reverse=True
+        ) if elem[0] > 60
+    ][:3]
+
+    # frames_with_score.save()
+
+    # return frames_with_score.id
+
+    return {'result': sorted_frames}
