@@ -115,13 +115,6 @@ exec { 'create-database':
     require => [ Package[$packages], Class['postgresql::server'] ]
 }
 
-exec { 'add-restart':
-  command   => 'echo "alias restart=\'sudo supervisorctl restart all\'" >> .bashrc',
-  path    => ['/usr/bin', '/usr/sbin', '/bin'],
-  cwd       => '/home/vagrant',
-  unless    => 'grep -Fxq "alias restart=\'sudo supervisorctl restart all\'" .bashrc',
-}
-
 file { '/home/vagrant/.bashrc':
     mode    => 644,
     owner   => vagrant,
