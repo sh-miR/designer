@@ -13,8 +13,8 @@ sys.path.insert(
     0, os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 )
 
-from shmir import app
+from shmir import run
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8090)
+    run()

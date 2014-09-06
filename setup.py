@@ -1,3 +1,4 @@
+from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
 setup(
@@ -11,13 +12,7 @@ setup(
     entry_points=('[console_scripts]\n'
                   'shmir = shmir:run'),
     install_requires=[
-        'Flask==0.10.1',
-        'psycopg2==2.5.2',
-        'sqlalchemy==0.9.2',
-        'Twisted==13.2.0',
-        'redis==2.10.2',
-        'celery==3.1.11',
-        'flower==0.7.2'
+        str(package.req) for package in parse_requirements('requirements.txt')
     ],
     test_suite='shmir.tests',
 )

@@ -25,3 +25,9 @@
 [submodule "puppet/modules/redis"]
 	path = puppet/modules/redis
 	url = git@github.com:fsalum/puppet-redis.git
+[submodule "puppet/modules/python"]
+	path = puppet/modules/python
+	url = git@github.com:stankevich/puppet-python.git
+[submodule "puppet/modules/firewall"]
+	path = puppet/modules/firewall
+	url = git@github.com:puppetlabs/puppetlabs-firewall.git
