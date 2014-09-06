@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 from celery import Celery
 from celery.exceptions import TimeoutError
+from kombu import Exchange, Queue
 
 from shmir import app
 from shmir.settings import (
@@ -35,9 +36,14 @@ def make_celery(app_obj):
 
     celery.Task = ContextTask
 
-    # celery.control.add_consumer(
-    #     'subtasks', reply=True
-    # )
+    celery.conf.update(
+        CELERY_TASK_SERIALIZER='pickle',
+        CELERY_TIMEZONE="Europe/Warsaw",
+        CELERY_QUEUES=(
+            Queue('main', Exchange('main')),
+            Queue('subtasks', Exchange('subtasks')),
+        )
+    )
 
     return celery
 

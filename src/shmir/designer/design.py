@@ -7,6 +7,7 @@ import operator
 from copy import deepcopy
 
 from celery import group
+from celery.result import allow_join_result
 
 from .validators import check_input
 from .utils import (
@@ -74,10 +75,11 @@ def design_and_score(input_str):
                         shift_left, shift_right,
                         deepcopy(original_frames))
 
-    frames_with_score = group([
-        fold_and_score.s(seq1, seq2, frame_tuple, original)
-        for frame_tuple, original in zip(frames, original_frames)
-    ]).apply_async().get()
+    with allow_join_result():
+        frames_with_score = group([
+            fold_and_score.s(seq1, seq2, frame_tuple, original).set(queue="subtasks")
+            for frame_tuple, original in zip(frames, original_frames)
+        ]).apply_async().get()
 
     sorted_frames = [
         elem for elem in sorted(

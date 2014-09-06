@@ -3,6 +3,7 @@ Flask server which provide RESTful api for mfold and shmiR designer
 """
 
 import sys
+import os
 
 from kombu import Queue
 
@@ -21,6 +22,8 @@ __all__ = ['app', 'run']
 
 app = Flask(__name__)
 
+# Fixing celery path
+sys.path.append(os.getcwd())
 
 # TODO move config to proper place
 app.config['CELERYD_FORCE_EXECV'] = True
