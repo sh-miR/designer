@@ -56,6 +56,7 @@ $packages = [
     'gcc-gfortran',
     # 'texlive-utils'
     'texlive-epstopdf',
+    'ImageMagick',
     'iptables-services'
 ]
 
