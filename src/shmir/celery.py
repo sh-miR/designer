@@ -10,9 +10,7 @@ from shmir.settings import (
     CELERY_RESULT_BACKEND
 )
 
-__all__ = ['celery', 'get_async_result',
-           # 'get_group_async_result',
-           'task']
+__all__ = ['celery', 'get_async_result', 'task']
 
 
 def make_celery(app_obj):
@@ -78,12 +76,3 @@ def get_async_result(task, task_id, timeout=1.0, only_status=False):
     """
     result = task.AsyncResult(task_id)
     return _get_async_result(result, timeout=timeout, only_status=only_status)
-
-
-# def get_group_async_result(task_id, timeout=1.0, only_status=False):
-#     """
-#     Gets GroupResult of tasks group, excepting TimeoutError and handling
-#     failures
-#     """
-#     result = celery.GroupResult.restore(task_id)
-#     return _get_async_result(result, timeout=timeout, only_status=only_status)

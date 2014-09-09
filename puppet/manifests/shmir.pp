@@ -1,4 +1,5 @@
-include firewall
+# TODO use this module and check why it has problems with Centos/RHEL 7
+# include firewall
 include nginx
 include supervisor
 
@@ -19,19 +20,6 @@ class { 'postgresql::server':
     postgres_password => 'shmir_dev'
 }
 
-# package { 'epel-release':
-#     ensure => installed,
-#     source => 'http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm',
-#     provider => rpm
-# }
-
-# package { 'ius-release':
-#     ensure      => installed,
-#     source      => 'http://dl.iuscommunity.org/pub/ius/stable/CentOS/6/x86_64/ius-release-1.0-13.ius.centos6.noarch.rpm',
-#     provider    => rpm,
-#     require => Package['epel-release']
-# }
-
 class { 'python':
     version    => 'system',
     pip        => true,
@@ -43,18 +31,12 @@ class { 'python':
 python::requirements { '/home/shmir/shmir/requirements.txt': }
 
 $packages = [
-    # 'python27',
-    # 'python27-setuptools',
-    # 'python27-pip',
-    # 'python27-devel',
     'gcc',
     'gcc-c++',
-    # 'erlang',
     'postgresql-devel',
     'redis',
     'vim-minimal',
     'gcc-gfortran',
-    # 'texlive-utils'
     'texlive-epstopdf',
     'ImageMagick',
     'iptables-services'
@@ -71,21 +53,28 @@ service { 'redis':
     require  => Package[$packages]
 }
 
-firewall { '100 allow http and https access':
-    port    => [80, 443, 5555, 8080],
-    proto   => tcp,
-    action  => accept,
-    require => Package[$packages]
+# firewall { '100 allow http and https access':
+#     port    => [80, 443, 5555, 8080],
+#     proto   => tcp,
+#     action  => accept,
+#     require => Package[$packages],
+#     before  => Exec['persist-firewall']
+# }
+
+service { 'firewalld':
+    ensure => running,
+    provider => systemd
+}
+
+exec { 'firewall-conf':
+    command => '/usr/bin/firewall-cmd --permanent --zone=public --add-port=80/tcp && /usr/bin/firewall-cmd --permanent --zone=public --add-port=80/tcp && /usr/bin/firewall-cmd --reload',
+    require => Service['firewalld']
 }
 
 class { '::rabbitmq':
     port    => '5672',
     require => [ Package['epel-release'], Package[$packages] ]
 }
-
-# class { 'redis':
-#     require => Package['epel-release']
-# }
 
 user { 'shmir':
     ensure => 'present',

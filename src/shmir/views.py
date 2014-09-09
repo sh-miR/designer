@@ -3,18 +3,13 @@ Handlers
 
 """
 
-import operator
-
 from flask import (
     jsonify,
     send_file
 )
 
 from shmir import app
-from shmir.celery import (
-    get_async_result,
-    # get_group_async_result
-)
+from shmir.celery import get_async_result
 from shmir.designer.design import design_and_score
 from shmir.mfold import delegate_mfold
 from shmir.utils import get_zip_path
@@ -59,12 +54,6 @@ def designer_task_status(task_id):
 @app.route('/designer/result/<task_id>')
 def designer_task_result(task_id):
     result = get_async_result(design_and_score, task_id)
-
-    # result['data'] = [
-    #     elem for elem in sorted(
-    #         result['data'], key=operator.itemgetter(0), reverse=True
-    #     ) if elem[0] > 60
-    # ][:3]
 
     return jsonify(result)
 
