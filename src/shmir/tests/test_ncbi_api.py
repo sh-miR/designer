@@ -28,10 +28,10 @@ class TestGetDataFromNcbi(unittest.TestCase):
         ncbi_api.get_data(self.GOOD_MRNA)
 
         mock_esearch.assert_called_with(
-            **dict(term='NM_001128164.1', db=self.DATA_BASE, retmode='json')
+            term='NM_001128164.1', db=self.DATA_BASE, retmode='json'
         )
         mock_efetch.assert_called_once_with(
-            **dict(db=self.DATA_BASE, id=ids, rettype='fasta', retmode='text')
+            db=self.DATA_BASE, id=ids, rettype='fasta', retmode='text'
         )
 
     @patch.object(ncbi_api, 'get_data')
