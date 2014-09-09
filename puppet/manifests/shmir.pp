@@ -139,7 +139,7 @@ nginx::resource::vhost { 'localhost':
 
 supervisor::program { 'shmir-celery-worker1':
     ensure    => present,
-    command   => '/usr/bin/celery -A shmir.celery.celery worker -l info -n worker1.%%h -Q main',
+    command   => '/usr/bin/celery -A shmir.async.celery worker -l info -n worker1.%%h -Q main',
     directory => '/home/shmir/shmir/src/',
     user      => 'vagrant',
     group     => 'vagrant',
@@ -148,7 +148,7 @@ supervisor::program { 'shmir-celery-worker1':
 
 supervisor::program { 'shmir-celery-worker2':
     ensure    => present,
-    command   => '/usr/bin/celery -A shmir.celery.celery worker -l info -n worker2.%%h -Q subtasks',
+    command   => '/usr/bin/celery -A shmir.async.celery worker -l info -n worker2.%%h -Q subtasks',
     directory => '/home/shmir/shmir/src/',
     user      => 'vagrant',
     group     => 'vagrant',
@@ -157,7 +157,7 @@ supervisor::program { 'shmir-celery-worker2':
 
 supervisor::program { 'flower':
     ensure    => present,
-    command   => '/usr/bin/celery -A shmir.celery.celery flower',
+    command   => '/usr/bin/celery -A shmir.async.celery flower',
     directory => '/home/shmir/shmir/src/',
     user      => 'vagrant',
     group     => 'vagrant',

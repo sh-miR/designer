@@ -9,7 +9,7 @@ from flask import (
 )
 
 from shmir import app
-from shmir.celery import get_async_result
+from shmir.async import get_async_result
 from shmir.designer.design import design_and_score
 from shmir.mfold import delegate_mfold
 from shmir.utils import get_zip_path
