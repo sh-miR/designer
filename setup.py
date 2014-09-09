@@ -1,3 +1,4 @@
+from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
 setup(
@@ -6,15 +7,12 @@ setup(
     author=('Sylwester Brzeczkowski, Mateusz Flieger, Piotr Rogulski, '
             'Michal Rostecki, Martyna Urbanek'),
     package_dir={'': 'src'},
+    package_data={'': ['structures/*']},
     packages=find_packages('src'),
     entry_points=('[console_scripts]\n'
-                  'shmir = shmir.app:run'),
+                  'shmir = shmir:run'),
     install_requires=[
-        'Flask==0.10.1',
-        'psycopg2==2.5.2',
-        'sqlalchemy==0.9.2',
-        'sqlsoup==0.9.0',
-        'Twisted==13.2.0',
+        str(package.req) for package in parse_requirements('requirements.txt')
     ],
     test_suite='shmir.tests',
 )

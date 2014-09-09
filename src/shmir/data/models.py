@@ -14,7 +14,7 @@ from sqlalchemy.orm import (
     sessionmaker
 )
 
-from settings import (
+from shmir.settings import (
     FCONN
 )
 

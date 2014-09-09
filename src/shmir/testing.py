@@ -1,14 +1,15 @@
 """
 Module to help testing
 """
+import unittest
+
+from sqlalchemy import create_engine
 from sqlalchemy.orm import (
     scoped_session,
     sessionmaker
 )
-from sqlalchemy import create_engine
-from settings import Base
-from data import models
-import unittest
+
+from shmir.data import models
 
 
 class TestModelBase(unittest.TestCase):
@@ -18,7 +19,7 @@ class TestModelBase(unittest.TestCase):
         self.db_session = scoped_session(sessionmaker(
             autocommit=False, autoflush=False, bind=self.engine
         ))
-        Base.metadata.create_all(bind=self.engine)
+        models.Base.metadata.create_all(bind=self.engine)
 
     def tearDown(self):
         self.engine.dispose()

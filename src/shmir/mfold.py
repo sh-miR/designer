@@ -2,56 +2,67 @@ from os import (
     fork,
     waitpid,
     execl,
-    path
+    path,
 )
-from datetime import datetime
-
-from contextmanagers import mfold_path
 from zipfile import ZipFile
-from settings import (
+
+from shmir.contextmanagers import mfold_path
+from shmir.celery import task
+from shmir.settings import (
     MFOLD_PATH,
 )
 
 
-def delegate_mfold(input, current_datetime=None):
-    """
-    Executes mfold in order to generate appropriate files
-    """
-    if not current_datetime:
-        current_datetime = datetime.now().strftime('%H:%M:%S-%d-%m-%y')
+def zipped_mfold(task_id, files, tmp_dirname):
+    zipname = "{}.zip".format(task_id)
 
-    with mfold_path(current_datetime) as tmp_dirname:
-        with open(current_datetime, "w") as f:
-            f.write(input)
+    with ZipFile(zipname, 'w') as mfold_zip:
+        for filename in files:
+            mfold_zip.write(
+                filename, "{}/{}".format(*filename.split('/')[-2:])
+            )
+
+    result = path.join(tmp_dirname, zipname)
+
+    return result
+
+
+def execute_mfold(path_id, sequence, zip_file=True):
+    with mfold_path(path_id) as tmp_dirname:
+        with open('sequence', "w") as f:
+            f.write(sequence)
 
         pid = fork()
 
         if pid == 0:
-            execl(MFOLD_PATH, 'mfold', 'SEQ={} P=1'.format(current_datetime))
+            execl(MFOLD_PATH, 'mfold', 'SEQ=sequence')
 
-        waitpid(pid, 0)
+        process_id, status = waitpid(pid, 0)
+        # Status in 0 - 255
+        status = (status & 0xff00) >> 8
 
-        result = map(
-            lambda mfold_path: path.join(
-                tmp_dirname, mfold_path.format(current_datetime)
-            ),
-            ["{}_1.pdf", "{}_1.ss"]
-        )
+        if status == 0:
+            result = map(
+                lambda mfold_path: path.join(
+                    tmp_dirname, mfold_path.format('sequence')
+                ),
+                ["{}_1.pdf", "{}_1.ss"]
+            )
 
-    return result
-
-
-def zipped_mfold(input):
-    current_datetime = datetime.now().strftime('%H:%M:%S-%d-%m-%y')
-    files = delegate_mfold(input, current_datetime)
-
-    with mfold_path(current_datetime) as tmp_dirname:
-        zipname = "{}.zip".format(current_datetime)
-
-        with ZipFile(zipname, 'w') as mfold_zip:
-            for filename in map(path.basename, files):
-                mfold_zip.write(filename)
-
-        result = path.join(tmp_dirname, zipname)
+            if zip_file:
+                result = zipped_mfold(path_id, result, tmp_dirname)
+        else:
+            result = {
+                'status': 'error',
+                'error': "No foldings",
+            }
 
     return result
+
+
+@task(bind=True)
+def delegate_mfold(self, sequence):
+    """
+    Executes mfold in order to generate appropriate files
+    """
+    return execute_mfold(self.request.id, sequence)
