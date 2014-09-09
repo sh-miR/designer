@@ -45,3 +45,4 @@ MFOLD_FILES = '/tmp/mfold_files'  # Path where mfold fiels are generated
 
 # nucleotide type for ncbi database
 NUCLEOTIDE_DB = 'nucleotide'
+EMAIL = 'amupoznan@gmail.com'

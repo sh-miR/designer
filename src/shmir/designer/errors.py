@@ -7,10 +7,21 @@ len_error = "to long or to short"
 patt_error = 'sequence can contain only {actgu} letters'
 
 
-class InputException(Exception):
-    """Exception error class for incorrect input"""
-
+class BaseException(Exception):
     def __init__(self, message=None):
         self.message = message
         logging.error('%s: %s', self.__class__.__name__, self.message)
-        super(InputException, self).__init__(self.message)
+        super(BaseException, self).__init__(self.message)
+
+
+class InputException(BaseException):
+    """Exception error class for incorrect input"""
+    pass
+
+
+class IncorrectDataError(BaseException):
+    pass
+
+
+class NoResultError(BaseException):
+    pass
