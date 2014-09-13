@@ -67,7 +67,7 @@ service { 'firewalld':
 }
 
 exec { 'firewall-conf':
-    command => '/usr/bin/firewall-cmd --permanent --zone=public --add-port=80/tcp && /usr/bin/firewall-cmd --permanent --zone=public --add-port=80/tcp && /usr/bin/firewall-cmd --reload',
+    command => '/usr/bin/firewall-cmd --permanent --zone=public --add-port=80/tcp && /usr/bin/firewall-cmd --permanent --zone=public --add-port=5555/tcp && /usr/bin/firewall-cmd --reload',
     require => Service['firewalld']
 }
 
@@ -87,13 +87,6 @@ exec { 'mfold-setup':
     path    => ['/usr/bin', '/usr/sbin', '/bin'],
     user    => 'root',
 
-    require => Package[$packages]
-}
-
-exec { 'python-packages':
-    command => 'easy_install-2.7 ipdb',
-    path    => ['/usr/bin', '/usr/sbin', '/bin'],
-    user    => 'root',
     require => Package[$packages]
 }
 
@@ -166,7 +159,8 @@ supervisor::program { 'flower':
 
 supervisor::program { 'shmir':
     ensure  => present,
-    command => '/usr/bin/python /home/shmir/shmir/src/shmir/__main__.py',
+    command => '/usr/bin/uwsgi --http :8080 --module shmir --callable app',
+    directory => '/home/shmir/shmir/src/',
     user    => 'vagrant',
     group   => 'vagrant',
     require => [ File['/etc/shmir.conf'], Class['python'] ]
