@@ -13,14 +13,18 @@ from twisted.web.wsgi import WSGIResource
 from twisted.python import log
 
 from flask import Flask
+from flask.ext.cache import Cache
 
 from data.models import Backbone
 
 
 __all__ = ['app', 'run']
 
-
+cache = Cache(config={
+    'CACHE_TYPE': 'redis', 'CACHE_DEFAULT_TIMEOUT': 3600
+})
 app = Flask(__name__)
+cache.init_app(app)
 
 # Fixing celery path
 sys.path.append(os.getcwd())
