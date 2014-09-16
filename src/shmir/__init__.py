@@ -5,7 +5,7 @@ Flask server which provide RESTful api for mfold and shmiR designer
 import sys
 import os
 
-from kombu import Queue
+# from kombu import Queue
 
 from twisted.internet import reactor
 from twisted.web.server import Site
@@ -24,19 +24,20 @@ cache = Cache(config={
     'CACHE_TYPE': 'redis', 'CACHE_DEFAULT_TIMEOUT': 3600
 })
 app = Flask(__name__)
+app.config.from_object('shmir.settings')
 cache.init_app(app)
 
 # Fixing celery path
 sys.path.append(os.getcwd())
 
 # TODO move config to proper place
-app.config['CELERYD_FORCE_EXECV'] = True
-app.config['CELERY_QUEUES'] = (
-    Queue('celery', routing_key='celery'),
-    Queue('subtasks', routing_key='transient',
-          delivery_mode=1),
-)
-app.config['DEBUG'] = True
+# app.config['CELERYD_FORCE_EXECV'] = True
+# app.config['CELERY_QUEUES'] = (
+#     Queue('celery', routing_key='celery'),
+#     Queue('subtasks', routing_key='transient',
+#           delivery_mode=1),
+# )
+# app.config['DEBUG'] = True
 
 # Import which is needed to register views
 # pylint: disable=W0611
