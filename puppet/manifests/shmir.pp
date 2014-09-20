@@ -49,6 +49,7 @@ package { $packages:
 
 service { 'redis':
     ensure   => running,
+    enable   => true,
     provider => systemd,
     require  => Package[$packages]
 }
