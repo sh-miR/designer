@@ -7,7 +7,7 @@ from os import (
 from zipfile import ZipFile
 
 from shmir.contextmanagers import mfold_path
-from shmir.celery import task
+from shmir.async import task
 from shmir.settings import (
     MFOLD_PATH,
 )

@@ -9,7 +9,7 @@ from flask import (
 )
 
 from shmir import app
-from shmir.celery import get_async_result
+from shmir.async import get_async_result
 from shmir.designer.design import design_and_score
 from shmir.mfold import delegate_mfold
 from shmir.utils import get_zip_path
@@ -60,7 +60,5 @@ def designer_task_result(task_id):
 
 @app.route('/designer/<data>')
 def design_handler(data):
-    # tasks_id = design_and_score(data.upper())
-    # return jsonify({'task_id': tasks_id})
     resource = design_and_score.apply_async(args=(data.upper(),), queue='main')
     return jsonify({'task_id': resource.task_id})

@@ -19,7 +19,7 @@ from .score import (
     score_homogeneity,
     score_two_same_strands,
 )
-from shmir.celery import task
+from shmir.async import task
 from shmir.contextmanagers import mfold_path
 from shmir.data.models import (
     Backbone,
