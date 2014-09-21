@@ -17,7 +17,8 @@ cache = Cache(config={
     'CACHE_TYPE': 'redis', 'CACHE_DEFAULT_TIMEOUT': 3600
 })
 app = Flask(__name__)
-app.config.from_object('shmir.settings')
+app.config.from_object(
+    os.environ.get('SHMIR_SETTINGS_MODULE', 'shmir.settings'))
 cache.init_app(app)
 
 # Fixing celery path
