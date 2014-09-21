@@ -19,7 +19,7 @@ from .score import (
     score_homogeneity,
     score_two_same_strands,
 )
-from shmir.celery import task
+from shmir.async import task
 from shmir.contextmanagers import mfold_path
 from shmir.data.models import (
     Backbone,
@@ -86,9 +86,5 @@ def design_and_score(input_str):
             frames_with_score, key=operator.itemgetter(0), reverse=True
         ) if elem[0] > 60
     ][:3]
-
-    # frames_with_score.save()
-
-    # return frames_with_score.id
 
     return {'result': sorted_frames}

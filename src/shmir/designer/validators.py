@@ -14,12 +14,14 @@ def check_complementary_single(seq1, seq2):
 
     input: string, string
     output: int"""
-    seq1, seq2 = seq1.lower(), seq2.lower()
-    tran = {"a": "t",
-            "t": "a",
-            "u": "a",
-            "c": "g",
-            "g": "c"}
+    seq1, seq2 = seq1.upper(), seq2.upper()
+    tran = {
+        "A": "T",
+        "T": "A",
+        "U": "A",
+        "C": "G",
+        "G": "C"
+    }
     seq2 = seq2[::-1]
     mini = float(min(len(seq1), len(seq2)))
     count = 0
@@ -80,15 +82,15 @@ def check_input_single(seq):
     Also rigth end of siRNA is cut if contain 'uu' or 'tt'.
     Input: string;
     The function has no output"""
-    seq = seq.lower().replace('u', 't')
-    pattern = re.compile(r'^[acgt]{19,21}$')
-    cut_warn = "cut 'uu' or 'tt'"
+    seq = seq.upper().replace('U', 'T')
+    pattern = re.compile(r'^[ACGT]{19,21}$')
+    cut_warn = "cut 'UU' or 'TT'"
 
     if not pattern.search(seq):
         if len(seq) > 21 or len(seq) < 19:
             raise errors.InputException('%s' % errors.len_error)
         raise errors.InputException('%s' % errors.patt_error)
-    elif seq[-2:] == "tt" and pattern.search(seq):
+    elif seq[-2:] == "TT" and pattern.search(seq):
         seq = seq[:-2]
         logging.warn(cut_warn)
         return [seq, cut_warn, True]

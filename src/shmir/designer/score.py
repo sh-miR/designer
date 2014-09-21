@@ -74,8 +74,8 @@ def score_homogeneity(original_frame):
 def score_two_same_strands(seq1, original_frame):
     """Input: string, pri-miRNA object.
     The function has no output."""
-    miRNA_s = original_frame.miRNA_s[:2].lower()
-    seq = seq1[:2].lower()
+    miRNA_s = original_frame.miRNA_s[:2].upper()
+    seq = seq1[:2].upper()
     if seq == miRNA_s:
         return 10
     elif seq[0] == miRNA_s[0]:
