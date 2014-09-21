@@ -5,11 +5,6 @@ Flask server which provide RESTful api for mfold and shmiR designer
 import sys
 import os
 
-from twisted.internet import reactor
-from twisted.web.server import Site
-from twisted.web.wsgi import WSGIResource
-from twisted.python import log
-
 from flask import Flask
 from flask.ext.cache import Cache
 
@@ -32,18 +27,4 @@ sys.path.append(os.getcwd())
 # pylint: disable=W0611
 import shmir.views
 
-
-def run_twisted(port):
-    Backbone.generate_regexp_all()
-
-    log.startLogging(sys.stdout)
-
-    resource = WSGIResource(reactor, reactor.getThreadPool(), app)
-    site = Site(resource)
-
-    reactor.listenTCP(port, site, interface="0.0.0.0")
-    reactor.run()
-
-
-def run():
-    run_twisted(8080)
+Backbone.generate_regexp_all()
