@@ -112,7 +112,8 @@ fi
 
 # User specific aliases and functions
 alias restart='sudo supervisorctl restart all && celery purge -f && sudo service rabbitmq-server restart'
-alias sctl='sudo supervisorctl'"
+alias sctl='sudo supervisorctl'
+alias rdb='telnet localhost 6900'"
 }
 
 file { '/etc/shmir.conf':
