@@ -44,7 +44,7 @@ def mfold_files(task_id):
 
 @app.route('/mfold/<data>')
 def mfold_data_handler(data):
-    resource = delegate_mfold.apply_async(args=(data.upper(),), queue='main')
+    resource = delegate_mfold.apply_async(args=(data.upper(),), queue='score')
     return jsonify({'task_id': resource.task_id})
 
 
@@ -64,7 +64,8 @@ def designer_task_result(task_id):
 
 @app.route('/designer/<data>')
 def design_handler(data):
-    resource = design_and_score.apply_async(args=(data.upper(),), queue='main')
+    resource = design_and_score.apply_async(args=(data.upper(),),
+                                            queue='score')
     return jsonify({'task_id': resource.task_id})
 
 

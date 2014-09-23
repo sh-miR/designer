@@ -38,7 +38,8 @@ def make_celery(app_obj):
         CELERY_TASK_SERIALIZER='pickle',
         CELERY_TIMEZONE="Europe/Warsaw",
         CELERY_QUEUES=(
-            Queue('main', Exchange('main')),
+            Queue('design', Exchange('design')),
+            Queue('score', Exchange('score')),
             Queue('subtasks', Exchange('subtasks')),
         )
     )
