@@ -1,1 +1,1 @@
-from .design import design_and_score
+from .design import shmir_from_sirna_score
