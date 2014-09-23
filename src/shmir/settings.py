@@ -59,4 +59,5 @@ NUCLEOTIDE_DB = 'nucleotide'
 EMAIL = 'amupoznan@gmail.com'
 
 # Cache
-TIMEOUT = get_config('cache', 'timeout', 3600)
+CACHE_TYPE = 'redis'
+CACHE_DEFAULT_TIMEOUT = get_config('cache', 'timeout', 3600)

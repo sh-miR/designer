@@ -13,13 +13,10 @@ from data.models import Backbone
 
 __all__ = ['app', 'run']
 
-cache = Cache(config={
-    'CACHE_TYPE': 'redis', 'CACHE_DEFAULT_TIMEOUT': 3600
-})
 app = Flask(__name__)
 app.config.from_object(
     os.environ.get('SHMIR_SETTINGS_MODULE', 'shmir.settings'))
-cache.init_app(app)
+cache = Cache(app)
 
 # Fixing celery path
 sys.path.append(os.getcwd())
