@@ -57,11 +57,10 @@ def add_shifts(start, end, frame_ss, value, current):
     input: start, end, frame_ss, value, current.
     The function has no output"""
     for num in range(end):
-        left, right = frame_ss[num]
         if num >= start:
-            left += value
-        if right != 0 and right > current:
-            right += value
+            frame_ss[num][0] += value
+        if frame_ss[num][1] != 0 and frame_ss[num][1] > current:
+            frame_ss[num][1] += value
 
 
 def score_homogeneity(original_frame):
