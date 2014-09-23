@@ -42,10 +42,10 @@ def score_frame(frame, frame_ss_file, orginal_frame):
         current = position + diff
         add_shifts(position, structure_len, structure_ss, diff, current)
     score = 0
-    for shmir in structure_ss:
-        for template in orginal_score:
-            if shmir == template[0]:
-                score += template[1]
+    for created in structure_ss:
+        for orginal, points in orginal_score:
+            if created == orginal:
+                score += points
     return int(ceil(score/max_score * 100))
 
 
@@ -57,10 +57,11 @@ def add_shifts(start, end, frame_ss, value, current):
     input: start, end, frame_ss, value, current.
     The function has no output"""
     for num in range(end):
+        left, right = frame_ss[num]
         if num >= start:
-            frame_ss[num][0] += value
-        if frame_ss[num][1] != 0 and frame_ss[num][1] > current:
-            frame_ss[num][1] += value
+            left += value
+        if right != 0 and right > current:
+            right += value
 
 
 def score_homogeneity(original_frame):
