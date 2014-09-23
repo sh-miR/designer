@@ -43,7 +43,8 @@ def fold_and_score(self, seq1, seq2, frame_tuple, original):
 
     if 'error' in mfold_data:
         return mfold_data
-    pdf, ss = mfold_data[0], mfold_data[1]
+
+    pdf, ss = mfold_data
     score += score_frame(frame_tuple, ss, original)
     score += score_homogeneity(original)
     score += score_two_same_strands(seq1, original)
@@ -57,7 +58,7 @@ def fold_and_score(self, seq1, seq2, frame_tuple, original):
 
 
 @task
-def design_and_score(input_str):
+def shmir_from_sirna_score(input_str):
     """
     Main function takes string input and returns the best results depending
     on scoring. Single result include sh-miR sequence,
@@ -88,3 +89,8 @@ def design_and_score(input_str):
     ][:3]
 
     return {'result': sorted_frames}
+
+
+@task
+def shmir_from_transcript_sequence():
+    pass

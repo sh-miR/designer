@@ -10,7 +10,7 @@ from flask import (
 
 from shmir import app
 from shmir.async import get_async_result
-from shmir.designer.design import design_and_score
+from shmir.designer.design import shmir_from_sirna_score
 from shmir.mfold import delegate_mfold
 from shmir.utils import get_zip_path
 from data.models import (
@@ -51,20 +51,20 @@ def mfold_data_handler(data):
 @app.route('/designer/status/<task_id>')
 def designer_task_status(task_id):
     return jsonify(get_async_result(
-        design_and_score, task_id, only_status=True)
+        shmir_from_sirna_score, task_id, only_status=True)
     )
 
 
 @app.route('/designer/result/<task_id>')
 def designer_task_result(task_id):
-    result = get_async_result(design_and_score, task_id)
+    result = get_async_result(shmir_from_sirna_score, task_id)
 
     return jsonify(result)
 
 
 @app.route('/designer/<data>')
 def design_handler(data):
-    resource = design_and_score.apply_async(args=(data.upper(),), queue='main')
+    resource = shmir_from_sirna_score.apply_async(args=(data.upper(),), queue='main')
     return jsonify({'task_id': resource.task_id})
 
 
