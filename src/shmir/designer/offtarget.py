@@ -1,4 +1,7 @@
-from Bio.Blast import NCBIWWW, NCBIXML
+from Bio.Blast import (
+    NCBIWWW,
+    NCBIXML,
+)
 import cStringIO
 
 

@@ -113,7 +113,7 @@ class InputData(Base):
     minimum_CG = Column(Integer, nullable=False)
     maximum_CG = Column(Integer, nullable=False)
     scaffold = Column(Unicode(10), default=u'all')
-    stymulatory_squences = Column(Unicode(10), default=u'no_difference')
+    stimulatory_sequences = Column(Unicode(15), default=u'no_difference')
     results = relationship('Result', backref='input_data')
 
 
@@ -124,7 +124,7 @@ class Result(Base):
     __tablename__ = 'result'
 
     id = Column(Integer, primary_key=True)
-    pri_mirna = Column(Unicode(300), nullable=False)
+    sh_mir = Column(Unicode(300), nullable=False)
     score = Column(Integer, nullable=False)
     pdf = Column(Unicode(150), nullable=False)
     input_id = Column(Integer, ForeignKey('input_data.id'))
