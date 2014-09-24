@@ -8,7 +8,10 @@ from flask import (
     send_file
 )
 
-from shmir import app
+from shmir import (
+    app,
+    cache
+)
 from shmir.async import get_async_result
 from shmir.designer.design import design_and_score
 from shmir.mfold import delegate_mfold
@@ -43,6 +46,7 @@ def mfold_files(task_id):
 
 
 @app.route('/mfold/<data>')
+@cache.cached()
 def mfold_data_handler(data):
     resource = delegate_mfold.apply_async(args=(data.upper(),), queue='main')
     return jsonify({'task_id': resource.task_id})
@@ -63,6 +67,7 @@ def designer_task_result(task_id):
 
 
 @app.route('/designer/<data>')
+@cache.cached()
 def design_handler(data):
     resource = design_and_score.apply_async(args=(data.upper(),), queue='main')
     return jsonify({'task_id': resource.task_id})
