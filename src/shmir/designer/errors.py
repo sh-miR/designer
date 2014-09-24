@@ -14,7 +14,7 @@ class BaseException(Exception):
         super(BaseException, self).__init__(self.message)
 
 
-class InputException(BaseException):
+class ValidationError(BaseException):
     """Exception error class for incorrect input"""
     pass
 
