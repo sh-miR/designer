@@ -111,6 +111,15 @@ class Immuno(Base):
     receptor = Column(Unicode(15))
     link = Column(Unicode(100), nullable=False)
 
+    @classmethod
+    def check_is_in_sequence(cls, input_sequence):
+        immunos = db_session.query(cls).all()
+        results = []
+        for immuno in immunos:
+            if immuno.sequence in input_sequence:
+                results.append({'id': immuno.id, 'sequence': immuno.sequence})
+        return results
+
 
 class InputData(Base):
     """
