@@ -132,3 +132,15 @@ def check_input(seq_to_be_check):
             return check_complementary(ch_seq1[0], ch_seq2[0])
     else:
         raise errors.InputException('{}'.format(errors.error))
+
+
+def calculate_gc_content(sequence):
+    sequence = sequence.upper()
+    g_count = sequence.count('G')
+    c_count = sequence.count('C')
+
+    return int((float(g_count + c_count) / len(sequence)) * 100)
+
+
+def validate_gc_content(sequence, min_percent, max_percent):
+    return min_percent <= calculate_gc_content(sequence) <= max_percent
