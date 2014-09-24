@@ -5,7 +5,7 @@ include supervisor
 
 package { 'epel-release':
     ensure   => installed,
-    source   => 'http://ftp.icm.edu.pl/pub/Linux/fedora/linux/epel/7/x86_64/e/epel-release-7-1.noarch.rpm',
+    source   => 'http://ftp.icm.edu.pl/pub/Linux/fedora/linux/epel/7/x86_64/e/epel-release-7-2.noarch.rpm',
     provider => rpm
 }
 
@@ -39,7 +39,8 @@ $packages = [
     'gcc-gfortran',
     'texlive-epstopdf',
     'ImageMagick',
-    'iptables-services'
+    'iptables-services',
+    'telnet'
 ]
 
 package { $packages:
@@ -112,8 +113,7 @@ fi
 
 # User specific aliases and functions
 alias restart='sudo supervisorctl restart all && celery purge -f && sudo service rabbitmq-server restart'
-alias sctl='sudo supervisorctl'
-export PATH=$PATH:/home/shmir/shmir/bin"
+alias sctl='sudo supervisorctl'"
 }
 
 file { '/etc/shmir.conf':

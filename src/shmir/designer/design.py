@@ -92,5 +92,6 @@ def shmir_from_sirna_score(input_str):
 
 
 @task
-def shmir_from_transcript_sequence():
+def shmir_from_transcript_sequence(transcipt_name, minimum_CG, maximum_CG,
+                                   scaffold, stimulatory_sequences):
     pass
