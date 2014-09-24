@@ -11,7 +11,7 @@ def parse_ss(file_name):
         output: list of tuples with two elements"""
     read_data = []
     with open(file_name, "r") as ss_file:
-        for line in ss_file.readlines():
+        for line in ss_file:
             splited = line.split()
             read_data.append(map(int, [splited[0], splited[-1]]))
     return read_data

@@ -13,6 +13,10 @@ from shmir.async import get_async_result
 from shmir.designer.design import design_and_score
 from shmir.mfold import delegate_mfold
 from shmir.utils import get_zip_path
+from data.models import (
+    Backbone,
+    db_session,
+)
 
 
 @app.route('/mfold/status/<task_id>')
@@ -62,3 +66,11 @@ def designer_task_result(task_id):
 def design_handler(data):
     resource = design_and_score.apply_async(args=(data.upper(),), queue='main')
     return jsonify({'task_id': resource.task_id})
+
+
+@app.route('/structures')
+def get_structures():
+    return jsonify({
+        'templates': [str(template.name)
+                      for template in db_session.query(Backbone).all()]
+    })

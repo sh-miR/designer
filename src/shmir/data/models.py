@@ -7,8 +7,13 @@ from sqlalchemy import (
     Integer,
     Unicode,
     event,
+    ForeignKey,
 )
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import (
+    relationship,
+    backref,
+)
 from sqlalchemy.orm import (
     scoped_session,
     sessionmaker
@@ -95,6 +100,38 @@ class Immuno(Base):
     sequence = Column(Unicode(10), nullable=False)
     receptor = Column(Unicode(15))
     link = Column(Unicode(100), nullable=False)
+
+
+class InputData(Base):
+    """
+    Table storing input data to sh-miR algorithm
+    """
+    __tablename__ = 'input_data'
+
+    id = Column(Integer, primary_key=True)
+    transcript_name = Column(Unicode(20), nullable=False)
+    minimum_CG = Column(Integer, nullable=False)
+    maximum_CG = Column(Integer, nullable=False)
+    scaffold = Column(Unicode(10), default=u'all')
+    stimulatory_sequences = Column(Unicode(15), default=u'no_difference')
+    results = relationship('Result', backref='input_data')
+
+
+class Result(Base):
+    """
+    sh-miR results
+    """
+    __tablename__ = 'result'
+
+    id = Column(Integer, primary_key=True)
+    sh_mir = Column(Unicode(300), nullable=False)
+    score = Column(Integer, nullable=False)
+    pdf = Column(Unicode(150), nullable=False)
+    input_id = Column(Integer, ForeignKey('input_data.id'))
+
+
+# Creating tables which does not exist
+Base.metadata.create_all(engine)
 
 
 @event.listens_for(Backbone, 'before_insert')

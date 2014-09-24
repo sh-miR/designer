@@ -1,28 +1,28 @@
-from Bio.Blast import NCBIWWW, NCBIXML
+from Bio.Blast import (
+    NCBIWWW,
+    NCBIXML,
+)
 import cStringIO
 
 
-
 def blast_offtarget(fasta_string):
-    result_handle = NCBIWWW.qblast("blastn", "refseq_rna", fasta_string, entrez_query="txid9606 [ORGN]", megablast=True)
+    result_handle = NCBIWWW.qblast(
+        "blastn", "refseq_rna", fasta_string, entrez_query="txid9606 [ORGN]",
+        expect=100, gapcosts="5 2", genetic_code=1, hitlist_size=100,
+        word_size=len(fasta_string), megablast=True
+    )
     blast_results = result_handle.read()
     blast_in = cStringIO.StringIO(blast_results)
+    count = 0
     for record in NCBIXML.parse(blast_in):
-        print "QUERY: %s" % record.query
-        for align in record.alignments :
-            print " MATCH: %s..." % align.title[:60]
-            for hsp in align.hsps :
-                print " HSP, e=%f, from position %i to %i" \
-                    % (hsp.expect, hsp.query_start, hsp.query_end)
-                if hsp.align_length < 60 :
-                     print "  Query: %s" % hsp.query
-                     print "  Match: %s" % hsp.match
-                     print "  Sbjct: %s" % hsp.sbjct
-                else :
-                     print "  Query: %s..." % hsp.query[:57]
-                     print "  Match: %s..." % hsp.match[:57]
-                     print "  Sbjct: %s..." % hsp.sbjct[:57]
-    print "Done"
+        for align in record.alignments:
+            count = count + 1
+    return count
 
 
-fasta_string="TTGCTGTGTGAGGCAGAACCTGCGGGGGCAGGGGCGGGCTGGTTCCCTGGCCAGCCATTGGCAGAGTCCG"
+def check_offtarget(min_offtarget, max_offtarget, fasta_string):
+    actual_offtarget = blast_offtarget(fasta_string)
+    if actual_offtarget <= max_offtarget and actual_offtarget >= min_offtarget:
+        return 0
+    else:
+        return 1

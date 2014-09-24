@@ -42,10 +42,10 @@ def score_frame(frame, frame_ss_file, orginal_frame):
         current = position + diff
         add_shifts(position, structure_len, structure_ss, diff, current)
     score = 0
-    for shmir in structure_ss:
-        for template in orginal_score:
-            if shmir == template[0]:
-                score += template[1]
+    for created in structure_ss:
+        for orginal, points in orginal_score:
+            if created == orginal:
+                score += points
     return int(ceil(score/max_score * 100))
 
 

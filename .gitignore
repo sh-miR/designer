@@ -1,10 +1,8 @@
 *.log
 *.pot
 *.pyc
-local_settings.py
 *~
 .DS_Store
-mfold_files
 *.so
 __pycache__
 *.egg
@@ -16,3 +14,4 @@ output.xml
 .ropeproject
 .vagrant
 build
+mfold_files
