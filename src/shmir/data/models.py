@@ -12,13 +12,13 @@ from sqlalchemy import (
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import (
     relationship,
-    backref,
 )
 from sqlalchemy.orm import (
     scoped_session,
     sessionmaker
 )
 
+from shmir.designer.errors import NoResultError
 from shmir.settings import (
     FCONN
 )
@@ -89,6 +89,16 @@ class Backbone(Base):
             row.generate_regexp()
 
         db_session.commit()
+
+    @classmethod
+    def get_mirna(cls, name=None):
+        if name:
+            mirna = db_session.query(cls).filter(cls.name == name).all()
+        else:
+            mirna = db_session.query(cls).all()
+        if not mirna:
+            raise NoResultError('Backbone does not exist.')
+        return mirna
 
 
 class Immuno(Base):
