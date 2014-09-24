@@ -1,6 +1,6 @@
 import unittest
 
-from designer.validators import (
+from shmir.designer.validators import (
     calculate_gc_content,
     validate_gc_content,
 )
