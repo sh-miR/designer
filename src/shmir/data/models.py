@@ -12,13 +12,13 @@ from sqlalchemy import (
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import (
     relationship,
-    backref,
 )
 from sqlalchemy.orm import (
     scoped_session,
     sessionmaker
 )
 
+from shmir.designer.errors import NoResultError
 from shmir.settings import (
     FCONN
 )
@@ -90,6 +90,16 @@ class Backbone(Base):
 
         db_session.commit()
 
+    @classmethod
+    def get_mirna(cls, name=None):
+        if name:
+            mirna = db_session.query(cls).filter(cls.name == name).all()
+        else:
+            mirna = db_session.query(cls).all()
+        if not mirna:
+            raise NoResultError('Backbone does not exist.')
+        return mirna
+
 
 class Immuno(Base):
     """
@@ -100,6 +110,15 @@ class Immuno(Base):
     sequence = Column(Unicode(10), nullable=False)
     receptor = Column(Unicode(15))
     link = Column(Unicode(100), nullable=False)
+
+    @classmethod
+    def check_is_in_sequence(cls, input_sequence):
+        immunos = db_session.query(cls).all()
+        results = []
+        for immuno in immunos:
+            if immuno.sequence in input_sequence:
+                results.append({'id': immuno.id, 'sequence': immuno.sequence})
+        return results
 
 
 class InputData(Base):

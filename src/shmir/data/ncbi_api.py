@@ -6,8 +6,8 @@ import json
 import re
 
 from Bio import Entrez
-from designer import errors
-import settings
+from shmir.designer import errors
+from shmir import settings
 
 
 def get_data(

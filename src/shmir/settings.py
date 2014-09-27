@@ -3,6 +3,8 @@ from ConfigParser import (
     Error
 )
 
+from kombu import Queue
+
 
 # Parsing config file
 
@@ -12,16 +14,18 @@ config.read('/etc/shmir.conf')
 # Config getters
 
 
-def get_config(section, option):
+def get_config(section, option, default=None):
     try:
         return config.get(section, option)
     except Error:
-        return None
+        return default
 
 
 get_db_config = lambda option: get_config('database', option)
 # RabbitMQ will be default broker and result backend if they're not defined
 # get_celery_config = lambda option: get_config('celery', option) or 'amqp://'
+
+DEBUG = True
 
 # SQLAlchemy engine
 
@@ -37,6 +41,13 @@ FCONN = CONN_STR.format(
 # CELERY_RESULT_BACKEND = get_celery_config('result_backend')
 CELERY_BROKER = 'amqp://'
 CELERY_RESULT_BACKEND = 'redis://'
+CELERYD_FORCE_EXECV = True
+CELERY_QUEUES = (
+    Queue('celery', routing_key='celery'),
+    Queue('subtasks', routing_key='transient',
+          delivery_mode=1),
+)
+
 
 # Mfold
 MFOLD_PATH = '/home/shmir/shmir/mfold/mfold'  # script path
@@ -46,3 +57,7 @@ MFOLD_FILES = '/tmp/mfold_files'  # Path where mfold fiels are generated
 # nucleotide type for ncbi database
 NUCLEOTIDE_DB = 'nucleotide'
 EMAIL = 'amupoznan@gmail.com'
+
+# Cache
+CACHE_TYPE = 'redis'
+CACHE_DEFAULT_TIMEOUT = get_config('cache', 'timeout', 3600)

@@ -6,8 +6,8 @@ from mock import (
     patch
 )
 
-from data import ncbi_api
-from designer import errors
+from shmir.data import ncbi_api
+from shmir.designer import errors
 
 
 class TestGetDataFromNcbi(unittest.TestCase):
