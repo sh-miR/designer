@@ -5,7 +5,7 @@ include supervisor
 
 package { 'epel-release':
     ensure   => installed,
-    source   => 'http://ftp.icm.edu.pl/pub/Linux/fedora/linux/epel/7/x86_64/e/epel-release-7-1.noarch.rpm',
+    source   => 'http://ftp.icm.edu.pl/pub/Linux/fedora/linux/epel/7/x86_64/e/epel-release-7-2.noarch.rpm',
     provider => rpm
 }
 
