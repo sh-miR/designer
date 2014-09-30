@@ -14,7 +14,7 @@ from .utils import (
     get_frames,
     reverse_complement,
 )
-from .score import (
+from shmir.designer.score import (
     score_frame,
     score_homogeneity,
     score_two_same_strands,
@@ -23,12 +23,15 @@ from shmir.async import task
 from shmir.contextmanagers import mfold_path
 from shmir.data.models import (
     Backbone,
+    InputData,
     db_session,
 )
+from shmir.data import ncbi_api
 from shmir.mfold import (
     execute_mfold,
     zipped_mfold
 )
+from sqlalchemy.orm.exc import NoResultFound
 
 
 @task(bind=True)
@@ -92,6 +95,21 @@ def shmir_from_sirna_score(input_str):
 
 
 @task
-def shmir_from_transcript_sequence(transcipt_name, minimum_CG, maximum_CG,
+def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
                                    scaffold, stimulatory_sequences):
-    pass
+    # check if results are in database
+    try:
+        stored_input = db_session.query(
+            InputData.transcript_name == transcript_name,
+            InputData.minimum_CG == minimum_CG,
+            InputData.maximum_CG == maximum_CG,
+            InputData.scaffold == scaffold,
+            InputData.stimulatory_sequences == stimulatory_sequences
+        ).one()
+    except NoResultFound:
+        stored_input = None
+
+    if stored_input:
+        return [result.as_json() for result in stored_input.results]  # hope it works this way...
+
+    sequence = ncbi_api.get_mRNA(transcript_name)

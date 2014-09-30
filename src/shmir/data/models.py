@@ -90,16 +90,6 @@ class Backbone(Base):
 
         db_session.commit()
 
-    @classmethod
-    def get_mirna(cls, name=None):
-        if name:
-            mirna = db_session.query(cls).filter(cls.name == name).all()
-        else:
-            mirna = db_session.query(cls).all()
-        if not mirna:
-            raise NoResultError('Backbone does not exist.')
-        return mirna
-
 
 class Immuno(Base):
     """
@@ -147,6 +137,13 @@ class Result(Base):
     score = Column(Integer, nullable=False)
     pdf = Column(Unicode(150), nullable=False)
     input_id = Column(Integer, ForeignKey('input_data.id'))
+
+    def as_json(self):
+        return {
+            'sh_mir': str(self.sh_mir),
+            'score': self.score,
+            'pdf': str(self.pdf),
+        }
 
 
 # Creating tables which does not exist

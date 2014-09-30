@@ -77,6 +77,5 @@ def design_handler(data):
 @app.route('/structures')
 def get_structures():
     return jsonify({
-        'templates': [str(template.name)
-                      for template in db_session.query(Backbone).all()]
+        'templates': [columns[0] for columns in db_session.query(Backbone.name)]
     })
