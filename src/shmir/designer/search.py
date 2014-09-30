@@ -4,6 +4,7 @@
 """
 
 from itertools import chain
+from collections import OrderedDict
 import re
 
 
@@ -34,9 +35,12 @@ def find_by_patterns(patterns, mRNA):
     :type patterns: dict.
     :param mRNA: mRNA sequnece.
     :type mRNA: str.
-    :returns: dict -- all sequences found by patterns.
+    :returns: OrderedDict -- all sequences found by patterns.
     """
-    return {
-        key: list(chain(*(findall_overlapping(pattern, mRNA) for pattern in patt_list)))
+    return OrderedDict(sorted([
+        (key, list(chain(*(
+            findall_overlapping(pattern, mRNA)
+            for pattern in patt_list)
+        )))
         for key, patt_list in patterns.items()
-    }
+    ], reverse=True))

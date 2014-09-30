@@ -20,9 +20,5 @@ def blast_offtarget(fasta_string):
     return count
 
 
-def check_offtarget(min_offtarget, max_offtarget, fasta_string):
-    actual_offtarget = blast_offtarget(fasta_string)
-    if actual_offtarget <= max_offtarget and actual_offtarget >= min_offtarget:
-        return 0
-    else:
-        return 1
+def check_offtarget(fasta_string, max_offtarget):
+    return blast_offtarget(fasta_string) <= fasta_string

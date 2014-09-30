@@ -120,6 +120,7 @@ class InputData(Base):
     transcript_name = Column(Unicode(20), nullable=False)
     minimum_CG = Column(Integer, nullable=False)
     maximum_CG = Column(Integer, nullable=False)
+    maximum_offtarget = Column(Integer, nullable=False)
     scaffold = Column(Unicode(10), default=u'all')
     stimulatory_sequences = Column(Unicode(15), default=u'no_difference')
     results = relationship('Result', backref='input_data')
