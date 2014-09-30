@@ -4,6 +4,7 @@
 """
 
 import operator
+import json
 from copy import deepcopy
 
 from celery import group
@@ -19,6 +20,7 @@ from shmir.designer.score import (
     score_homogeneity,
     score_two_same_strands,
 )
+from shmir.designer.search import find_by_patterns
 from shmir.async import task
 from shmir.contextmanagers import mfold_path
 from shmir.data.models import (
@@ -32,6 +34,7 @@ from shmir.mfold import (
     zipped_mfold
 )
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.sql import func
 
 
 @task(bind=True)
@@ -99,12 +102,12 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
                                    scaffold, stimulatory_sequences):
     # check if results are in database
     try:
-        stored_input = db_session.query(
-            InputData.transcript_name == transcript_name,
+        stored_input = db_session.query(InputData).filter(
+            func.lower(InputData.transcript_name) == transcript_name.lower(),
             InputData.minimum_CG == minimum_CG,
             InputData.maximum_CG == maximum_CG,
-            InputData.scaffold == scaffold,
-            InputData.stimulatory_sequences == stimulatory_sequences
+            func.lower(InputData.scaffold) == scaffold.lower(),
+            func.lower(InputData.stimulatory_sequences) == stimulatory_sequences.lower()
         ).one()
     except NoResultFound:
         stored_input = None
@@ -112,4 +115,16 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
     if stored_input:
         return [result.as_json() for result in stored_input.results]  # hope it works this way...
 
-    sequence = ncbi_api.get_mRNA(transcript_name)
+    mRNA = ncbi_api.get_mRNA(transcript_name)
+
+    if scaffold == 'all':
+        frames = db_session.query(Backbone).all()
+    else:
+        frames = db_session.query(Backbone).filter(
+            func.lower(Backbone.name) == scaffold
+        ).all()
+
+    patterns = [json.loads(frame.regexp) for frame in frames]
+
+    for sequenece in find_by_patterns(patterns, mRNA):
+        pass

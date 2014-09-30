@@ -18,7 +18,6 @@ from sqlalchemy.orm import (
     sessionmaker
 )
 
-from shmir.designer.errors import NoResultError
 from shmir.settings import (
     FCONN
 )
