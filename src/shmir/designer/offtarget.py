@@ -16,7 +16,7 @@ def blast_offtarget(fasta_string):
     count = 0
     for record in NCBIXML.parse(blast_in):
         for align in record.alignments:
-            count = count + 1
+            count += 1
     return count
 
 

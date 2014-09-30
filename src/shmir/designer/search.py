@@ -14,7 +14,7 @@ def findall_overlapping(pattern, string):
     :type pattern: str.
     :param string: String in which we search.param
     :type string: str.
-    :returns: list -- all unique overlapping matches of pattern in string.
+    :returns: set -- all unique overlapping matches of pattern in string.
     """
     regex = re.compile(pattern)
     results = []
@@ -26,7 +26,7 @@ def findall_overlapping(pattern, string):
             break
         results.append(result.group())
         pos = result.start() + 1
-    return list(set(results))
+    return set(results)
 
 
 def find_by_patterns(patterns, mRNA):
@@ -38,9 +38,9 @@ def find_by_patterns(patterns, mRNA):
     :returns: OrderedDict -- all sequences found by patterns.
     """
     return OrderedDict(sorted([
-        (key, list(chain(*(
+        (key, chain(*(
             findall_overlapping(pattern, mRNA)
             for pattern in patt_list)
-        )))
+        ))
         for key, patt_list in patterns.items()
     ], reverse=True))

@@ -8,11 +8,17 @@ import json
 import math
 from copy import deepcopy
 
+from collections import defaultdict
+from itertools import chain
+
 from celery import group
 from celery.result import allow_join_result
 
-from .validators import check_input
-from .utils import (
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.sql import func
+
+from shmir.designer.validators import check_input
+from shmir.designer.utils import (
     get_frames,
     reverse_complement,
 )
@@ -37,8 +43,6 @@ from shmir.mfold import (
     execute_mfold,
     zipped_mfold
 )
-from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.sql import func
 
 
 @task(bind=True)
@@ -135,13 +139,10 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
         ).all()
 
     patterns = {frame[0]: json.loads(frame[1]) for frame in frames}
-    best_sequeneces = dict.fromkeys([frame[0] for frame in frames])
-    # can it be better done?
-    for key in best_sequeneces:
-        best_sequeneces[key] = list()
+    best_sequeneces = defaultdict(list)
 
-    for name, patterns_dict in patterns:
-        for sequence in find_by_patterns(patterns_dict, mRNA).values():
+    for name, patterns_dict in patterns.items():
+        for sequence in chain(*find_by_patterns(patterns_dict, mRNA).itervalues()):
 
             if len(best_sequeneces[name]) > math.ceil(10. / len(frames)):
                 break
