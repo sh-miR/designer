@@ -60,4 +60,8 @@ EMAIL = 'amupoznan@gmail.com'
 
 # Cache
 CACHE_TYPE = 'redis'
-CACHE_DEFAULT_TIMEOUT = get_config('cache', 'timeout', 3600)
+# for coding purposes
+if DEBUG:
+    CACHE_DEFAULT_TIMEOUT = get_config('cache', 'timeout', 1)
+else:
+    CACHE_DEFAULT_TIMEOUT = get_config('cache', 'timeout', 3600)

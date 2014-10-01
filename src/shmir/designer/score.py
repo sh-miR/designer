@@ -80,5 +80,16 @@ def score_two_same_strands(seq1, original_frame):
         return 10
     elif seq[0] == miRNA_s[0]:
         return 4
-    else:
-        return 0
+    return 0
+
+
+def score_from_sirna(frame_tuple, original_frame, sequence, frame_ss):
+    return (
+        score_frame(frame_tuple, frame_ss, original_frame) +
+        score_homogeneity(original_frame) +
+        score_two_same_strands(sequence, original_frame)
+    )
+
+
+def score_from_transcript():
+    pass

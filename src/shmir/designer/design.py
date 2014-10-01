@@ -23,9 +23,8 @@ from shmir.designer.utils import (
     reverse_complement,
 )
 from shmir.designer.score import (
-    score_frame,
-    score_homogeneity,
-    score_two_same_strands,
+    score_from_sirna,
+    score_from_transcript,
 )
 from shmir.designer.search import find_by_patterns
 from shmir.designer.validators import validate_gc_content
@@ -46,9 +45,8 @@ from shmir.mfold import (
 
 
 @task(bind=True)
-def fold_and_score(self, seq1, seq2, frame_tuple, original):
+def fold_and_score(self, seq1, seq2, frame_tuple, original, score_fun):
     path_id = self.request.id
-    score = 0
     frame, insert1, insert2 = frame_tuple
 
     mfold_data = execute_mfold(
@@ -59,9 +57,7 @@ def fold_and_score(self, seq1, seq2, frame_tuple, original):
         return mfold_data
 
     pdf, ss = mfold_data
-    score += score_frame(frame_tuple, ss, original)
-    score += score_homogeneity(original)
-    score += score_two_same_strands(seq1, original)
+    score = score_fun(frame_tuple, original,  seq1, ss)
 
     with mfold_path(self.request.id) as tmp_dirname:
         zipped_mfold(self.request.id, [pdf, ss], tmp_dirname)
@@ -72,7 +68,7 @@ def fold_and_score(self, seq1, seq2, frame_tuple, original):
 
 
 @task
-def shmir_from_sirna_score(input_str, scaffold='all'):
+def shmir_from_sirna_score(input_str):
     """
     Main function takes string input and returns the best results depending
     on scoring. Single result include sh-miR sequence,
@@ -83,12 +79,7 @@ def shmir_from_sirna_score(input_str, scaffold='all'):
     if not seq2:
         seq2 = reverse_complement(seq1)
 
-    if scaffold == 'all':
-        original_frames = db_session.query(Backbone).all()
-    else:
-        original_frames = db_session.query(Backbone).filter(
-            func.lower(Backbone.name) == scaffold
-        ).all()
+    original_frames = db_session.query(Backbone).all()
 
     frames = get_frames(seq1, seq2,
                         shift_left, shift_right,
@@ -96,7 +87,8 @@ def shmir_from_sirna_score(input_str, scaffold='all'):
 
     with allow_join_result():
         frames_with_score = group([
-            fold_and_score.s(seq1, seq2, frame_tuple, original).set(queue="subtasks")
+            fold_and_score.s(seq1, seq2, frame_tuple,
+                             original, score_from_sirna).set(queue="subtasks")
             for frame_tuple, original in zip(frames, original_frames)
         ]).apply_async().get()
 
