@@ -91,5 +91,16 @@ def score_from_sirna(frame_tuple, original_frame, sequence, frame_ss):
     )
 
 
+def score_offtarget(number):
+    score = 40 - number * 2
+    if score >= 0:
+        return score
+    return 0
+
+
+def score_regexp(number):
+    return number * 5
+
+
 def score_from_transcript():
     pass

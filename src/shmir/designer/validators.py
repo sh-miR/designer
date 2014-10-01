@@ -8,6 +8,8 @@ import math
 import errors
 import logging
 
+from shmir.data.models import Immuno
+
 
 def check_complementary_single(seq1, seq2):
     """The function checks complementary of two sequences
@@ -144,3 +146,21 @@ def calculate_gc_content(sequence):
 
 def validate_gc_content(sequence, min_percent, max_percent):
     return min_percent <= calculate_gc_content(sequence) <= max_percent
+
+
+def validate_sequence(sequence, actual_offtarget,
+                      max_offtarget, min_gc, max_gc, stimulatory):
+    offtarget = actual_offtarget <= max_offtarget
+    gc = validate_gc_content(sequence, min_gc, max_gc)
+    # this must be changed
+    is_immuno = Immuno.check_is_in_sequence(sequence)
+
+    if offtarget and gc:
+        if stimulatory == 'no_difference':
+            return True
+        else:
+            if ((is_immuno and stimulatory == 'yes') or
+               (not is_immuno and stimulatory == 'no')):
+
+                return True
+    return False

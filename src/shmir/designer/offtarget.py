@@ -18,7 +18,3 @@ def blast_offtarget(fasta_string):
         for align in record.alignments:
             count += 1
     return count
-
-
-def check_offtarget(fasta_string, max_offtarget):
-    return blast_offtarget(fasta_string) <= fasta_string

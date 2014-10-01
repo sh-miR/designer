@@ -5,11 +5,9 @@
 
 import operator
 import json
-import math
 from copy import deepcopy
 
 from collections import defaultdict
-from itertools import chain
 
 from celery import group
 from celery.result import allow_join_result
@@ -17,7 +15,10 @@ from celery.result import allow_join_result
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import func
 
-from shmir.designer.validators import check_input
+from shmir.designer.validators import (
+    check_input,
+    validate_sequence,
+)
 from shmir.designer.utils import (
     get_frames,
     reverse_complement,
@@ -27,13 +28,11 @@ from shmir.designer.score import (
     score_from_transcript,
 )
 from shmir.designer.search import find_by_patterns
-from shmir.designer.validators import validate_gc_content
-from shmir.designer.offtarget import check_offtarget
+from shmir.designer.offtarget import blast_offtarget
 from shmir.async import task
 from shmir.contextmanagers import mfold_path
 from shmir.data.models import (
     Backbone,
-    Immuno,
     InputData,
     db_session,
 )
@@ -68,7 +67,7 @@ def fold_and_score(self, seq1, seq2, frame_tuple, original, score_fun):
 
 
 @task
-def shmir_from_sirna_score(input_str):
+def shmir_from_sirna_score(input_str, original_frames=None):
     """
     Main function takes string input and returns the best results depending
     on scoring. Single result include sh-miR sequence,
@@ -79,7 +78,8 @@ def shmir_from_sirna_score(input_str):
     if not seq2:
         seq2 = reverse_complement(seq1)
 
-    original_frames = db_session.query(Backbone).all()
+    if not original_frames:
+        original_frames = db_session.query(Backbone).all()
 
     frames = get_frames(seq1, seq2,
                         shift_left, shift_right,
@@ -98,7 +98,7 @@ def shmir_from_sirna_score(input_str):
         ) if elem[0] > 60
     ][:3]
 
-    return {'result': sorted_frames}
+    return sorted_frames
 
 
 @task
@@ -123,28 +123,48 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
     mRNA = ncbi_api.get_mRNA(transcript_name)
 
     if scaffold == 'all':
-        frames = db_session.query(Backbone.name, Backbone.regexp).all()
+        original_frames = db_session.query(Backbone).all()
     else:
-        frames = db_session.query(Backbone.name, Backbone.regexp).filter(
+        original_frames = db_session.query(Backbone).filter(
             func.lower(Backbone.name) == scaffold
         ).all()
 
-    patterns = {frame[0]: json.loads(frame[1]) for frame in frames}
+    patterns = {frame.name: json.loads(frame.regexp) for frame in original_frames}
     best_sequeneces = defaultdict(list)
 
     for name, patterns_dict in patterns.items():
-        for sequence in chain(*find_by_patterns(patterns_dict, mRNA).itervalues()):
+        for regexp_type, sequences in find_by_patterns(patterns_dict, mRNA).iteritems():
+            for sequence in sequences:
 
-            if len(best_sequeneces[name]) > math.ceil(10. / len(frames)):
-                break
+                actual_offtarget = blast_offtarget(sequence)
+                if validate_sequence(sequence, actual_offtarget, maximum_offtarget,
+                                     minimum_CG, maximum_CG, stimulatory_sequences):
+                    best_sequeneces[name].append({
+                        'sequence': sequence,
+                        'regexp': regexp_type,
+                        'offtarget': actual_offtarget
+                    })
 
-            if (validate_gc_content(sequence, minimum_CG, maximum_CG) and
-               check_offtarget(sequence, maximum_offtarget)):
-                if stimulatory_sequences == 'no_difference':
-                    best_sequeneces[name].append(sequence)
-                else:
-                    is_immuno = Immuno.check_is_in_sequence(sequence)
-                    if is_immuno and stimulatory_sequences == 'yes':
-                        best_sequeneces[name].append(sequence)
-                    elif not is_immuno and stimulatory_sequences == 'no':
-                        best_sequeneces[name].append(sequence)
+    # TODO take just 10
+    results = []
+    for name, sequences in best_sequeneces.iteritems():
+        for seq_dict in sequences:
+            # this part might be a task in future
+            seq1 = seq_dict['sequence']
+            seq2 = reverse_complement(seq1)
+
+            frames = get_frames(seq1, seq2, 0, 0, deepcopy(original_frames))
+
+            # BAD SCORING!
+            with allow_join_result():
+                frames_with_score = group([
+                    fold_and_score.s(seq1, seq2, frame_tuple,
+                                     original, score_from_sirna).set(queue="subtasks")
+                    for frame_tuple, original in zip(frames, original_frames)
+                ]).apply_async().get()
+
+            results.extend([
+                elem for elem in sorted(
+                    frames_with_score, key=operator.itemgetter(0), reverse=True
+                ) if elem[0] > 60
+            ])

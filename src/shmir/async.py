@@ -66,7 +66,7 @@ def _get_async_result(result, timeout=1.0, only_status=False):
     response = {'status': 'ok'}
 
     if not only_status:
-        response['data'] = data
+        response['data'] = {'result': data}
 
     return response
 
