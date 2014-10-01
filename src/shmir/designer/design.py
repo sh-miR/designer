@@ -79,8 +79,7 @@ def shmir_from_sirna_score(input_str, scaffold='all'):
     score and link to 2D structure from mfold program
     """
 
-    sequence = check_input(input_str)
-    seq1, seq2, shift_left, shift_right = sequence
+    seq1, seq2, shift_left, shift_right = check_input(input_str)
     if not seq2:
         seq2 = reverse_complement(seq1)
 

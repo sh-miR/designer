@@ -44,3 +44,13 @@ def find_by_patterns(patterns, mRNA):
         ))
         for key, patt_list in patterns.items()
     ], reverse=True))
+
+
+def all_possible_sequences(mRNA, min_len, max_len):
+    sequences = []
+    for i in xrange(len(mRNA) - min_len + 1):
+        for j in xrange(min_len, max_len + 1):
+            sequence = mRNA[i:i+j]
+            if len(sequence) == j:
+                sequences.append(sequence)
+    return sequences
