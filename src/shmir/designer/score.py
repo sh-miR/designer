@@ -83,7 +83,7 @@ def score_two_same_strands(seq1, original_frame):
     return 0
 
 
-def score_from_sirna(frame_tuple, original_frame, sequence, frame_ss):
+def score_from_sirna(frame_tuple, original_frame, frame_ss, sequence):
     return (
         score_frame(frame_tuple, frame_ss, original_frame) +
         score_homogeneity(original_frame) +
@@ -102,5 +102,9 @@ def score_regexp(number):
     return number * 5
 
 
-def score_from_transcript():
-    pass
+def score_from_transcript(frame_tuple, original_frame, frame_ss, offtarget, regexp):
+    return (
+        score_frame(frame_tuple, frame_ss, original_frame) +
+        score_offtarget(offtarget) +
+        score_regexp(regexp)
+    )

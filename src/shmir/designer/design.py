@@ -27,7 +27,10 @@ from shmir.designer.score import (
     score_from_sirna,
     score_from_transcript,
 )
-from shmir.designer.search import find_by_patterns
+from shmir.designer.search import (
+    find_by_patterns,
+    all_possible_sequences,
+)
 from shmir.designer.offtarget import blast_offtarget
 from shmir.async import task
 from shmir.contextmanagers import mfold_path
@@ -44,7 +47,7 @@ from shmir.mfold import (
 
 
 @task(bind=True)
-def fold_and_score(self, seq1, seq2, frame_tuple, original, score_fun):
+def fold_and_score(self, seq1, seq2, frame_tuple, original, score_fun, args_fun):
     path_id = self.request.id
     frame, insert1, insert2 = frame_tuple
 
@@ -56,7 +59,7 @@ def fold_and_score(self, seq1, seq2, frame_tuple, original, score_fun):
         return mfold_data
 
     pdf, ss = mfold_data
-    score = score_fun(frame_tuple, original,  seq1, ss)
+    score = score_fun(frame_tuple, original, ss, *args_fun)
 
     with mfold_path(self.request.id) as tmp_dirname:
         zipped_mfold(self.request.id, [pdf, ss], tmp_dirname)
@@ -88,7 +91,8 @@ def shmir_from_sirna_score(input_str, original_frames=None):
     with allow_join_result():
         frames_with_score = group([
             fold_and_score.s(seq1, seq2, frame_tuple,
-                             original, score_from_sirna).set(queue="subtasks")
+                             original, score_from_sirna,
+                             (seq1,)).set(queue="subtasks")
             for frame_tuple, original in zip(frames, original_frames)
         ]).apply_async().get()
 
@@ -99,6 +103,29 @@ def shmir_from_sirna_score(input_str, original_frames=None):
     ][:3]
 
     return sorted_frames
+
+
+@task
+def shmir_from_fasta_string(fasta_string, original_frames,
+                            actual_offtarget, regexp_type):
+    seq2 = reverse_complement(fasta_string)
+
+    frames = get_frames(fasta_string, seq2, 0, 0, deepcopy(original_frames))
+
+    with allow_join_result():
+        frames_with_score = group([
+            fold_and_score.s(fasta_string, seq2, frame_tuple,
+                             original, score_from_transcript,
+                             (actual_offtarget, regexp_type)
+                             ).set(queue="subtasks")
+            for frame_tuple, original in zip(frames, original_frames)
+        ]).apply_async().get()
+
+    return [
+        elem for elem in sorted(
+            frames_with_score, key=operator.itemgetter(0), reverse=True
+        ) if elem[0] > 60
+    ]
 
 
 @task
@@ -146,25 +173,32 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
                     })
 
     # TODO take just 10
-    results = []
     for name, sequences in best_sequeneces.iteritems():
-        for seq_dict in sequences:
-            # this part might be a task in future
-            seq1 = seq_dict['sequence']
-            seq2 = reverse_complement(seq1)
+        with allow_join_result():
+            results = group([
+                shmir_from_fasta_string.s(seq_dict['sequence'], original_frames,
+                                          seq_dict['offtarget'], seq_dict['regexp']
+                                          ).set(queue="score")
+                for seq_dict in sequences]).apply_async().get()
 
-            frames = get_frames(seq1, seq2, 0, 0, deepcopy(original_frames))
+    # TODO better validation
+    if not results:
+        best_sequeneces = []
+        for sequence in all_possible_sequences(sequence, 19, 21):
+            actual_offtarget = blast_offtarget(sequence)
+            if validate_sequence(sequence, actual_offtarget, maximum_offtarget,
+                                 minimum_CG, maximum_CG, stimulatory_sequences):
+                best_sequeneces.append({
+                    'sequence': sequence,
+                    'regexp': 0,
+                    'offtarget': actual_offtarget
+                })
 
-            # BAD SCORING!
-            with allow_join_result():
-                frames_with_score = group([
-                    fold_and_score.s(seq1, seq2, frame_tuple,
-                                     original, score_from_sirna).set(queue="subtasks")
-                    for frame_tuple, original in zip(frames, original_frames)
-                ]).apply_async().get()
+        with allow_join_result():
+            results = group([
+                shmir_from_fasta_string.s(seq_dict['sequence'], original_frames,
+                                          seq_dict['offtarget'], seq_dict['regexp']
+                                          ).set(queue="score")
+                for seq_dict in best_sequeneces]).apply_async().get()
 
-            results.extend([
-                elem for elem in sorted(
-                    frames_with_score, key=operator.itemgetter(0), reverse=True
-                ) if elem[0] > 60
-            ])
+    # TODO Save to database
