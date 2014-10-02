@@ -4,7 +4,7 @@
 """
 
 from string import maketrans
-# from backbone import Backbone
+from itertools import izip_longest
 
 
 def reverse_complement(sequence):
@@ -129,3 +129,9 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
 
             frames.append([frame, _seq1, _seq2])
     return frames
+
+
+def unpack_dict_to_list(dict_object):
+    to_zip = [[(key, elem) for elem in dict_object[key]] for key in dict_object]
+    return (elem for inner_list in izip_longest(*to_zip)
+            for elem in inner_list if elem is not None)

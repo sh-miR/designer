@@ -22,6 +22,7 @@ from shmir.designer.validators import (
 from shmir.designer.utils import (
     get_frames,
     reverse_complement,
+    unpack_dict_to_list,
 )
 from shmir.designer.score import (
     score_from_sirna,
@@ -176,14 +177,15 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
                         'offtarget': actual_offtarget
                     })
 
-    # TODO take just 10
-    for name, sequences in best_sequeneces.iteritems():
+    results = []
+    for name, seq_dict in unpack_dict_to_list(best_sequeneces):
+        if len(results) == 10:
+            break
         with allow_join_result():
-            results = group([
-                shmir_from_fasta_string.s(seq_dict['sequence'], frames_by_name[name],
-                                          seq_dict['offtarget'], seq_dict['regexp']
-                                          ).set(queue="score")
-                for seq_dict in sequences]).apply_async().get()
+            results.extend(shmir_from_fasta_string.s(
+                seq_dict['sequence'], frames_by_name[name],
+                seq_dict['offtarget'], seq_dict['regexp']
+            ).set(queue="score").apply_async().get())
 
     if not results:
         best_sequeneces = []
@@ -204,13 +206,14 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
                                           ).set(queue="score")
                 for seq_dict in best_sequeneces]).apply_async().get()
 
+    sorted_results = sorted(results, key=operator.itemgetter(0), reverse=True)[:5]
     db_results = [Result(
         score=score,
         sh_mir=shmir,
         pdf=path_id,
         backbone=frames_by_name[frame_name],
         sequence=sequences[0],
-    ) for score, shmir, frame_name, path_id, sequencess in results]
+    ) for score, shmir, frame_name, path_id, sequencess in sorted_results]
 
     db_input = InputData(
         transcript_name=transcript_name,
