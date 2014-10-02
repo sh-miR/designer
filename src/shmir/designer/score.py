@@ -103,8 +103,12 @@ def score_regexp(number):
 
 
 def score_from_transcript(frame_tuple, original_frame, frame_ss, offtarget, regexp):
-    return (
-        score_frame(frame_tuple, frame_ss, original_frame) +
-        score_offtarget(offtarget) +
-        score_regexp(regexp)
-    )
+    sframe = score_frame(frame_tuple, frame_ss, original_frame)
+    sofftarget = score_offtarget(offtarget)
+    sregexp = score_regexp(regexp)
+    return {
+        'frame': sframe,
+        'offtarget': sofftarget,
+        'regexp': sregexp,
+        'all': sframe + sofftarget + sregexp,
+    }
