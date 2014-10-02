@@ -134,6 +134,7 @@ class Result(Base):
     sh_mir = Column(Unicode(300), nullable=False)
     score = Column(Integer, nullable=False)
     pdf = Column(Unicode(150), nullable=False)
+    backbone = relationship('Backbone', uselist=False)
     input_id = Column(Integer, ForeignKey('input_data.id'))
 
     def as_json(self):
@@ -141,6 +142,7 @@ class Result(Base):
             'sh_mir': str(self.sh_mir),
             'score': self.score,
             'pdf': str(self.pdf),
+            'backbone': str(self.backbone.name),
         }
 
 
