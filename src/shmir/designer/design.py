@@ -66,7 +66,7 @@ def fold_and_score(self, seq1, seq2, frame_tuple, original, score_fun, args_fun)
         zipped_mfold(self.request.id, [pdf, ss], tmp_dirname)
 
     return (
-        score, frame.template(insert1, insert2), frame.name, path_id
+        score, frame.template(insert1, insert2), frame.name, path_id, (seq1, seq2),
     )
 
 
@@ -97,7 +97,7 @@ def shmir_from_sirna_score(input_str):
         ]).apply_async().get()
 
     sorted_frames = [
-        elem for elem in sorted(
+        elem[:-1] for elem in sorted(
             frames_with_score, key=operator.itemgetter(0), reverse=True
         ) if elem[0] > 60
     ][:3]
@@ -208,8 +208,9 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
         score=score,
         sh_mir=shmir,
         pdf=path_id,
-        backbone=frames_by_name[frame_name]
-    ) for score, shmir, frame_name, path_id in results]
+        backbone=frames_by_name[frame_name],
+        sequence=sequences[0],
+    ) for score, shmir, frame_name, path_id, sequencess in results]
 
     db_input = InputData(
         transcript_name=transcript_name,
