@@ -156,6 +156,8 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
             func.lower(Backbone.name) == scaffold
         ).all()
 
+    frames_by_name = {frame.name: [frame] for frame in original_frames}
+
     patterns = {frame.name: json.loads(frame.regexp) for frame in original_frames}
     best_sequeneces = defaultdict(list)
 
@@ -176,7 +178,7 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
     for name, sequences in best_sequeneces.iteritems():
         with allow_join_result():
             results = group([
-                shmir_from_fasta_string.s(seq_dict['sequence'], original_frames,
+                shmir_from_fasta_string.s(seq_dict['sequence'], frames_by_name[name],
                                           seq_dict['offtarget'], seq_dict['regexp']
                                           ).set(queue="score")
                 for seq_dict in sequences]).apply_async().get()
