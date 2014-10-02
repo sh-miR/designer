@@ -108,7 +108,8 @@ def transcript_handler():
         for key, default, param_type in params
     ])
 
-    resource = shmir_from_transcript_sequence.apply_async(args=args)
+    resource = shmir_from_transcript_sequence.apply_async(args=args,
+                                                          queue='design')
 
     return jsonify({'task_id': resource.task_id})
 

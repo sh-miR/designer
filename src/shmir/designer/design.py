@@ -11,6 +11,7 @@ from collections import defaultdict
 
 from celery import group
 from celery.result import allow_join_result
+from celery.utils.log import get_task_logger
 
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import func
@@ -46,6 +47,9 @@ from shmir.mfold import (
     execute_mfold,
     zipped_mfold
 )
+
+
+logger = get_task_logger(__name__)
 
 
 @task(bind=True)
@@ -136,6 +140,7 @@ def shmir_from_fasta_string(fasta_string, original_frames,
 def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
                                    maximum_offtarget, scaffold, stimulatory_sequences):
     # check if results are in database
+    logger.info('Checking whether results are in database')
     try:
         stored_input = db_session.query(InputData).filter(
             func.lower(InputData.transcript_name) == transcript_name.lower(),
@@ -150,7 +155,13 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
     else:
         return [result.as_json() for result in stored_input.results]
 
-    mRNA = ncbi_api.get_mRNA(transcript_name)
+    logger.info('Checked results in database')
+    logger.info('Getting data from NCBI')
+
+    mRNA = ncbi_api.get_mRNA(transcript_name)[400]
+
+    logger.info('Got data from NCBI')
+    logger.info('Getting original frames')
 
     if scaffold == 'all':
         original_frames = db_session.query(Backbone).all()
@@ -163,6 +174,9 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
 
     patterns = {frame.name: json.loads(frame.regexp) for frame in original_frames}
     best_sequeneces = defaultdict(list)
+
+    logger.info('Got original frames')
+    logger.info('Processing patterns')
 
     for name, patterns_dict in patterns.iteritems():
         for regexp_type, sequences in find_by_patterns(patterns_dict, mRNA).iteritems():
@@ -177,6 +191,9 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
                         'offtarget': actual_offtarget
                     })
 
+    logger.info('Patterns processed')
+    logger.info('Unpacking structures')
+
     results = []
     for name, seq_dict in unpack_dict_to_list(best_sequeneces):
         if len(results) == 10:
@@ -187,9 +204,12 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
                 seq_dict['offtarget'], seq_dict['regexp']
             ).set(queue="score").apply_async().get())
 
+    logger.info('Sctructures unpacked')
+    logger.info('Getting best sequences, offtarget')
+
     if not results:
         best_sequeneces = []
-        for sequence in all_possible_sequences(sequence, 19, 21):
+        for sequence in all_possible_sequences(mRNA, 19, 21):
             actual_offtarget = blast_offtarget(sequence)
             if validate_sequence(sequence, actual_offtarget, maximum_offtarget,
                                  minimum_CG, maximum_CG, stimulatory_sequences):
@@ -205,6 +225,9 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
                                           seq_dict['offtarget'], seq_dict['regexp']
                                           ).set(queue="score")
                 for seq_dict in best_sequeneces]).apply_async().get()
+
+    logger.info('Got best sequences, offtarget calculated')
+    logger.info('Storing DB results')
 
     sorted_results = sorted(results, key=operator.itemgetter(0), reverse=True)[:5]
     db_results = [Result(
@@ -227,5 +250,8 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
     db_session.add(db_input)
     db_session.add_all(db_results)
     db_session.commit()
+
+    logger.info('DB results stored')
+    logger.info('End of task')
 
     return [result.as_json() for result in db_results]
