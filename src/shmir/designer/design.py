@@ -219,12 +219,16 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
                     'offtarget': actual_offtarget
                 })
 
-        with allow_join_result():
-            results = group([
-                shmir_from_fasta_string.s(seq_dict['sequence'], original_frames,
-                                          seq_dict['offtarget'], seq_dict['regexp']
-                                          ).set(queue="score")
-                for seq_dict in best_sequeneces]).apply_async().get()
+        logger.info('best seqs: %r', best_sequeneces)
+        logger.info('sqs len: %d', len(best_sequeneces))
+
+        if best_sequeneces != []:
+            with allow_join_result():
+                results = group([
+                    shmir_from_fasta_string.s(seq_dict['sequence'], original_frames,
+                                            seq_dict['offtarget'], seq_dict['regexp']
+                                            ).set(queue="score")
+                    for seq_dict in best_sequeneces]).apply_async().get()
 
     logger.info('Got best sequences, offtarget calculated')
     logger.info('Storing DB results')
