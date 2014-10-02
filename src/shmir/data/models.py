@@ -102,12 +102,11 @@ class Immuno(Base):
 
     @classmethod
     def check_is_in_sequence(cls, input_sequence):
-        immunos = db_session.query(cls).all()
-        results = []
-        for immuno in immunos:
-            if immuno.sequence in input_sequence:
-                results.append({'id': immuno.id, 'sequence': immuno.sequence})
-        return results
+        immunos = bool(db_session.execute(
+            "SELECT COUNT(*) FROM immuno WHERE :input_sequence LIKE "
+            "'%'||sequence||'%';", {'input_sequence': input_sequence}
+        ).first()[0])
+        return immunos
 
 
 class InputData(Base):
