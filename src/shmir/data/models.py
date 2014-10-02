@@ -102,11 +102,10 @@ class Immuno(Base):
 
     @classmethod
     def check_is_in_sequence(cls, input_sequence):
-        immunos = bool(db_session.execute(
+        return bool(db_session.execute(
             "SELECT COUNT(*) FROM immuno WHERE :input_sequence LIKE "
             "'%'||sequence||'%';", {'input_sequence': input_sequence}
         ).first()[0])
-        return immunos
 
 
 class InputData(Base):
