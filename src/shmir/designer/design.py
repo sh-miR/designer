@@ -3,6 +3,7 @@
     :synopsis: provides the executable program
 """
 
+import logging
 import operator
 import json
 from copy import deepcopy
@@ -70,7 +71,7 @@ def fold_and_score(self, seq1, seq2, frame_tuple, original, score_fun, args_fun)
 
 
 @task
-def shmir_from_sirna_score(input_str, original_frames=None):
+def shmir_from_sirna_score(input_str):
     """
     Main function takes string input and returns the best results depending
     on scoring. Single result include sh-miR sequence,
@@ -81,8 +82,7 @@ def shmir_from_sirna_score(input_str, original_frames=None):
     if not seq2:
         seq2 = reverse_complement(seq1)
 
-    if not original_frames:
-        original_frames = db_session.query(Backbone).all()
+    original_frames = db_session.query(Backbone).all()
 
     frames = get_frames(seq1, seq2,
                         shift_left, shift_right,
@@ -121,11 +121,14 @@ def shmir_from_fasta_string(fasta_string, original_frames,
             for frame_tuple, original in zip(frames, original_frames)
         ]).apply_async().get()
 
-    return [
-        elem for elem in sorted(
-            frames_with_score, key=operator.itemgetter(0), reverse=True
-        ) if elem[0] > 60
-    ]
+    filtered_frames = []
+    for frame in frames_with_score:
+        notes = frame[0]
+        if notes['frame'] > 60 and notes['all'] > 100:
+            frame[0] = notes['all']
+            filtered_frames.append(frame)
+
+    return sorted(filtered_frames, key=operator.itemgetter(0), reverse=True)
 
 
 @task
@@ -142,9 +145,8 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
             func.lower(InputData.stimulatory_sequences) == stimulatory_sequences.lower()
         ).one()
     except NoResultFound:
-        stored_input = None
-
-    if stored_input:
+        pass
+    else:
         return [result.as_json() for result in stored_input.results]  # hope it works this way...
 
     mRNA = ncbi_api.get_mRNA(transcript_name)
@@ -161,7 +163,7 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
     patterns = {frame.name: json.loads(frame.regexp) for frame in original_frames}
     best_sequeneces = defaultdict(list)
 
-    for name, patterns_dict in patterns.items():
+    for name, patterns_dict in patterns.iteritems():
         for regexp_type, sequences in find_by_patterns(patterns_dict, mRNA).iteritems():
             for sequence in sequences:
 
