@@ -43,7 +43,8 @@ CELERY_BROKER = 'amqp://'
 CELERY_RESULT_BACKEND = 'redis://'
 CELERYD_FORCE_EXECV = True
 CELERY_QUEUES = (
-    Queue('celery', routing_key='celery'),
+    Queue('design', routing_key='design'),
+    Queue('score', routing_key='score'),
     Queue('subtasks', routing_key='transient',
           delivery_mode=1),
 )

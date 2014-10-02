@@ -5,6 +5,7 @@ Handlers
 
 from flask import (
     jsonify,
+    request,
     send_file
 )
 
@@ -13,7 +14,10 @@ from shmir import (
     cache
 )
 from shmir.async import get_async_result
-from shmir.designer.design import shmir_from_sirna_score
+from shmir.designer.design import (
+    shmir_from_sirna_score,
+    shmir_from_transcript_sequence
+)
 from shmir.mfold import delegate_mfold
 from shmir.utils import get_zip_path
 from data.models import (
@@ -74,8 +78,44 @@ def design_handler(data):
     return jsonify({'task_id': resource.task_id})
 
 
+@app.route('/transcript/status/<task_id>')
+def transcript_task_status(task_id):
+    return jsonify(get_async_result(
+        shmir_from_transcript_sequence, task_id, only_status=True)
+    )
+
+
+@app.route('/transcript/result/<task_id>')
+def transcript_task_result(task_id):
+    result = get_async_result(shmir_from_transcript_sequence, task_id)
+
+    return jsonify(result)
+
+
+@app.route('/transcript/')
+@cache.cached()
+def transcript_handler():
+    params = (
+        ('transcript_name', None, str),
+        ('min_gc', 40, int),
+        ('max_gc', 60, int),
+        ('max_offtarget', 10, int),
+        ('mirna_name', 'all', str),
+        ('stymulators', 'no_difference', str)
+    )
+    args = tuple([
+        param_type(request.args.get(key, default))
+        for key, default, param_type in params
+    ])
+
+    resource = shmir_from_transcript_sequence.apply_async(args=args)
+
+    return jsonify({'task_id': resource.task_id})
+
+
 @app.route('/structures')
 def get_structures():
     return jsonify({
-        'templates': [columns[0] for columns in db_session.query(Backbone.name)]
+        'templates': [
+            columns[0] for columns in db_session.query(Backbone.name)]
     })
