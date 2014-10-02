@@ -158,9 +158,7 @@ def validate_sequence(sequence, actual_offtarget,
     if offtarget and gc:
         if stimulatory == 'no_difference':
             return True
-        else:
-            if ((is_immuno and stimulatory == 'yes') or
-               (not is_immuno and stimulatory == 'no')):
-
-                return True
+        elif ((is_immuno and stimulatory == 'yes') or
+              (not is_immuno and stimulatory == 'no')):
+            return True
     return False
