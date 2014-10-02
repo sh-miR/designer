@@ -3,7 +3,6 @@
     :synopsis: provides the executable program
 """
 
-import logging
 import operator
 import json
 from copy import deepcopy
@@ -38,6 +37,7 @@ from shmir.contextmanagers import mfold_path
 from shmir.data.models import (
     Backbone,
     InputData,
+    Result,
     db_session,
 )
 from shmir.data import ncbi_api
@@ -66,7 +66,7 @@ def fold_and_score(self, seq1, seq2, frame_tuple, original, score_fun, args_fun)
         zipped_mfold(self.request.id, [pdf, ss], tmp_dirname)
 
     return (
-        score, frame.template(insert1, insert2), frame.name, path_id
+        score, frame.template(insert1, insert2), frame.name, path_id, (seq1, seq2),
     )
 
 
@@ -97,7 +97,7 @@ def shmir_from_sirna_score(input_str):
         ]).apply_async().get()
 
     sorted_frames = [
-        elem for elem in sorted(
+        elem[:-1] for elem in sorted(
             frames_with_score, key=operator.itemgetter(0), reverse=True
         ) if elem[0] > 60
     ][:3]
@@ -147,7 +147,7 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
     except NoResultFound:
         pass
     else:
-        return [result.as_json() for result in stored_input.results]  # hope it works this way...
+        return [result.as_json() for result in stored_input.results]
 
     mRNA = ncbi_api.get_mRNA(transcript_name)
 
@@ -185,7 +185,6 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
                                           ).set(queue="score")
                 for seq_dict in sequences]).apply_async().get()
 
-    # TODO better validation
     if not results:
         best_sequeneces = []
         for sequence in all_possible_sequences(sequence, 19, 21):
@@ -205,4 +204,25 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
                                           ).set(queue="score")
                 for seq_dict in best_sequeneces]).apply_async().get()
 
-    # TODO Save to database
+    db_results = [Result(
+        score=score,
+        sh_mir=shmir,
+        pdf=path_id,
+        backbone=frames_by_name[frame_name],
+        sequence=sequences[0],
+    ) for score, shmir, frame_name, path_id, sequencess in results]
+
+    db_input = InputData(
+        transcript_name=transcript_name,
+        minimum_CG=minimum_CG,
+        maximum_CG=maximum_CG,
+        maximum_offtarget=maximum_offtarget,
+        scaffold=scaffold,
+        stimulatory_sequences=stimulatory_sequences,
+        results=db_results
+    )
+    db_session.add(db_input)
+    db_session.add_all(db_results)
+    db_session.commit()
+
+    return [result.as_json() for result in db_results]

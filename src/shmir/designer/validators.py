@@ -152,13 +152,13 @@ def validate_sequence(sequence, actual_offtarget,
                       max_offtarget, min_gc, max_gc, stimulatory):
     offtarget = actual_offtarget <= max_offtarget
     gc = validate_gc_content(sequence, min_gc, max_gc)
-    # this must be changed
     is_immuno = Immuno.check_is_in_sequence(sequence)
 
     if offtarget and gc:
-        if stimulatory == 'no_difference':
-            return True
-        elif ((is_immuno and stimulatory == 'yes') or
-              (not is_immuno and stimulatory == 'no')):
+        if (
+            stimulatory == 'no_difference' or
+            (is_immuno and stimulatory == 'yes') or
+            (not is_immuno and stimulatory == 'no')
+        ):
             return True
     return False
