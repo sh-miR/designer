@@ -33,7 +33,6 @@ from shmir.designer.search import (
     find_by_patterns,
     all_possible_sequences,
 )
-from shmir.designer.offtarget import blast_offtarget
 from shmir.async import task
 from shmir.contextmanagers import mfold_path
 from shmir.data.models import (
@@ -158,7 +157,7 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
     logger.info('Checked results in database')
     logger.info('Getting data from NCBI')
 
-    mRNA = ncbi_api.get_mRNA(transcript_name)[400]
+    mRNA = ncbi_api.get_mRNA(transcript_name)[:400]
 
     logger.info('Got data from NCBI')
     logger.info('Getting original frames')
@@ -181,10 +180,13 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
     for name, patterns_dict in patterns.iteritems():
         for regexp_type, sequences in find_by_patterns(patterns_dict, mRNA).iteritems():
             for sequence in sequences:
+                # this part must be async task - requests to blast takes very long time
+                validated, actual_offtarget = validate_sequence(
+                    sequence, maximum_offtarget, minimum_CG,
+                    maximum_CG, stimulatory_sequences
+                )
 
-                actual_offtarget = blast_offtarget(sequence)
-                if validate_sequence(sequence, actual_offtarget, maximum_offtarget,
-                                     minimum_CG, maximum_CG, stimulatory_sequences):
+                if validated:
                     best_sequeneces[name].append({
                         'sequence': sequence,
                         'regexp': regexp_type,

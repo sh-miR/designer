@@ -9,6 +9,7 @@ import errors
 import logging
 
 from shmir.data.models import Immuno
+from shmir.designer.offtarget import blast_offtarget
 
 
 def check_complementary_single(seq1, seq2):
@@ -148,17 +149,18 @@ def validate_gc_content(sequence, min_percent, max_percent):
     return min_percent <= calculate_gc_content(sequence) <= max_percent
 
 
-def validate_sequence(sequence, actual_offtarget,
-                      max_offtarget, min_gc, max_gc, stimulatory):
-    offtarget = actual_offtarget <= max_offtarget
+def validate_sequence(sequence, max_offtarget, min_gc, max_gc, stimulatory):
     gc = validate_gc_content(sequence, min_gc, max_gc)
     is_immuno = Immuno.check_is_in_sequence(sequence)
 
-    if offtarget and gc:
-        if (
+    if gc and (
             stimulatory == 'no_difference' or
             (is_immuno and stimulatory == 'yes') or
             (not is_immuno and stimulatory == 'no')
-        ):
-            return True
-    return False
+    ):
+        actual_offtarget = blast_offtarget(sequence)
+        offtarget = actual_offtarget <= max_offtarget
+        if offtarget:
+            return True, actual_offtarget
+
+    return False, None
