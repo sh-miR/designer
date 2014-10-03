@@ -5,6 +5,8 @@
 
 from string import maketrans
 from itertools import izip_longest
+from operator import is_not
+from functools import partial
 
 
 def reverse_complement(sequence):
@@ -135,3 +137,7 @@ def unpack_dict_to_list(dict_object):
     to_zip = [[(key, elem) for elem in dict_object[key]] for key in dict_object]
     return (elem for inner_list in izip_longest(*to_zip)
             for elem in inner_list if elem is not None)
+
+
+def remove_none(list_object):
+    return filter(partial(is_not, None), list_object)

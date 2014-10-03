@@ -14,6 +14,8 @@ def blast_offtarget(fasta_string):
     blast_results = result_handle.read()
     blast_in = cStringIO.StringIO(blast_results)
     count = 0
+    import ipdb; ipdb.set_trace()
+
     for record in NCBIXML.parse(blast_in):
         for align in record.alignments:
             count += 1

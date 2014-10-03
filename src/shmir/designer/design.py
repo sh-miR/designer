@@ -24,6 +24,7 @@ from shmir.designer.utils import (
     get_frames,
     reverse_complement,
     unpack_dict_to_list,
+    remove_none,
 )
 from shmir.designer.score import (
     score_from_sirna,
@@ -136,6 +137,21 @@ def shmir_from_fasta_string(fasta_string, original_frames,
 
 
 @task
+def validate_and_offtarget(sequence, maximum_offtarget, minimum_CG,
+                           maximum_CG, stimulatory_sequences, regexp_type):
+    validated, actual_offtarget = validate_sequence(
+        sequence, maximum_offtarget, minimum_CG,
+        maximum_CG, stimulatory_sequences
+    )
+    if validated:
+        return {
+            'sequence': sequence,
+            'regexp': regexp_type,
+            'offtarget': actual_offtarget
+        }
+
+
+@task
 def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
                                    maximum_offtarget, scaffold, stimulatory_sequences):
     # check if results are in database
@@ -179,19 +195,12 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
 
     for name, patterns_dict in patterns.iteritems():
         for regexp_type, sequences in find_by_patterns(patterns_dict, mRNA).iteritems():
-            for sequence in sequences:
-                # this part must be async task - requests to blast takes very long time
-                validated, actual_offtarget = validate_sequence(
-                    sequence, maximum_offtarget, minimum_CG,
-                    maximum_CG, stimulatory_sequences
-                )
-
-                if validated:
-                    best_sequeneces[name].append({
-                        'sequence': sequence,
-                        'regexp': regexp_type,
-                        'offtarget': actual_offtarget
-                    })
+            with allow_join_result():
+                best_sequeneces[name] = remove_none(group([
+                    validate_and_offtarget.s(sequence, maximum_offtarget, minimum_CG,
+                                             maximum_CG, stimulatory_sequences,
+                                             regexp_type).set(queue="subtasks")
+                    for sequence in sequences]).apply_async().get())
 
     logger.info('Patterns processed')
     logger.info('Unpacking structures')
@@ -212,9 +221,17 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
     if not results:
         best_sequeneces = []
         for sequence in all_possible_sequences(mRNA, 19, 21):
-            actual_offtarget = blast_offtarget(sequence)
-            if validate_sequence(sequence, actual_offtarget, maximum_offtarget,
-                                 minimum_CG, maximum_CG, stimulatory_sequences):
+            with allow_join_result():
+                best_sequeneces = group([
+                    validate_and_offtarget.s(sequence, maximum_offtarget, minimum_CG,
+                                             maximum_CG, stimulatory_sequences,
+                                             0).set(queue="subtasks")
+                    for sequence in sequences]).apply_async().get()
+            validated, actual_offtarget = validate_sequence(
+                sequence, maximum_offtarget, minimum_CG,
+                maximum_CG, stimulatory_sequences
+            )
+            if validated:
                 best_sequeneces.append({
                     'sequence': sequence,
                     'regexp': 0,
@@ -226,11 +243,11 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
 
         if best_sequeneces != []:
             with allow_join_result():
-                results = group([
+                results = remove_none(group([
                     shmir_from_fasta_string.s(seq_dict['sequence'], original_frames,
-                                            seq_dict['offtarget'], seq_dict['regexp']
-                                            ).set(queue="score")
-                    for seq_dict in best_sequeneces]).apply_async().get()
+                                              seq_dict['offtarget'], seq_dict['regexp']
+                                              ).set(queue="score")
+                    for seq_dict in best_sequeneces]).apply_async().get())
 
     logger.info('Got best sequences, offtarget calculated')
     logger.info('Storing DB results')
