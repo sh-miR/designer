@@ -164,7 +164,7 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
             InputData.maximum_offtarget == maximum_offtarget,
             func.lower(InputData.scaffold) == scaffold.lower(),
             func.lower(InputData.stimulatory_sequences) == stimulatory_sequences.lower()
-        ).one()
+        ).join(InputData.results).one()
     except NoResultFound:
         pass
     else:
