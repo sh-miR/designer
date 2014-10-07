@@ -25,7 +25,7 @@ from data.models import (
     db_session,
 )
 
-
+#TODO ujednolicenie i nazwy
 @app.route('/mfold/status/<task_id>')
 def mfold_task_status(task_id):
     return jsonify(get_async_result(delegate_mfold, task_id, only_status=True))
@@ -56,21 +56,21 @@ def mfold_data_handler(data):
     return jsonify({'task_id': resource.task_id})
 
 
-@app.route('/designer/status/<task_id>')
+@app.route('/from_sirna/status/<task_id>')
 def designer_task_status(task_id):
     return jsonify(get_async_result(
         shmir_from_sirna_score, task_id, only_status=True)
     )
 
 
-@app.route('/designer/result/<task_id>')
+@app.route('/from_sirna/result/<task_id>')
 def designer_task_result(task_id):
     result = get_async_result(shmir_from_sirna_score, task_id)
 
     return jsonify(result)
 
 
-@app.route('/designer/<data>')
+@app.route('/from_sirna/<data>')
 @cache.cached()
 def design_handler(data):
     resource = shmir_from_sirna_score.apply_async(args=(data.upper(),),
@@ -78,32 +78,31 @@ def design_handler(data):
     return jsonify({'task_id': resource.task_id})
 
 
-@app.route('/transcript/status/<task_id>')
+@app.route('/from_transcript/status/<task_id>')
 def transcript_task_status(task_id):
     return jsonify(get_async_result(
         shmir_from_transcript_sequence, task_id, only_status=True)
     )
 
 
-@app.route('/transcript/result/<task_id>')
+@app.route('/from_transcript/result/<task_id>')
 def transcript_task_result(task_id):
     result = get_async_result(shmir_from_transcript_sequence, task_id)
 
     return jsonify(result)
 
 
-@app.route('/transcript/')
+@app.route('/from_transcript/<transcript_name>')
 @cache.cached()
-def transcript_handler():
+def transcript_handler(transcript_name):
     params = (
-        ('transcript_name', None, str),
         ('min_gc', 40, int),
         ('max_gc', 60, int),
         ('max_offtarget', 10, int),
         ('mirna_name', 'all', str),
         ('stymulators', 'no_difference', str)
     )
-    args = tuple([
+    args = tuple([transcript_name] + [
         param_type(request.args.get(key, default))
         for key, default, param_type in params
     ])
