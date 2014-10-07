@@ -45,8 +45,10 @@ CELERYD_FORCE_EXECV = True
 CELERY_QUEUES = (
     Queue('design', routing_key='design'),
     Queue('score', routing_key='score'),
-    Queue('subtasks', routing_key='transient',
+    Queue('subtasks', routing_key='subtasks',
           delivery_mode=1),
+    Queue('blast', routing_key='blast',
+          delivery_mode=1)
 )
 
 

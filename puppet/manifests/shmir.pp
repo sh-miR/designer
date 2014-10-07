@@ -160,6 +160,15 @@ supervisor::program { 'shmir-celery-worker3':
     require   => [ File['/etc/shmir.conf'], Class['python'] ]
 }
 
+supervisor::program { 'shmir-celery-worker4':
+    ensure    => present,
+    command   => '/usr/bin/celery -A shmir.async.celery worker --concurrency=8 -l info -n worker4.%%h -Q blast',
+    directory => '/home/shmir/shmir/src/',
+    user      => 'vagrant',
+    group     => 'vagrant',
+    require   => [ File['/etc/shmir.conf'], Class['python'] ]
+}
+
 supervisor::program { 'flower':
     ensure    => present,
     command   => '/usr/bin/celery -A shmir.async.celery flower',
