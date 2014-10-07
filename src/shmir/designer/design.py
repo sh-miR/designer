@@ -136,13 +136,17 @@ def shmir_from_fasta_string(fasta_string, original_frames,
     return sorted(filtered_frames, key=operator.itemgetter(0), reverse=True)
 
 
-@task
-def validate_and_offtarget(sequence, maximum_offtarget, minimum_CG,
+@task(bind=True, max_retries=10)
+def validate_and_offtarget(self, sequence, maximum_offtarget, minimum_CG,
                            maximum_CG, stimulatory_sequences, regexp_type):
-    validated, actual_offtarget = validate_sequence(
-        sequence, maximum_offtarget, minimum_CG,
-        maximum_CG, stimulatory_sequences
-    )
+    try:
+        validated, actual_offtarget = validate_sequence(
+            sequence, maximum_offtarget, minimum_CG,
+            maximum_CG, stimulatory_sequences
+        )
+    except ValueError as exc:
+        raise self.retry(exc=exc)
+
     if validated:
         return {
             'sequence': sequence,
@@ -199,7 +203,7 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
                 best_sequeneces[name] = remove_none(group([
                     validate_and_offtarget.s(sequence, maximum_offtarget, minimum_CG,
                                              maximum_CG, stimulatory_sequences,
-                                             regexp_type).set(queue="subtasks")
+                                             regexp_type).set(queue="blast")
                     for sequence in sequences]).apply_async().get())
 
     logger.info('Patterns processed')
@@ -225,7 +229,7 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
                 best_sequeneces = group([
                     validate_and_offtarget.s(sequence, maximum_offtarget, minimum_CG,
                                              maximum_CG, stimulatory_sequences,
-                                             0).set(queue="subtasks")
+                                             0).set(queue="blast")
                     for sequence in sequences]).apply_async().get()
             validated, actual_offtarget = validate_sequence(
                 sequence, maximum_offtarget, minimum_CG,
