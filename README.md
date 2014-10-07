@@ -41,10 +41,10 @@ example:
 
 ```curl -i -X GET http://127.0.0.1:8080/mfold/file/f3591b31-49d9-47da-ae78-898792db26a5```
 
-- */designer/* - delegates task for sh-mir designer with given sequence
+- */from_sirna/* - delegates task for sh-mir designer with given sequence
 
 example:
 
-```curl -i http://127.0.0.1:8080/designer/UUUGUAUUCGCCCUAGCGC%20CGCUAUGGCGAAUACAAACA```
+```curl -i http://127.0.0.1:8080/from_sirna/UUUGUAUUCGCCCUAGCGC%20CGCUAUGGCGAAUACAAACA```
 
-- */designer/result/<task_id>* - getting designer results with mfold task ids
+- */from_sirna/result/<task_id>* - getting from_sirna results with mfold task ids

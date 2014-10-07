@@ -25,7 +25,7 @@ from data.models import (
     db_session,
 )
 
-#TODO ujednolicenie i nazwy
+
 @app.route('/mfold/status/<task_id>')
 def mfold_task_status(task_id):
     return jsonify(get_async_result(delegate_mfold, task_id, only_status=True))
