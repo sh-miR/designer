@@ -21,6 +21,7 @@ from shmir.designer.validators import (
     validate_sequence,
 )
 from shmir.designer.utils import (
+    generator_is_empty,
     get_frames,
     reverse_complement,
     unpack_dict_to_list,
@@ -247,7 +248,7 @@ def shmir_from_transcript_sequence(
             func.lower(
                 InputData.stimulatory_sequences
             ) == stimulatory_sequences.lower()
-        ).join(InputData.results).one()
+        ).outerjoin(InputData.results).one()
     except NoResultFound:
         pass
     else:
@@ -282,19 +283,21 @@ def shmir_from_transcript_sequence(
         founded_patterns = find_by_patterns(patterns_dict, mRNA).iteritems()
         for regexp_type, sequences in founded_patterns:
             with allow_join_result():
-                best_sequeneces[name] = remove_none(
-                    group([
-                        validate_and_offtarget.s(
-                            sequence,
-                            maximum_offtarget,
-                            minimum_CG,
-                            maximum_CG,
-                            stimulatory_sequences,
-                            regexp_type
-                        ).set(queue="blast")
-                        for sequence in sequences
-                    ]).apply_async().get()
-                )
+                is_empty, sequences = generator_is_empty(sequences)
+                if not is_empty:
+                    best_sequeneces[name] = remove_none(
+                        group([
+                            validate_and_offtarget.s(
+                                sequence,
+                                maximum_offtarget,
+                                minimum_CG,
+                                maximum_CG,
+                                stimulatory_sequences,
+                                regexp_type
+                            ).set(queue="blast")
+                            for sequence in sequences
+                        ]).apply_async().get()
+                    )
 
     logger.info('Patterns processed')
     logger.info('Unpacking structures')
@@ -314,34 +317,32 @@ def shmir_from_transcript_sequence(
 
     if not results:
         best_sequeneces = []
-        for sequence in all_possible_sequences(mRNA, 19, 21):
-            with allow_join_result():
-                best_sequeneces = group([
-                    validate_and_offtarget.s(
-                        sequence,
-                        maximum_offtarget,
-                        minimum_CG,
-                        maximum_CG,
-                        stimulatory_sequences,
-                        0
-                    ).set(queue="blast")
-                    for sequence in sequences]
-                ).apply_async().get()
-            validated, actual_offtarget = validate_sequence(
-                sequence, maximum_offtarget, minimum_CG,
-                maximum_CG, stimulatory_sequences
-            )
-            if validated:
-                best_sequeneces.append({
-                    'sequence': sequence,
-                    'regexp': 0,
-                    'offtarget': actual_offtarget
-                })
+        sequences = all_possible_sequences(mRNA, 19, 21)
 
-        logger.info('best seqs: %r', best_sequeneces)
-        logger.info('sqs len: %d', len(best_sequeneces))
+        with allow_join_result():
+            is_empty, sequences = generator_is_empty(sequences)
+            if not is_empty:
+                best_sequeneces = remove_none(
+                    group([
+                        validate_and_offtarget.s(
+                            sequence,
+                            maximum_offtarget,
+                            minimum_CG,
+                            maximum_CG,
+                            stimulatory_sequences,
+                            0
+                        ).set(queue="blast")
+                        for sequence in sequences
+                    ]).apply_async().get()
+                )
 
-        if best_sequeneces != []:
+        if best_sequeneces:
+            logger.info('best seqs: %r', best_sequeneces)
+            logger.info('sqs len: %d', len(best_sequeneces))
+        else:
+            logger.info('no best seqs')
+
+        if best_sequeneces:
             with allow_join_result():
                 results = remove_none(
                     group([
@@ -367,7 +368,7 @@ def shmir_from_transcript_sequence(
         pdf=path_id,
         backbone=frames_by_name[frame_name],
         sequence=sequences[0],
-    ) for score, shmir, frame_name, path_id, sequencess in sorted_results]
+    ) for score, shmir, frame_name, path_id, sequences in sorted_results]
 
     db_input = InputData(
         transcript_name=transcript_name,

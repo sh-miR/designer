@@ -4,7 +4,10 @@
 """
 
 from string import maketrans
-from itertools import izip_longest
+from itertools import (
+    chain,
+    izip_longest,
+)
 from operator import is_not
 from functools import partial
 
@@ -144,3 +147,11 @@ def unpack_dict_to_list(dict_object):
 
 def remove_none(list_object):
     return filter(partial(is_not, None), list_object)
+
+
+def generator_is_empty(generator):
+    try:
+        first = next(generator)
+    except StopIteration:
+        return True, None
+    return False, chain([first], generator)
