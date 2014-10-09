@@ -177,7 +177,7 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
     logger.info('Checked results in database')
     logger.info('Getting data from NCBI')
 
-    mRNA = ncbi_api.get_mRNA(transcript_name)[:400]
+    mRNA = ncbi_api.get_mRNA(transcript_name)[:50]
 
     logger.info('Got data from NCBI')
     logger.info('Getting original frames')

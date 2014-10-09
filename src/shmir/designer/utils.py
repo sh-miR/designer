@@ -56,13 +56,16 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
     output: List of list of Backbone object, 1st strand 2nd strand   """
     frames = []
     for frame in all_frames:
-        # frame = Backbone(**elem)
+        _seq1 = seq1[:]
+        _seq2 = seq2[:]
+        # switch active strand
+        if frame.active_strand == 3:
+            _seq1, _seq2 = _seq2, _seq1
+
         if shift_left == frame.miRNA_end_5 and shift_right == frame.miRNA_end_5:
-            frames.append([frame, seq1, seq2])
+            frames.append([frame, _seq1, _seq2])
         else:
-            _seq1 = seq1[:]
-            _seq2 = seq2[:]
-            #miRNA 5 end (left)
+            # miRNA 5 end (left)
             if frame.miRNA_end_5 < shift_left:
                 if frame.miRNA_end_5 < 0 and shift_left < 0:
                     _seq2 += reverse_complement(
@@ -95,7 +98,7 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
                     frame.flanks5_s += reverse_complement(
                         _seq2[shift_left:frame.miRNA_end_5])
 
-            #miRNA 3 end (right)
+            # miRNA 3 end (right)
             if frame.miRNA_end_3 < shift_right:
                 if frame.miRNA_end_3 < 0 and shift_right > 0:
                     frame.loop_s = frame.loop_s[-frame.miRNA_end_3:]
