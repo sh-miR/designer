@@ -47,6 +47,16 @@ def find_by_patterns(patterns, mRNA):
 
 
 def all_possible_sequences(mRNA, min_len, max_len):
+    """
+    This function returns all possible sequneces.
+    :param mRNA: mRNA sequence.
+    :type mRNA: str.
+    :param min_len: Minimum length of mRNA sequence.
+    :type min_len: int.
+    :param max_len: Maximum length of mRNA sequence.
+    :type max_len: int.
+    :returns: list.
+    """
     sequences = []
     for i in xrange(len(mRNA) - min_len + 1):
         for j in xrange(min_len, max_len + 1):
