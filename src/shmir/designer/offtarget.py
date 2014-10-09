@@ -6,6 +6,12 @@ import cStringIO
 
 
 def blast_offtarget(fasta_string):
+    """
+    Function which count offtarget using blast.
+    :param fasta_string: Fasta sequence.
+    :type fasta_string: str.
+    :returns: int.
+    """
     result_handle = NCBIWWW.qblast(
         "blastn", "refseq_rna", fasta_string, entrez_query="txid9606 [ORGN]",
         expect=100, gapcosts="5 2", genetic_code=1, hitlist_size=100,

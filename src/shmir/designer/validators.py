@@ -138,6 +138,11 @@ def check_input(seq_to_be_check):
 
 
 def calculate_gc_content(sequence):
+    """
+    Function to calculate the GC content.
+    input: str.
+    output: int
+    """
     sequence = sequence.upper()
     g_count = sequence.count('G')
     c_count = sequence.count('C')
@@ -146,10 +151,20 @@ def calculate_gc_content(sequence):
 
 
 def validate_gc_content(sequence, min_percent, max_percent):
+    """
+    Function for validate the GC content.
+    input: sequence, min_percent, max_percent
+    output: bool.
+    """
     return min_percent <= calculate_gc_content(sequence) <= max_percent
 
 
 def validate_sequence(sequence, max_offtarget, min_gc, max_gc, stimulatory):
+    """
+    Function to validate sequence.
+    input: sequence, max_offtarget, min_gc, max_gc, stimulatory
+    output: tuple.
+    """
     gc = validate_gc_content(sequence, min_gc, max_gc)
     is_immuno = Immuno.check_is_in_sequence(sequence)
 

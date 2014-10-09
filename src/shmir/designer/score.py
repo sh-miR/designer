@@ -84,6 +84,11 @@ def score_two_same_strands(seq1, original_frame):
 
 
 def score_from_sirna(frame_tuple, original_frame, frame_ss, sequence):
+    """
+    Function for getting score from siRNA.
+    input: frame_tuple, original_frame, frame_ss, sequence
+    output: tuple.
+    """
     return (
         score_frame(frame_tuple, frame_ss, original_frame) +
         score_homogeneity(original_frame) +
@@ -92,6 +97,11 @@ def score_from_sirna(frame_tuple, original_frame, frame_ss, sequence):
 
 
 def score_offtarget(number):
+    """
+    Function counts score.
+    input: number
+    output: int.
+    """
     score = 40 - number * 2
     if score >= 0:
         return score
@@ -99,10 +109,21 @@ def score_offtarget(number):
 
 
 def score_regexp(number):
+    """
+    input: int.
+    output: int.
+    """
     return number * 5
 
 
-def score_from_transcript(frame_tuple, original_frame, frame_ss, offtarget, regexp):
+def score_from_transcript(
+    frame_tuple, original_frame, frame_ss, offtarget, regexp
+):
+    """
+    Function which count score from transcript.
+    input: frame_tuple, original_frame, frame_ss, offtarget, regexp
+    output: dict.
+    """
     sframe = score_frame(frame_tuple, frame_ss, original_frame)
     sofftarget = score_offtarget(offtarget)
     sregexp = score_regexp(regexp)

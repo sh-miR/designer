@@ -8,6 +8,9 @@ patt_error = 'sequence can contain only {actgu} letters'
 
 
 class BaseException(Exception):
+    """
+    Base exception class.
+    """
     def __init__(self, message=None):
         self.message = message
         logging.error('%s: %s', self.__class__.__name__, self.message)
@@ -20,8 +23,10 @@ class ValidationError(BaseException):
 
 
 class IncorrectDataError(BaseException):
+    """Exception error class for incorrect data input"""
     pass
 
 
 class NoResultError(BaseException):
+    """Exception error class for no results"""
     pass
