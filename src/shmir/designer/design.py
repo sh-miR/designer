@@ -53,7 +53,27 @@ logger = get_task_logger(__name__)
 
 
 @task(bind=True)
-def fold_and_score(self, seq1, seq2, frame_tuple, original, score_fun, args_fun):
+def fold_and_score(
+    self, seq1, seq2, frame_tuple, original, score_fun, args_fun
+):
+    """
+    Function for scoring and folding sequnces.
+    :param seq1: First RNA sequence.
+    :type seq1: str.
+    :param seq2: Second RNA sequence.
+    :type seq2: str.
+    :param frame_tuple: Tuple with frame and inserts.
+    :type frame_tuple: tuple.
+    :param orginal: Backbone model.
+    :type orginal: Backbone.
+    :param score_fun: Scoring function.
+    :type score_fun: function.
+    :param score_fun: Scoring function.
+    :type score_fun: function.
+    :param args_fun: Arguments for scoring function.
+    :type args_fun: tuple.
+    :returns: tuple.
+    """
     path_id = self.request.id
     frame, insert1, insert2 = frame_tuple
 
@@ -71,7 +91,11 @@ def fold_and_score(self, seq1, seq2, frame_tuple, original, score_fun, args_fun)
         zipped_mfold(self.request.id, [pdf, ss], tmp_dirname)
 
     return (
-        score, frame.template(insert1, insert2), frame.name, path_id, (seq1, seq2),
+        score,
+        frame.template(insert1, insert2),
+        frame.name,
+        path_id,
+        (seq1, seq2),
     )
 
 
@@ -81,6 +105,10 @@ def shmir_from_sirna_score(input_str):
     Main function takes string input and returns the best results depending
     on scoring. Single result include sh-miR sequence,
     score and link to 2D structure from mfold program
+
+    :param input_str: Input string contains one or two sequences.
+    :type: str.
+    :returns: list.
     """
 
     seq1, seq2, shift_left, shift_right = check_input(input_str)
@@ -113,6 +141,19 @@ def shmir_from_sirna_score(input_str):
 @task
 def shmir_from_fasta_string(fasta_string, original_frames,
                             actual_offtarget, regexp_type):
+    """
+    Generating function of shmir from fasta string.
+    :param fasta_string: Sequence.
+    :type fasta_string: str.
+    :param original_frames: Backbone object.
+    :type original_frames: Backbone.
+    :param actual_offtarget: Argument for scoring function.
+    :type actual_offtarget: int.
+    :param regexp_type: Number of a regex.
+    :type regexp_type: int.
+    :returns: list.
+
+    """
     seq2 = reverse_complement(fasta_string)
 
     frames = get_frames(fasta_string, seq2, 0, 0, deepcopy(original_frames))
@@ -139,6 +180,24 @@ def shmir_from_fasta_string(fasta_string, original_frames,
 @task(bind=True, max_retries=10)
 def validate_and_offtarget(self, sequence, maximum_offtarget, minimum_CG,
                            maximum_CG, stimulatory_sequences, regexp_type):
+    """
+    Function for validation and checking the target of sequence.
+    :param sequence: RNA sequence.
+    :type sequence: str.
+    :param maximum_offtarget: Maximum offtarget.
+    :type maximum_offtarget: int.
+    :param minimum_CG: Minimum number of 'C' and 'G' nucleotide in sequence.
+    :type minimum_CG: int.
+    :param maximum_CG: Maximum number of 'C' and 'G' nucleotide in sequence.
+    :type maximum_CG: int.
+    :param stimulatory_sequences: Stimulator sequences.
+    :type stimulatory_sequences: list.
+    :param regexp_type: Number of a regex.
+    :type regexp_type: int.
+    :returns: dict.
+    :raises: ValueError.
+
+    """
     try:
         validated, actual_offtarget = validate_sequence(
             sequence, maximum_offtarget, minimum_CG,
@@ -156,8 +215,26 @@ def validate_and_offtarget(self, sequence, maximum_offtarget, minimum_CG,
 
 
 @task
-def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
-                                   maximum_offtarget, scaffold, stimulatory_sequences):
+def shmir_from_transcript_sequence(
+    transcript_name, minimum_CG, maximum_CG, maximum_offtarget, scaffold,
+    stimulatory_sequences
+):
+    """
+    Generating function of shmir from transcript sequence.
+    :param transcript_name: Name of transcipt.
+    :type transcript_name: str.
+    :param minimum_CG: Minimum number of 'C' and 'G' nucleotide in sequence.
+    :type minimum_CG: int.
+    :param maximum_CG: Maximum number of 'C' and 'G' nucleotide in sequence.
+    :type maximum_CG: int.
+    :param maximum_offtarget: Maximum offtarget.
+    :type maximum_offtarget: int.
+    :param scaffold: Frames of miRNA.
+    :type scaffold: str.
+    :param stimulatory_sequences: Stimulator sequences.
+    :type stimulatory_sequences: list.
+    :returns: list.
+    """
     # check if results are in database
     logger.info('Checking whether results are in database')
     try:
@@ -167,7 +244,9 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
             InputData.maximum_CG == maximum_CG,
             InputData.maximum_offtarget == maximum_offtarget,
             func.lower(InputData.scaffold) == scaffold.lower(),
-            func.lower(InputData.stimulatory_sequences) == stimulatory_sequences.lower()
+            func.lower(
+                InputData.stimulatory_sequences
+            ) == stimulatory_sequences.lower()
         ).join(InputData.results).one()
     except NoResultFound:
         pass
@@ -191,20 +270,31 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
 
     frames_by_name = {frame.name: [frame] for frame in original_frames}
 
-    patterns = {frame.name: json.loads(frame.regexp) for frame in original_frames}
+    patterns = {
+        frame.name: json.loads(frame.regexp) for frame in original_frames
+    }
     best_sequeneces = defaultdict(list)
 
     logger.info('Got original frames')
     logger.info('Processing patterns')
 
     for name, patterns_dict in patterns.iteritems():
-        for regexp_type, sequences in find_by_patterns(patterns_dict, mRNA).iteritems():
+        founded_patterns = find_by_patterns(patterns_dict, mRNA).iteritems()
+        for regexp_type, sequences in founded_patterns:
             with allow_join_result():
-                best_sequeneces[name] = remove_none(group([
-                    validate_and_offtarget.s(sequence, maximum_offtarget, minimum_CG,
-                                             maximum_CG, stimulatory_sequences,
-                                             regexp_type).set(queue="blast")
-                    for sequence in sequences]).apply_async().get())
+                best_sequeneces[name] = remove_none(
+                    group([
+                        validate_and_offtarget.s(
+                            sequence,
+                            maximum_offtarget,
+                            minimum_CG,
+                            maximum_CG,
+                            stimulatory_sequences,
+                            regexp_type
+                        ).set(queue="blast")
+                        for sequence in sequences
+                    ]).apply_async().get()
+                )
 
     logger.info('Patterns processed')
     logger.info('Unpacking structures')
@@ -227,10 +317,16 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
         for sequence in all_possible_sequences(mRNA, 19, 21):
             with allow_join_result():
                 best_sequeneces = group([
-                    validate_and_offtarget.s(sequence, maximum_offtarget, minimum_CG,
-                                             maximum_CG, stimulatory_sequences,
-                                             0).set(queue="blast")
-                    for sequence in sequences]).apply_async().get()
+                    validate_and_offtarget.s(
+                        sequence,
+                        maximum_offtarget,
+                        minimum_CG,
+                        maximum_CG,
+                        stimulatory_sequences,
+                        0
+                    ).set(queue="blast")
+                    for sequence in sequences]
+                ).apply_async().get()
             validated, actual_offtarget = validate_sequence(
                 sequence, maximum_offtarget, minimum_CG,
                 maximum_CG, stimulatory_sequences
@@ -247,16 +343,24 @@ def shmir_from_transcript_sequence(transcript_name, minimum_CG, maximum_CG,
 
         if best_sequeneces != []:
             with allow_join_result():
-                results = remove_none(group([
-                    shmir_from_fasta_string.s(seq_dict['sequence'], original_frames,
-                                              seq_dict['offtarget'], seq_dict['regexp']
-                                              ).set(queue="score")
-                    for seq_dict in best_sequeneces]).apply_async().get())
+                results = remove_none(
+                    group([
+                        shmir_from_fasta_string.s(
+                            seq_dict['sequence'], original_frames,
+                            seq_dict['offtarget'], seq_dict['regexp']
+                        ).set(queue="score")
+                        for seq_dict in best_sequeneces]
+                    ).apply_async().get()
+                )
 
     logger.info('Got best sequences, offtarget calculated')
     logger.info('Storing DB results')
 
-    sorted_results = sorted(results, key=operator.itemgetter(0), reverse=True)[:5]
+    sorted_results = sorted(
+        results,
+        key=operator.itemgetter(0),
+        reverse=True
+    )[:5]
     db_results = [Result(
         score=score,
         sh_mir=shmir,
