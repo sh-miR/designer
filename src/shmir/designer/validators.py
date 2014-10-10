@@ -8,6 +8,7 @@ import math
 import errors
 import logging
 
+from urllib2 import HTTPError
 from shmir.data.models import Immuno
 from shmir.designer.offtarget import blast_offtarget
 
@@ -173,7 +174,10 @@ def validate_sequence(sequence, max_offtarget, min_gc, max_gc, stimulatory):
             (is_immuno and stimulatory == 'yes') or
             (not is_immuno and stimulatory == 'no')
     ):
-        actual_offtarget = blast_offtarget(sequence)
+        try:
+            actual_offtarget = blast_offtarget(sequence)
+        except HTTPError:
+            return False, None
         offtarget = actual_offtarget <= max_offtarget
         if offtarget:
             return True, actual_offtarget

@@ -257,7 +257,7 @@ def shmir_from_transcript_sequence(
     logger.info('Checked results in database')
     logger.info('Getting data from NCBI')
 
-    mRNA = ncbi_api.get_mRNA(transcript_name)[:50]
+    mRNA = ncbi_api.get_mRNA(transcript_name)[:100]
 
     logger.info('Got data from NCBI')
     logger.info('Getting original frames')
@@ -280,8 +280,7 @@ def shmir_from_transcript_sequence(
     logger.info('Processing patterns')
 
     for name, patterns_dict in patterns.iteritems():
-        founded_patterns = find_by_patterns(patterns_dict, mRNA).iteritems()
-        for regexp_type, sequences in founded_patterns:
+        for regexp_type, sequences in find_by_patterns(patterns_dict, mRNA).iteritems():
             with allow_join_result():
                 is_empty, sequences = generator_is_empty(sequences)
                 if not is_empty:
@@ -293,7 +292,7 @@ def shmir_from_transcript_sequence(
                                 minimum_CG,
                                 maximum_CG,
                                 stimulatory_sequences,
-                                regexp_type
+                                int(regexp_type)
                             ).set(queue="blast")
                             for sequence in sequences
                         ]).apply_async().get()
@@ -308,8 +307,10 @@ def shmir_from_transcript_sequence(
             break
         with allow_join_result():
             results.extend(shmir_from_fasta_string.s(
-                seq_dict['sequence'], frames_by_name[name],
-                seq_dict['offtarget'], seq_dict['regexp']
+                seq_dict['sequence'],
+                frames_by_name[name],
+                seq_dict['offtarget'],
+                seq_dict['regexp']
             ).set(queue="score").apply_async().get())
 
     logger.info('Sctructures unpacked')
@@ -367,8 +368,8 @@ def shmir_from_transcript_sequence(
         sh_mir=shmir,
         pdf=path_id,
         backbone=frames_by_name[frame_name],
-        sequence=sequences[0],
-    ) for score, shmir, frame_name, path_id, sequences in sorted_results]
+        sequence=found_sequences[0],
+    ) for score, shmir, frame_name, path_id, found_sequences in sorted_results]
 
     db_input = InputData(
         transcript_name=transcript_name,
