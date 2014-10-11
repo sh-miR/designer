@@ -1,5 +1,6 @@
 import re
 import json
+import os
 
 from sqlalchemy import (
     create_engine,
@@ -143,8 +144,16 @@ class Result(Base):
             'sh_mir': str(self.sh_mir),
             'score': self.score,
             'pdf': str(self.pdf),
-            'backbone': str(self.backbone.name),
+            'sequence': str(self.sequence),
+            'backbone': str(
+                db_session.query(Backbone.name).filter(
+                    Backbone.id == self.backbone
+                ).one()[0]
+            ),
         }
+
+    def get_task_id(self):
+        return os.path.basename(os.path.dirname(self.pdf))
 
 
 # Creating tables which does not exist

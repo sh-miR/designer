@@ -174,6 +174,8 @@ def validate_sequence(sequence, max_offtarget, min_gc, max_gc, stimulatory):
             (is_immuno and stimulatory == 'yes') or
             (not is_immuno and stimulatory == 'no')
     ):
+        # when debuging uncomment return
+        # return True, 0
         try:
             actual_offtarget = blast_offtarget(sequence)
         except HTTPError:

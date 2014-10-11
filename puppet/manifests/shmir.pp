@@ -112,7 +112,7 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # User specific aliases and functions
-alias restart='sudo supervisorctl restart all && celery purge -f && sudo service rabbitmq-server restart && redis-cli FLUSHALL'
+alias restart='sudo supervisorctl restart all && celery purge -f && sudo service rabbitmq-server restart && redis-cli FLUSHALL && celery amqp queue.purge design && celery amqp queue.purge score && celery amqp queue.purge subtasks && celery amqp queue.purge blast'
 alias sctl='sudo supervisorctl'
 export PATH=/home/shmir/shmir/bin:\$PATH"
 }
