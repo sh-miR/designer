@@ -7,7 +7,10 @@ import operator
 import json
 from copy import deepcopy
 
-from collections import defaultdict
+from collections import (
+    defaultdict,
+    OrderedDict
+)
 
 from celery import group
 from celery.result import allow_join_result
@@ -123,12 +126,16 @@ def shmir_from_sirna_score(input_str):
                         deepcopy(original_frames))
 
     with allow_join_result():
-        frames_with_score = group([
-            fold_and_score.s(seq1, seq2, frame_tuple,
-                             original, score_from_sirna,
-                             (seq1,)).set(queue="subtasks")
+        frames_with_score = group(
+            fold_and_score.s(
+                seq1, seq2,
+                frame_tuple,
+                original,
+                score_from_sirna,
+                (seq1,)
+            ).set(queue="subtasks")
             for frame_tuple, original in zip(frames, original_frames)
-        ]).apply_async().get()
+        ).apply_async().get()
 
     sorted_frames = [
         elem[:-1] for elem in sorted(
@@ -160,13 +167,17 @@ def shmir_from_fasta_string(fasta_string, original_frames,
     frames = get_frames(fasta_string, seq2, 0, 0, deepcopy(original_frames))
 
     with allow_join_result():
-        frames_with_score = group([
-            fold_and_score.s(fasta_string, seq2, frame_tuple,
-                             original, score_from_transcript,
-                             (actual_offtarget, regexp_type)
-                             ).set(queue="subtasks")
+        frames_with_score = group(
+            fold_and_score.s(
+                fasta_string,
+                seq2,
+                frame_tuple,
+                original,
+                score_from_transcript,
+                (actual_offtarget, regexp_type)
+            ).set(queue="subtasks")
             for frame_tuple, original in zip(frames, original_frames)
-        ]).apply_async().get()
+        ).apply_async().get()
 
     filtered_frames = []
     for frame in frames_with_score:
@@ -175,7 +186,7 @@ def shmir_from_fasta_string(fasta_string, original_frames,
             frame[0] = notes['all']
             filtered_frames.append(frame)
 
-    return sorted(filtered_frames, key=operator.itemgetter(0), reverse=True)
+    return sorted(filtered_frames, key=operator.itemgetter(0), reverse=True) or None
 
 
 @task(bind=True, max_retries=10)
@@ -257,7 +268,7 @@ def shmir_from_transcript_sequence(
     logger.info('Checked results in database')
     logger.info('Getting data from NCBI')
 
-    mRNA = ncbi_api.get_mRNA(transcript_name)[:100]
+    mRNA = ncbi_api.get_mRNA(transcript_name)
 
     logger.info('Got data from NCBI')
     logger.info('Getting original frames')
@@ -272,8 +283,14 @@ def shmir_from_transcript_sequence(
     frames_by_name = {frame.name: [frame] for frame in original_frames}
 
     patterns = {
-        frame.name: json.loads(frame.regexp) for frame in original_frames
+        frame.name: OrderedDict(
+            sorted(
+                json.loads(frame.regexp).items(),
+                reverse=True
+            )
+        ) for frame in original_frames
     }
+
     best_sequeneces = defaultdict(list)
 
     logger.info('Got original frames')
@@ -285,7 +302,7 @@ def shmir_from_transcript_sequence(
                 is_empty, sequences = generator_is_empty(sequences)
                 if not is_empty:
                     best_sequeneces[name] = remove_none(
-                        group([
+                        group(
                             validate_and_offtarget.s(
                                 sequence,
                                 maximum_offtarget,
@@ -295,7 +312,7 @@ def shmir_from_transcript_sequence(
                                 int(regexp_type)
                             ).set(queue="blast")
                             for sequence in sequences
-                        ]).apply_async().get()
+                        ).apply_async().get()
                     )
 
     logger.info('Patterns processed')
@@ -306,12 +323,15 @@ def shmir_from_transcript_sequence(
         if len(results) == 10:
             break
         with allow_join_result():
-            results.extend(shmir_from_fasta_string.s(
+            shmir_result = shmir_from_fasta_string.s(
                 seq_dict['sequence'],
                 frames_by_name[name],
                 seq_dict['offtarget'],
                 seq_dict['regexp']
-            ).set(queue="score").apply_async().get())
+            ).set(queue="score").apply_async().get()
+
+            if shmir_result:
+                results.append(shmir_result)
 
     logger.info('Sctructures unpacked')
     logger.info('Getting best sequences, offtarget')
@@ -324,7 +344,7 @@ def shmir_from_transcript_sequence(
             is_empty, sequences = generator_is_empty(sequences)
             if not is_empty:
                 best_sequeneces = remove_none(
-                    group([
+                    group(
                         validate_and_offtarget.s(
                             sequence,
                             maximum_offtarget,
@@ -334,11 +354,11 @@ def shmir_from_transcript_sequence(
                             0
                         ).set(queue="blast")
                         for sequence in sequences
-                    ]).apply_async().get()
+                    ).apply_async().get()
                 )
 
         if best_sequeneces:
-            logger.info('best seqs: %r', best_sequeneces)
+            logger.info('best seqs: %r...', best_sequeneces[:5])
             logger.info('sqs len: %d', len(best_sequeneces))
         else:
             logger.info('no best seqs')
@@ -346,12 +366,12 @@ def shmir_from_transcript_sequence(
         if best_sequeneces:
             with allow_join_result():
                 results = remove_none(
-                    group([
+                    group(
                         shmir_from_fasta_string.s(
                             seq_dict['sequence'], original_frames,
                             seq_dict['offtarget'], seq_dict['regexp']
                         ).set(queue="score")
-                        for seq_dict in best_sequeneces]
+                        for seq_dict in best_sequeneces
                     ).apply_async().get()
                 )
 
