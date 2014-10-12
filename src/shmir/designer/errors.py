@@ -2,8 +2,8 @@ import logging
 
 error = 'insert only one siRNA sequence or both strands of one' \
         'siRNA at a time; check if both stands are in 5-3 orientation'
-len_error = "sequence to long or to short"
-patt_error = 'sequence can contain only {actgu} letters'
+len_error = "sequence(s) to long or to short"
+patt_error = 'sequence(s) can contain only {actgu} letters'
 
 
 class BaseException(Exception):
