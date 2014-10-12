@@ -4,66 +4,12 @@ Module for decorators
 
 from __future__ import unicode_literals
 
-from flask import request
-from flask.json import dumps
-
 import json
-
-from shmir.utils import json_error
+import smtplib
+from email.mime.text import MIMEText
 from functools import wraps
 
-
-def require_json(require_data=True, required_data_words=None,
-                 required_data_characters=None, jsonify=True):
-    """
-    Accepts only json requests and sends parsed data to the handlers
-
-    :param require_data: checking whether json request has 'data' attribute
-    """
-    def wrapper(f):
-
-        def wrapped(*args, **kwargs):
-            data = request.data.decode('utf-8')
-            try:
-                request_json = json.loads(data)
-            except (ValueError, KeyError, TypeError):
-                return json_error('Use JSON to comunicate with our API')
-
-            if not require_data:
-                return f(request_json=request_json, *args, **kwargs)
-            elif 'data' in request_json.keys():
-                data = str(request_json['data']).strip()
-
-                if required_data_words and len(data.split()) != \
-                        required_data_words:
-                    return json_error("Data must have {0} word(s)!".format(
-                                      required_data_words))
-
-                if required_data_characters and len(data) != \
-                        required_data_characters:
-                    return json_error("Data must have {0} characters!".format(
-                                      required_data_characters))
-
-                if jsonify:
-                    return dumps(
-                        f(data=data, request_json=request_json, *args,
-                          **kwargs)
-                    )
-                return f(data=data, request_json=request_json, *args, **kwargs)
-
-            return json_error('Data not provided')
-
-        return wrapped
-    return wrapper
-
-
-def jsonify(f):
-    """
-    Returns JSON
-    """
-    def wrapped(*args, **kwargs):
-        return dumps(f(*args, **kwargs))
-    return wrapped
+from shmir import settings
 
 
 def catch_errors(*errors):
@@ -80,4 +26,28 @@ def catch_errors(*errors):
                     }
                 }
         return wrapped
+    return wrapper
+
+
+def send_email(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        email_to = kwargs.pop('email', None)
+        result = f(*args, **kwargs)
+
+        if settings.EMAIL_ENABLED and email_to is not None:
+            msg = MIMEText(json.dumps(result))
+            msg['Subject'] = 'Task ended'
+            msg['From'] = settings.EMAIL_FROM
+            msg['To'] = email_to
+
+            smtp_server = smtplib.SMTP(settings.SMTP_SERVER,
+                                       settings.SMTP_PORT)
+            smtp_server.starttls()
+            smtp_server.login(settings.EMAIL_FROM, settings.EMAIL_PASSWORD)
+            smtp_server.sendmail(settings.EMAIL_FROM, email_to,
+                                 msg.as_string())
+            smtp_server.quit()
+
+        return result
     return wrapper

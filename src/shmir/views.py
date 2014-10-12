@@ -62,7 +62,9 @@ def mfold_from_subdirs(dir1, dir2):
 @app.route('/mfold/<data>')
 @cache.cached()
 def mfold_data_handler(data):
-    resource = delegate_mfold.apply_async(args=(data.upper(),), queue='score')
+    resource = delegate_mfold.apply_async(args=(data.upper(),),
+                                          kwargs=request.args.to_dict(),
+                                          queue='score')
     return jsonify({'task_id': resource.task_id})
 
 

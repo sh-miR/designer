@@ -10,6 +10,7 @@ from shmir.decorators import catch_errors
 from shmir.designer.errors import NoResultError
 from shmir.contextmanagers import mfold_path
 from shmir.async import task
+from shmir.decorators import send_email
 from shmir.settings import (
     MFOLD_PATH,
 )
@@ -61,6 +62,7 @@ def execute_mfold(path_id, sequence, zip_file=True):
 
 @task(bind=True)
 @catch_errors(NoResultError)
+@send_email
 def delegate_mfold(self, sequence):
     """
     Executes mfold in order to generate appropriate files
