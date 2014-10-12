@@ -39,7 +39,6 @@ def mfold_zip(path, task_id):
         })
 
     zip_file = get_zip_path(path, task_id)
-    print(zip_file)
     try:
         return send_file(zip_file)
     except IOError:

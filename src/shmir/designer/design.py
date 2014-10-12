@@ -408,7 +408,7 @@ def shmir_from_transcript_sequence(
         sequence=found_sequences[0],
     ) for score, shmir, frame_name, path_id, found_sequences in sorted_results]
 
-    remove_bad_foldings(path, (result.get_task_id() for result in db_results))
+    remove_bad_foldings(path, result.get_task_id() for result in db_results)
 
     db_input = InputData(
         transcript_name=transcript_name,
