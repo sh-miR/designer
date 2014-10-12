@@ -52,9 +52,10 @@ def execute_mfold(path_id, sequence, zip_file=True):
 
             if zip_file:
                 result = zipped_mfold(path_id, result, tmp_dirname)
-        else:
-            remove_error_folding(path_id)
-            raise NoResultError("No foldings for %s" % sequence)
+
+    if status != 0:
+        remove_error_folding(path_id)
+        raise NoResultError("No foldings for %s" % sequence)
 
     return result
 
