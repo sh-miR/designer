@@ -32,11 +32,13 @@ def mfold_task_status(task_id):
 
 
 def mfold_zip(path, task_id):
-    status = get_async_result(delegate_mfold, task_id, only_status=True)
+    status = get_async_result(delegate_mfold, task_id)
     if status['status'] == 'fail':
         return jsonify({
             'status': 'error', 'error': 'Task is not ready or has failed'
         })
+    elif status['status'] == 'error':
+        return jsonify(status)
 
     zip_file = get_zip_path(path, task_id)
     try:

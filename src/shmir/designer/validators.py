@@ -135,7 +135,7 @@ def check_input(seq_to_be_check):
         if ch_seq1[2] and ch_seq2[2]:
             return check_complementary(ch_seq1[0], ch_seq2[0])
     else:
-        raise errors.InputException('{}'.format(errors.error))
+        raise errors.ValidationError('{}'.format(errors.error))
 
 
 def calculate_gc_content(sequence):

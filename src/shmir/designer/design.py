@@ -39,6 +39,11 @@ from shmir.designer.search import (
     find_by_patterns,
     all_possible_sequences,
 )
+from shmir.designer.errors import (
+    NoResultError,
+    ValidationError,
+    IncorrectDataError,
+)
 from shmir.async import task
 from shmir.contextmanagers import mfold_path
 from shmir.data.models import (
@@ -53,12 +58,14 @@ from shmir.mfold import (
     zipped_mfold
 )
 from shmir.utils import remove_bad_foldings
+from shmir.decorators import catch_errors
 
 
 logger = get_task_logger(__name__)
 
 
 @task(bind=True)
+@catch_errors(NoResultError)
 def fold_and_score(
     self, seq1, seq2, frame_tuple, original, score_fun, args_fun, prefix=None
 ):
@@ -91,9 +98,6 @@ def fold_and_score(
         path_id, frame.template(insert1, insert2), zip_file=False
     )
 
-    if 'error' in mfold_data:
-        return mfold_data
-
     pdf, ss = mfold_data
     score = score_fun(frame_tuple, original, ss, *args_fun)
 
@@ -110,6 +114,7 @@ def fold_and_score(
 
 
 @task
+@catch_errors(ValidationError, NoResultError)
 def shmir_from_sirna_score(input_str):
     """
     Main function takes string input and returns the best results depending
@@ -234,6 +239,7 @@ def validate_and_offtarget(self, sequence, maximum_offtarget, minimum_CG,
 
 
 @task
+@catch_errors(IncorrectDataError, NoResultError)
 def shmir_from_transcript_sequence(
     transcript_name, minimum_CG, maximum_CG, maximum_offtarget, scaffold,
     stimulatory_sequences

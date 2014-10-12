@@ -6,6 +6,8 @@ from os import (
 )
 from zipfile import ZipFile
 
+from shmir.decorators import catch_errors
+from shmir.designer.errors import NoResultError
 from shmir.contextmanagers import mfold_path
 from shmir.async import task
 from shmir.settings import (
@@ -52,15 +54,13 @@ def execute_mfold(path_id, sequence, zip_file=True):
             if zip_file:
                 result = zipped_mfold(path_id, result, tmp_dirname)
         else:
-            result = {
-                'status': 'error',
-                'error': "No foldings",
-            }
+            raise NoResultError("No foldings for %s" % sequence)
 
     return result
 
 
 @task(bind=True)
+@catch_errors(NoResultError)
 def delegate_mfold(self, sequence):
     """
     Executes mfold in order to generate appropriate files

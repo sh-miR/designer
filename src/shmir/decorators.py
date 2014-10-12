@@ -10,6 +10,7 @@ from flask.json import dumps
 import json
 
 from shmir.utils import json_error
+from functools import wraps
 
 
 def require_json(require_data=True, required_data_words=None,
@@ -63,3 +64,20 @@ def jsonify(f):
     def wrapped(*args, **kwargs):
         return dumps(f(*args, **kwargs))
     return wrapped
+
+
+def catch_errors(*errors):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            try:
+                return f(*args, **kwargs)
+            except errors as e:
+                return {
+                    'status': 'error',
+                    'data': {
+                        'result': e.message,
+                    }
+                }
+        return wrapped
+    return wrapper
