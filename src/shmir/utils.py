@@ -36,3 +36,7 @@ def remove_bad_foldings(path_id, good_ids):
     for dirname in glob.glob(os.path.join(MFOLD_FILES, path_id)):
         if not os.path.basename(dirname) in good_ids:
             shutil.rmtree(dirname)
+
+
+def remove_error_folding(path_id):
+    shutil.rmtree(os.path.join(MFOLD_FILES, path_id))

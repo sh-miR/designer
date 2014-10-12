@@ -20,7 +20,7 @@ def score_frame(frame, frame_ss_file, orginal_frame):
     structure_ss = parse_ss(frame_ss_file)
     max_score, orginal_score = parse_score(u'.' + orginal_frame.structure)
 
-    #differences
+    # differences
     flanks5 = len(orginal_frame.flanks5_s) - len(structure.flanks5_s)
     insertion1 = len(orginal_frame.miRNA_s) - len(seq1)
     loop = len(orginal_frame.loop_s) - len(structure.loop_s)

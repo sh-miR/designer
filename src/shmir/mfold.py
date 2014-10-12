@@ -10,9 +10,8 @@ from shmir.decorators import catch_errors
 from shmir.designer.errors import NoResultError
 from shmir.contextmanagers import mfold_path
 from shmir.async import task
-from shmir.settings import (
-    MFOLD_PATH,
-)
+from shmir.settings import MFOLD_PATH
+from shmir.utils import remove_error_folding
 
 
 def zipped_mfold(task_id, files, tmp_dirname):
@@ -54,6 +53,7 @@ def execute_mfold(path_id, sequence, zip_file=True):
             if zip_file:
                 result = zipped_mfold(path_id, result, tmp_dirname)
         else:
+            remove_error_folding(path_id)
             raise NoResultError("No foldings for %s" % sequence)
 
     return result
