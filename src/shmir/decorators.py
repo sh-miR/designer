@@ -35,7 +35,7 @@ def send_email(file_handler=None):
         @wraps(f)
         def wrapped(*args, **kwargs):
             email_to = kwargs.pop('email', None)
-            result = f(*args, **kwargs)
+            result = f(*args)
 
             if settings.EMAIL_ENABLED and email_to is not None:
                 # msg = MIMEText(json.dumps(result))

@@ -82,7 +82,8 @@ def check_complementary(seq1, seq2):
 
 def check_input_single(seq):
     """Function for check sequence from input
-    if a single siRNA strand have only actgu letters and is 19-21 nucleotides long.
+    if a single siRNA strand have only actgu letters and is 19-21 nucleotides
+    long.
     Also rigth end of siRNA is cut if contain 'uu' or 'tt'.
     Input: string;
     The function has no output"""
