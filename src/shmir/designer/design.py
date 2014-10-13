@@ -58,7 +58,11 @@ from shmir.mfold import (
     zipped_mfold
 )
 from shmir.utils import remove_bad_foldings
-from shmir.decorators import catch_errors
+from shmir.decorators import (
+    catch_errors,
+    send_email
+)
+from shmir.result_handlers import zip_files_from_sirna
 
 
 logger = get_task_logger(__name__)
@@ -115,6 +119,7 @@ def fold_and_score(
 
 @task
 @catch_errors(ValidationError, NoResultError)
+@send_email(file_handler=zip_files_from_sirna)
 def shmir_from_sirna_score(input_str):
     """
     Main function takes string input and returns the best results depending
