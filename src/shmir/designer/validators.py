@@ -136,7 +136,7 @@ def check_input(seq_to_be_check):
         if ch_seq1[2] and ch_seq2[2]:
             return check_complementary(ch_seq1[0], ch_seq2[0])
     else:
-        raise errors.InputException('{}'.format(errors.error))
+        raise errors.ValidationError('{}'.format(errors.error))
 
 
 def calculate_gc_content(sequence):
@@ -175,6 +175,8 @@ def validate_sequence(sequence, max_offtarget, min_gc, max_gc, stimulatory):
             (is_immuno and stimulatory == 'yes') or
             (not is_immuno and stimulatory == 'no')
     ):
+        # when debuging uncomment return
+        # return True, 0
         try:
             actual_offtarget = blast_offtarget(sequence)
         except HTTPError:

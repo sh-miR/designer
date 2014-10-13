@@ -7,6 +7,7 @@ import operator
 import json
 from copy import deepcopy
 
+from itertools import chain
 from collections import (
     defaultdict,
     OrderedDict
@@ -38,6 +39,11 @@ from shmir.designer.search import (
     find_by_patterns,
     all_possible_sequences,
 )
+from shmir.designer.errors import (
+    NoResultError,
+    ValidationError,
+    IncorrectDataError,
+)
 from shmir.async import task
 from shmir.contextmanagers import mfold_path
 from shmir.data.models import (
@@ -51,14 +57,17 @@ from shmir.mfold import (
     execute_mfold,
     zipped_mfold
 )
+from shmir.utils import remove_bad_foldings
+from shmir.decorators import catch_errors
 
 
 logger = get_task_logger(__name__)
 
 
 @task(bind=True)
+@catch_errors(NoResultError)
 def fold_and_score(
-    self, seq1, seq2, frame_tuple, original, score_fun, args_fun
+    self, seq1, seq2, frame_tuple, original, score_fun, args_fun, prefix=None
 ):
     """
     Function for scoring and folding sequnces.
@@ -78,32 +87,34 @@ def fold_and_score(
     :type args_fun: tuple.
     :returns: tuple.
     """
-    path_id = self.request.id
+    if prefix:
+        path_id = "%s/%s" % (prefix, self.request.id)
+    else:
+        path_id = self.request.id
+
     frame, insert1, insert2 = frame_tuple
 
     mfold_data = execute_mfold(
         path_id, frame.template(insert1, insert2), zip_file=False
     )
 
-    if 'error' in mfold_data:
-        return mfold_data
-
     pdf, ss = mfold_data
     score = score_fun(frame_tuple, original, ss, *args_fun)
 
-    with mfold_path(self.request.id) as tmp_dirname:
+    with mfold_path(path_id) as tmp_dirname:
         zipped_mfold(self.request.id, [pdf, ss], tmp_dirname)
 
-    return (
+    return [
         score,
         frame.template(insert1, insert2),
         frame.name,
         path_id,
         (seq1, seq2),
-    )
+    ]
 
 
 @task
+@catch_errors(ValidationError, NoResultError)
 def shmir_from_sirna_score(input_str):
     """
     Main function takes string input and returns the best results depending
@@ -148,7 +159,7 @@ def shmir_from_sirna_score(input_str):
 
 @task
 def shmir_from_fasta_string(fasta_string, original_frames,
-                            actual_offtarget, regexp_type):
+                            actual_offtarget, regexp_type, path):
     """
     Generating function of shmir from fasta string.
     :param fasta_string: Sequence.
@@ -174,7 +185,8 @@ def shmir_from_fasta_string(fasta_string, original_frames,
                 frame_tuple,
                 original,
                 score_from_transcript,
-                (actual_offtarget, regexp_type)
+                (actual_offtarget, regexp_type),
+                path
             ).set(queue="subtasks")
             for frame_tuple, original in zip(frames, original_frames)
         ).apply_async().get()
@@ -227,6 +239,7 @@ def validate_and_offtarget(self, sequence, maximum_offtarget, minimum_CG,
 
 
 @task
+@catch_errors(IncorrectDataError, NoResultError)
 def shmir_from_transcript_sequence(
     transcript_name, minimum_CG, maximum_CG, maximum_offtarget, scaffold,
     stimulatory_sequences
@@ -268,7 +281,16 @@ def shmir_from_transcript_sequence(
     logger.info('Checked results in database')
     logger.info('Getting data from NCBI')
 
-    mRNA = ncbi_api.get_mRNA(transcript_name)
+    # create path string
+    path = "_".join(
+        map(
+            str,
+            [transcript_name, minimum_CG, maximum_CG, maximum_offtarget,
+             scaffold, stimulatory_sequences]
+        )
+    )
+
+    mRNA = ncbi_api.get_mRNA(transcript_name)[:100]
 
     logger.info('Got data from NCBI')
     logger.info('Getting original frames')
@@ -277,10 +299,10 @@ def shmir_from_transcript_sequence(
         original_frames = db_session.query(Backbone).all()
     else:
         original_frames = db_session.query(Backbone).filter(
-            func.lower(Backbone.name) == scaffold
+            func.lower(Backbone.name) == scaffold.lower()
         ).all()
 
-    frames_by_name = {frame.name: [frame] for frame in original_frames}
+    frames_by_name = {frame.name: frame for frame in original_frames}
 
     patterns = {
         frame.name: OrderedDict(
@@ -325,13 +347,14 @@ def shmir_from_transcript_sequence(
         with allow_join_result():
             shmir_result = shmir_from_fasta_string.s(
                 seq_dict['sequence'],
-                frames_by_name[name],
+                [frames_by_name[name]],
                 seq_dict['offtarget'],
-                seq_dict['regexp']
+                seq_dict['regexp'],
+                path
             ).set(queue="score").apply_async().get()
 
             if shmir_result:
-                results.append(shmir_result)
+                results.extend(shmir_result)
 
     logger.info('Sctructures unpacked')
     logger.info('Getting best sequences, offtarget')
@@ -365,15 +388,15 @@ def shmir_from_transcript_sequence(
 
         if best_sequeneces:
             with allow_join_result():
-                results = remove_none(
+                results = chain(*remove_none(
                     group(
                         shmir_from_fasta_string.s(
                             seq_dict['sequence'], original_frames,
-                            seq_dict['offtarget'], seq_dict['regexp']
+                            seq_dict['offtarget'], seq_dict['regexp'], path
                         ).set(queue="score")
                         for seq_dict in best_sequeneces
                     ).apply_async().get()
-                )
+                ))
 
     logger.info('Got best sequences, offtarget calculated')
     logger.info('Storing DB results')
@@ -387,9 +410,11 @@ def shmir_from_transcript_sequence(
         score=score,
         sh_mir=shmir,
         pdf=path_id,
-        backbone=frames_by_name[frame_name],
+        backbone=frames_by_name[frame_name].id,
         sequence=found_sequences[0],
     ) for score, shmir, frame_name, path_id, found_sequences in sorted_results]
+
+    remove_bad_foldings(path, (result.get_task_id() for result in db_results))
 
     db_input = InputData(
         transcript_name=transcript_name,
