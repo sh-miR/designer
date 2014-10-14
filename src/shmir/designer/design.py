@@ -313,7 +313,7 @@ def shmir_from_transcript_sequence(
         ) for frame in original_frames
     }
 
-    best_sequeneces = defaultdict(list)
+    best_sequences = defaultdict(list)
 
     logger.info('Got original frames')
     logger.info('Processing patterns')
@@ -323,7 +323,7 @@ def shmir_from_transcript_sequence(
             with allow_join_result():
                 is_empty, sequences = generator_is_empty(sequences)
                 if not is_empty:
-                    best_sequeneces[name] = remove_none(
+                    best_sequences[name] = remove_none(
                         group(
                             validate_and_offtarget.s(
                                 sequence,
@@ -339,9 +339,8 @@ def shmir_from_transcript_sequence(
 
     logger.info('Patterns processed')
     logger.info('Unpacking structures')
-
     results = []
-    for name, seq_dict in unpack_dict_to_list(best_sequeneces):
+    for name, seq_dict in unpack_dict_to_list(best_sequences):
         if len(results) == 10:
             break
         with allow_join_result():
@@ -360,13 +359,13 @@ def shmir_from_transcript_sequence(
     logger.info('Getting best sequences, offtarget')
 
     if not results:
-        best_sequeneces = []
+        best_sequences = []
         sequences = all_possible_sequences(mRNA, 19, 21)
 
         with allow_join_result():
             is_empty, sequences = generator_is_empty(sequences)
             if not is_empty:
-                best_sequeneces = remove_none(
+                best_sequences = remove_none(
                     group(
                         validate_and_offtarget.s(
                             sequence,
@@ -380,13 +379,13 @@ def shmir_from_transcript_sequence(
                     ).apply_async().get()
                 )
 
-        if best_sequeneces:
-            logger.info('best seqs: %r...', best_sequeneces[:5])
-            logger.info('sqs len: %d', len(best_sequeneces))
+        if best_sequences:
+            logger.info('best seqs: %r...', best_sequences[:5])
+            logger.info('sqs len: %d', len(best_sequences))
         else:
             logger.info('no best seqs')
 
-        if best_sequeneces:
+        if best_sequences:
             with allow_join_result():
                 results = chain(*remove_none(
                     group(
@@ -394,7 +393,7 @@ def shmir_from_transcript_sequence(
                             seq_dict['sequence'], original_frames,
                             seq_dict['offtarget'], seq_dict['regexp'], path
                         ).set(queue="score")
-                        for seq_dict in best_sequeneces
+                        for seq_dict in best_sequences
                     ).apply_async().get()
                 ))
 
