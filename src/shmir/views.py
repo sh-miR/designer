@@ -60,7 +60,7 @@ def mfold_from_subdirs(dir1, dir2):
 
 
 @app.route('/mfold/<data>')
-@cache.cached()
+@cache.memoize()
 def mfold_data_handler(data):
     resource = delegate_mfold.apply_async(args=(data.upper(),),
                                           kwargs=request.args.to_dict(),
@@ -83,7 +83,7 @@ def designer_task_result(task_id):
 
 
 @app.route('/from_sirna/<data>')
-@cache.cached()
+@cache.memoize()
 def design_handler(data):
     resource = shmir_from_sirna_score.apply_async(
         args=(data.upper(),), kwargs=request.args.to_dict(), queue='score')
@@ -105,7 +105,7 @@ def transcript_task_result(task_id):
 
 
 @app.route('/from_transcript/<transcript_name>')
-@cache.cached()
+@cache.memoize()
 def transcript_handler(transcript_name):
     params = (
         ('min_gc', 40, int),
