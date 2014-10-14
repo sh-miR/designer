@@ -38,7 +38,8 @@ def make_celery(app_obj):
         CELERY_TASK_SERIALIZER='pickle',
         CELERY_TIMEZONE="Europe/Warsaw",
         CELERY_QUEUES=(
-            Queue('main', Exchange('main')),
+            Queue('design', Exchange('design')),
+            Queue('score', Exchange('score')),
             Queue('subtasks', Exchange('subtasks')),
         )
     )
@@ -62,10 +63,13 @@ def _get_async_result(result, timeout=1.0, only_status=False):
     except TimeoutError:
         return {'status': 'in progress'}
 
-    response = {'status': 'ok'}
+    if isinstance(data, dict) and data.get('status') == 'error':
+        response = data
+    else:
+        response = {'status': 'ok'}
 
-    if not only_status:
-        response['data'] = data
+        if not only_status:
+            response['data'] = {'result': data}
 
     return response
 

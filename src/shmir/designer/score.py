@@ -20,7 +20,7 @@ def score_frame(frame, frame_ss_file, orginal_frame):
     structure_ss = parse_ss(frame_ss_file)
     max_score, orginal_score = parse_score(u'.' + orginal_frame.structure)
 
-    #differences
+    # differences
     flanks5 = len(orginal_frame.flanks5_s) - len(structure.flanks5_s)
     insertion1 = len(orginal_frame.miRNA_s) - len(seq1)
     loop = len(orginal_frame.loop_s) - len(structure.loop_s)
@@ -80,5 +80,56 @@ def score_two_same_strands(seq1, original_frame):
         return 10
     elif seq[0] == miRNA_s[0]:
         return 4
-    else:
-        return 0
+    return 0
+
+
+def score_from_sirna(frame_tuple, original_frame, frame_ss, sequence):
+    """
+    Function for getting score from siRNA.
+    input: frame_tuple, original_frame, frame_ss, sequence
+    output: tuple.
+    """
+    return (
+        score_frame(frame_tuple, frame_ss, original_frame) +
+        score_homogeneity(original_frame) +
+        score_two_same_strands(sequence, original_frame)
+    )
+
+
+def score_offtarget(number):
+    """
+    Function counts score.
+    input: number
+    output: int.
+    """
+    score = 40 - number * 2
+    if score >= 0:
+        return score
+    return 0
+
+
+def score_regexp(number):
+    """
+    input: int.
+    output: int.
+    """
+    return number * 5
+
+
+def score_from_transcript(
+    frame_tuple, original_frame, frame_ss, offtarget, regexp
+):
+    """
+    Function which count score from transcript.
+    input: frame_tuple, original_frame, frame_ss, offtarget, regexp
+    output: dict.
+    """
+    sframe = score_frame(frame_tuple, frame_ss, original_frame)
+    sofftarget = score_offtarget(offtarget)
+    sregexp = score_regexp(regexp)
+    return {
+        'frame': sframe,
+        'offtarget': sofftarget,
+        'regexp': sregexp,
+        'all': sframe + sofftarget + sregexp,
+    }

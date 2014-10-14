@@ -21,6 +21,20 @@ def get_config(section, option, default=None):
         return default
 
 
+def get_int(section, option, default=None):
+    try:
+        return config.getint(section, option)
+    except Error:
+        return default
+
+
+def get_bool(section, option, default=None):
+    try:
+        return config.getboolean(section, option)
+    except Error:
+        return default
+
+
 get_db_config = lambda option: get_config('database', option)
 # RabbitMQ will be default broker and result backend if they're not defined
 # get_celery_config = lambda option: get_config('celery', option) or 'amqp://'
@@ -43,9 +57,12 @@ CELERY_BROKER = 'amqp://'
 CELERY_RESULT_BACKEND = 'redis://'
 CELERYD_FORCE_EXECV = True
 CELERY_QUEUES = (
-    Queue('celery', routing_key='celery'),
-    Queue('subtasks', routing_key='transient',
+    Queue('design', routing_key='design'),
+    Queue('score', routing_key='score'),
+    Queue('subtasks', routing_key='subtasks',
           delivery_mode=1),
+    Queue('blast', routing_key='blast',
+          delivery_mode=1)
 )
 
 
@@ -60,4 +77,15 @@ EMAIL = 'amupoznan@gmail.com'
 
 # Cache
 CACHE_TYPE = 'redis'
-CACHE_DEFAULT_TIMEOUT = get_config('cache', 'timeout', 3600)
+# for coding purposes
+if DEBUG:
+    CACHE_DEFAULT_TIMEOUT = get_config('cache', 'timeout', 1)
+else:
+    CACHE_DEFAULT_TIMEOUT = get_config('cache', 'timeout', 3600)
+
+# Email
+EMAIL_ENABLED = get_bool('email', 'enabled', default=False)
+SMTP_SERVER = get_config('email', 'smtp_server', default='smtp.gmail.com')
+SMTP_PORT = get_int('email', 'smtp_port', default=587)
+EMAIL_FROM = get_config('email', 'email_from')
+EMAIL_PASSWORD = get_config('email', 'password')

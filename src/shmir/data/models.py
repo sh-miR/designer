@@ -1,5 +1,6 @@
 import re
 import json
+import os
 
 from sqlalchemy import (
     create_engine,
@@ -18,7 +19,6 @@ from sqlalchemy.orm import (
     sessionmaker
 )
 
-from shmir.designer.errors import NoResultError
 from shmir.settings import (
     FCONN
 )
@@ -90,16 +90,6 @@ class Backbone(Base):
 
         db_session.commit()
 
-    @classmethod
-    def get_mirna(cls, name=None):
-        if name:
-            mirna = db_session.query(cls).filter(cls.name == name).all()
-        else:
-            mirna = db_session.query(cls).all()
-        if not mirna:
-            raise NoResultError('Backbone does not exist.')
-        return mirna
-
 
 class Immuno(Base):
     """
@@ -113,12 +103,10 @@ class Immuno(Base):
 
     @classmethod
     def check_is_in_sequence(cls, input_sequence):
-        immunos = db_session.query(cls).all()
-        results = []
-        for immuno in immunos:
-            if immuno.sequence in input_sequence:
-                results.append({'id': immuno.id, 'sequence': immuno.sequence})
-        return results
+        return bool(db_session.execute(
+            "SELECT COUNT(*) FROM immuno WHERE :input_sequence LIKE "
+            "'%'||sequence||'%';", {'input_sequence': input_sequence}
+        ).first()[0])
 
 
 class InputData(Base):
@@ -131,6 +119,7 @@ class InputData(Base):
     transcript_name = Column(Unicode(20), nullable=False)
     minimum_CG = Column(Integer, nullable=False)
     maximum_CG = Column(Integer, nullable=False)
+    maximum_offtarget = Column(Integer, nullable=False)
     scaffold = Column(Unicode(10), default=u'all')
     stimulatory_sequences = Column(Unicode(15), default=u'no_difference')
     results = relationship('Result', backref='input_data')
@@ -146,7 +135,25 @@ class Result(Base):
     sh_mir = Column(Unicode(300), nullable=False)
     score = Column(Integer, nullable=False)
     pdf = Column(Unicode(150), nullable=False)
+    sequence = Column(Unicode(30), nullable=False)
+    backbone = Column(Integer, ForeignKey(Backbone.id))
     input_id = Column(Integer, ForeignKey('input_data.id'))
+
+    def as_json(self):
+        return {
+            'sh_mir': str(self.sh_mir),
+            'score': self.score,
+            'pdf': str(self.pdf),
+            'sequence': str(self.sequence),
+            'backbone': str(
+                db_session.query(Backbone.name).filter(
+                    Backbone.id == self.backbone
+                ).one()[0]
+            ),
+        }
+
+    def get_task_id(self):
+        return os.path.basename(os.path.dirname(self.pdf))
 
 
 # Creating tables which does not exist

@@ -39,12 +39,22 @@ $packages = [
     'gcc-gfortran',
     'texlive-epstopdf',
     'ImageMagick',
-    'iptables-services'
+    'iptables-services',
+    'telnet',
+    'perl-Archive-Tar',
+    'perl-Digest-MD5',
+    'perl-File-Temp'
 ]
 
 package { $packages:
      ensure      => installed,
      require     => Package['epel-release']
+}
+
+package { 'ncbi-blast':
+    ensure   => installed,
+    source   => 'ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.2.29+-1.x86_64.rpm',
+    provider => rpm
 }
 
 service { 'redis':
@@ -111,8 +121,9 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # User specific aliases and functions
-alias restart='sudo supervisorctl restart all && celery purge -f && sudo service rabbitmq-server restart'
-alias sctl='sudo supervisorctl'"
+alias restart='sudo supervisorctl restart all && celery purge -f && sudo service rabbitmq-server restart && redis-cli FLUSHALL && celery amqp queue.purge design && celery amqp queue.purge score && celery amqp queue.purge subtasks && celery amqp queue.purge blast'
+alias sctl='sudo supervisorctl'
+export PATH=/home/shmir/shmir/bin:\$PATH"
 }
 
 file { '/etc/shmir.conf':
@@ -133,7 +144,7 @@ nginx::resource::vhost { 'localhost':
 
 supervisor::program { 'shmir-celery-worker1':
     ensure    => present,
-    command   => '/usr/bin/celery -A shmir.async.celery worker -l info -n worker1.%%h -Q main',
+    command   => '/usr/bin/celery -A shmir.async.celery worker -l info -n worker1.%%h -Q design',
     directory => '/home/shmir/shmir/src/',
     user      => 'vagrant',
     group     => 'vagrant',
@@ -142,7 +153,25 @@ supervisor::program { 'shmir-celery-worker1':
 
 supervisor::program { 'shmir-celery-worker2':
     ensure    => present,
-    command   => '/usr/bin/celery -A shmir.async.celery worker -l info -n worker2.%%h -Q subtasks',
+    command   => '/usr/bin/celery -A shmir.async.celery worker -l info -n worker2.%%h -Q score',
+    directory => '/home/shmir/shmir/src/',
+    user      => 'vagrant',
+    group     => 'vagrant',
+    require   => [ File['/etc/shmir.conf'], Class['python'] ]
+}
+
+supervisor::program { 'shmir-celery-worker3':
+    ensure    => present,
+    command   => '/usr/bin/celery -A shmir.async.celery worker -l info -n worker3.%%h -Q subtasks',
+    directory => '/home/shmir/shmir/src/',
+    user      => 'vagrant',
+    group     => 'vagrant',
+    require   => [ File['/etc/shmir.conf'], Class['python'] ]
+}
+
+supervisor::program { 'shmir-celery-worker4':
+    ensure    => present,
+    command   => '/usr/bin/celery -A shmir.async.celery worker --concurrency=8 -l info -n worker4.%%h -Q blast',
     directory => '/home/shmir/shmir/src/',
     user      => 'vagrant',
     group     => 'vagrant',
