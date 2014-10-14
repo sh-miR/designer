@@ -27,7 +27,7 @@ def get_dirname(task_id):
     return dirname
 
 
-@cache.cached()
+@cache.cached(key_prefix='zip_path')
 def get_zip_path(path, task_id):
     return os.path.join(get_dirname(path), '{}.zip'.format(task_id))
 

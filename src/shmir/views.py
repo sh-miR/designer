@@ -85,8 +85,8 @@ def designer_task_result(task_id):
 @app.route('/from_sirna/<data>')
 @cache.cached()
 def design_handler(data):
-    resource = shmir_from_sirna_score.apply_async(args=(data.upper(),),
-                                                  queue='score')
+    resource = shmir_from_sirna_score.apply_async(
+        args=(data.upper(),), kwargs=request.args.to_dict(), queue='score')
     return jsonify({'task_id': resource.task_id})
 
 

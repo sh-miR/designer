@@ -40,12 +40,21 @@ $packages = [
     'texlive-epstopdf',
     'ImageMagick',
     'iptables-services',
-    'telnet'
+    'telnet',
+    'perl-Archive-Tar',
+    'perl-Digest-MD5',
+    'perl-File-Temp'
 ]
 
 package { $packages:
      ensure      => installed,
      require     => Package['epel-release']
+}
+
+package { 'ncbi-blast':
+    ensure   => installed,
+    source   => 'ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.2.29+-1.x86_64.rpm',
+    provider => rpm
 }
 
 service { 'redis':

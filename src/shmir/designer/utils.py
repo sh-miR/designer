@@ -33,7 +33,8 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
     if miRNA_end_5 < first_end
     add to right site of second sequence additional nucleotides
     (as many as |miRNA_end_5 - first_end|) like
-    (dots are nucleotides to add, big letter are flanking sequences, small are input):
+    (dots are nucleotides to add, big letter are flanking sequences, small are
+    input):
 
     AAAGGGGCTTTTagtcttaga
     TTTCCCCGAA....agaatct
@@ -140,16 +141,31 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
 
 
 def unpack_dict_to_list(dict_object):
+    """
+    Function to unpack dict to list.
+    input: dict.
+    output: list.
+    """
     to_zip = [[(key, elem) for elem in dict_object[key]] for key in dict_object]
     return (elem for inner_list in izip_longest(*to_zip)
             for elem in inner_list if elem is not None)
 
 
 def remove_none(list_object):
+    """
+    Function which removes None objects from list.
+    input: list.
+    output: list.
+    """
     return filter(partial(is_not, None), list_object)
 
 
 def generator_is_empty(generator):
+    """
+    Function which check if a generator is empty.
+    input: generator.
+    output: list -- (bool, generator) or (bool, None)
+    """
     try:
         first = next(generator)
     except StopIteration:
