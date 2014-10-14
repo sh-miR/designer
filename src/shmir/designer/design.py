@@ -295,7 +295,7 @@ def shmir_from_transcript_sequence(
         )
     )
 
-    mRNA = ncbi_api.get_mRNA(transcript_name)[:100]
+    mRNA = ncbi_api.get_mRNA(transcript_name)
 
     logger.info('Got data from NCBI')
     logger.info('Getting original frames')
