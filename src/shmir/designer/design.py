@@ -346,7 +346,7 @@ def shmir_from_transcript_sequence(
     logger.info('Unpacking structures')
     results = []
     for name, seq_dict in unpack_dict_to_list(best_sequences):
-        if len(results) == 10:
+        if len(results) == 20:
             break
         with allow_join_result():
             shmir_result = shmir_from_fasta_string.s(
@@ -409,7 +409,7 @@ def shmir_from_transcript_sequence(
         results,
         key=operator.itemgetter(0),
         reverse=True
-    )[:5]
+    )[:10]
     db_results = [Result(
         score=score,
         sh_mir=shmir,
