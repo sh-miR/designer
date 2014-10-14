@@ -162,7 +162,7 @@ supervisor::program { 'shmir-celery-worker2':
 
 supervisor::program { 'shmir-celery-worker3':
     ensure    => present,
-    command   => '/usr/bin/celery -A shmir.async.celery worker -l info -n worker3.%%h -Q subtasks',
+    command   => '/usr/bin/celery -A shmir.async.celery worker --concurrency=4 -l info -n worker3.%%h -Q subtasks',
     directory => '/home/shmir/shmir/src/',
     user      => 'vagrant',
     group     => 'vagrant',
