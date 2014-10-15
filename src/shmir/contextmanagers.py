@@ -1,7 +1,10 @@
 from contextlib import contextmanager
 import os
 
-from shmir import utils
+from shmir import (
+    settings,
+    utils
+)
 
 
 @contextmanager
@@ -15,3 +18,13 @@ def mfold_path(task_id):
     yield tmp_dirname
 
     os.chdir(programm_path)
+
+
+@contextmanager
+def blast_path():
+    old_path = os.getcwd()
+    os.chdir(settings.BLAST_PATH)
+
+    yield
+
+    os.chdir(old_path)
