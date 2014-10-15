@@ -7,24 +7,22 @@ from shmir import (
 )
 
 
+def generic_path(path):
+    old_path = os.getcwd()
+    os.chdir(path)
+
+    yield path
+
+    os.chdir(old_path)
+
+
 @contextmanager
 def mfold_path(task_id):
-    programm_path = os.getcwd()
-
-    tmp_dirname = utils.get_dirname(task_id)
-
-    os.chdir(tmp_dirname)
-
-    yield tmp_dirname
-
-    os.chdir(programm_path)
+    for path in generic_path(utils.get_dirname(task_id)):
+        yield path
 
 
 @contextmanager
 def blast_path():
-    old_path = os.getcwd()
-    os.chdir(settings.BLAST_PATH)
-
-    yield
-
-    os.chdir(old_path)
+    for _ in generic_path(settings.BLAST_PATH):
+        yield
