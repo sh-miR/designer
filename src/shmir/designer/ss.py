@@ -7,8 +7,13 @@ import pkgutil
 def parse_ss(file_name):
     """Function which parses ss file and returns tuples with first
         and last column on output
-        input: string
-        output: list of tuples with two elements"""
+
+        Args
+            file_name; String.
+
+        Returns:
+            List of tuples with two elements
+    """
     read_data = []
     with open(file_name, "r") as ss_file:
         for line in ss_file:
@@ -27,8 +32,13 @@ def to_normal():
 
 def parse_score(name):
     """Parses files with score to list of tuple and score value
-    input: string
-    output: float, list of three element lists"""
+
+    Args:
+        name: String with name of file.
+
+    Returns:
+        max_score, data - Float, list of three element lists.
+    """
     data = []
     score_file_content = pkgutil.get_data('shmir', name).split('\n')
     max_score = float(score_file_content[0])
@@ -45,8 +55,13 @@ def parse_score(name):
 
 def max_score(name):
     """Parses files with score to list of tuple and score value
-    input: string
-    output: int"""
+
+    Args:
+        name: String with file name.
+
+    Returns:
+        score: Int.
+    """
     score = 0
     with open(name) as score_file:
         for line in score_file:
