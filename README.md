@@ -18,8 +18,9 @@ Quick Start
 
 To start server:
 
-        $ git submodule update --init
-        $ vagrant up
+    $ git submodule update --init
+    $ vagrant up
+
 
 After this commands server builds all its dependencies and start sh-miR API.
 
@@ -56,9 +57,9 @@ Where DATA is a sequence which we would like to fold.
 
 Examples:
 
-        $ curl -i http://127.0.0.1:8080/mfold/UUUGUAUUCGCCCUAGCGC
-        $ curl -i -X GET http://127.0.0.1:8080/mfold/status/f3591b31-49d9-47da-ae78-898792db26a5
-        $ curl -i -X GET http://127.0.0.1:8080/mfold/result/f3591b31-49d9-47da-ae78-898792db26a5
+    $ curl -i http://127.0.0.1:8080/mfold/UUUGUAUUCGCCCUAGCGC
+    $ curl -i -X GET http://127.0.0.1:8080/mfold/status/f3591b31-49d9-47da-ae78-898792db26a5
+    $ curl -i -X GET http://127.0.0.1:8080/mfold/result/f3591b31-49d9-47da-ae78-898792db26a5
 
 
 * from_sirna
@@ -71,12 +72,12 @@ Pdf is a task ID of mfold. To get this file use mfold service.
 
 Examples:
 
-        $ curl -i http://127.0.0.1:8080/from_sirna/UUUGUAUUCGCCCUAGCGC%20CGCUAUGGCGAAUACAAACA
-        $ curl -i -X GET http://127.0.0.1:8080/from_sirna/status/f3591b31-49d9-47da-ae78-898792db26a5
-        $ curl -i -X GET http://127.0.0.1:8080/from_sirna/result/f3591b31-49d9-47da-ae78-898792db26a5
+    $ curl -i http://127.0.0.1:8080/from_sirna/UUUGUAUUCGCCCUAGCGC%20CGCUAUGGCGAAUACAAACA
+    $ curl -i -X GET http://127.0.0.1:8080/from_sirna/status/f3591b31-49d9-47da-ae78-898792db26a5
+    $ curl -i -X GET http://127.0.0.1:8080/from_sirna/result/f3591b31-49d9-47da-ae78-898792db26a5
 
 Here we download folded sh-miR:
-        $ curl -i -X GET http://127.0.0.1:8080/mfold/result/4bbee83a-0337-4efa-a018-13517390ebd1
+    $ curl -i -X GET http://127.0.0.1:8080/mfold/result/4bbee83a-0337-4efa-a018-13517390ebd1
 
 
 * from_transcript
@@ -94,12 +95,12 @@ Pdf is task ID of mfold. To get this file use mfold service.
 
 Examples:
 
-        $ curl -i http://127.0.0.1:8080/from_transcript/UUUGUAUUCGCCCUAGCGC%20CGCUAUGGCGAAUACAAACA
-        $ curl -i -X GET http://127.0.0.1:8080/from_transcript/status/f3591b31-49d9-47da-ae78-898792db26a5
-        $ curl -i -X GET http://127.0.0.1:8080/from_transcript/result/f3591b31-49d9-47da-ae78-898792db26a5
+    $ curl -i http://127.0.0.1:8080/from_transcript/UUUGUAUUCGCCCUAGCGC%20CGCUAUGGCGAAUACAAACA
+    $ curl -i -X GET http://127.0.0.1:8080/from_transcript/status/f3591b31-49d9-47da-ae78-898792db26a5
+    $ curl -i -X GET http://127.0.0.1:8080/from_transcript/result/f3591b31-49d9-47da-ae78-898792db26a5
 
 Here we download folded sh-miR:
-        $ curl -i -X GET http://127.0.0.1:8080/mfold/result/4bbee83a-0337-4efa-a018-13517390ebd1
+    $ curl -i -X GET http://127.0.0.1:8080/mfold/result/4bbee83a-0337-4efa-a018-13517390ebd1
 
 
 ***********
@@ -108,21 +109,21 @@ Development
 
 To log into server use:
 
-        $ vagrant ssh
+    $ vagrant ssh
 
 
 After changing code you should restart all queues and flask server:
 
-        $ vagrant ssh
-        $ restart
-        $ exit
+    $ vagrant ssh
+    $ restart
+    $ exit
 
 
 To debug we recommend celery tool (in code):
 
-        from celery.contrib import rdb; rdb.set_trace()
+    from celery.contrib import rdb; rdb.set_trace()
 
 
 And from vagrant connect via 'rdb':
-        $ vagrant ssh
-        $ rdb PORT
+    $ vagrant ssh
+    $ rdb PORT
