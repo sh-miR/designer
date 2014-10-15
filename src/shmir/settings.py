@@ -16,6 +16,14 @@ config.read('/etc/shmir.conf')
 
 
 def get_config(section, option, default=None):
+    """Function which gets settings
+
+    Args:
+        section(str): section of settings
+        option(str): option of settings
+    Returns:
+        config or default value
+    """
     try:
         return config.get(section, option)
     except Error:
@@ -23,6 +31,14 @@ def get_config(section, option, default=None):
 
 
 def get_int(section, option, default=None):
+    """Function which gets settings
+
+    Args:
+        section(str): section of settings
+        option(str): option of settings
+    Returns:
+        config(int) or default value
+    """
     try:
         return config.getint(section, option)
     except Error:
@@ -30,6 +46,14 @@ def get_int(section, option, default=None):
 
 
 def get_bool(section, option, default=None):
+    """Function which gets settings
+
+    Args:
+        section(str): section of settings
+        option(str): option of settings
+    Returns:
+        config(bool) or default value
+    """
     try:
         return config.getboolean(section, option)
     except Error:

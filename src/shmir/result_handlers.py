@@ -7,6 +7,14 @@ from shmir.utils import get_zip_path
 
 
 def zip_file_mfold(path):
+    """Function which creates zip_msg to send via email
+
+    Args:
+        path: path of zip file
+
+    Returns:
+        tuple of zip message
+    """
     zip_msg = MIMEBase('application', 'zip')
     with open(path, 'r') as zip_file:
         zip_msg.set_payload(zip_file.read())
@@ -18,6 +26,14 @@ def zip_file_mfold(path):
 
 
 def zip_files_from_sirna(struct):
+    """Function which generates email msg from siRNA
+
+    Args:
+        struct: sh-miR struct
+
+    Returns:
+        zip message
+    """
     for element in struct:
         task_id = element[-1]
         with app.app_context():
