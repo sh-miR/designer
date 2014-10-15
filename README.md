@@ -1,35 +1,31 @@
-##########
-sh-miR API
-##########
-.. image:: http://img.shields.io/badge/license-GNU-blue.svg
-    :target: http://www.gnu.org/licenses/gpl.html
+# sh-miR API #
+**************
+
+[![GNU License](http://img.shields.io/badge/license-GNU-blue.svg)](http://www.gnu.org/licenses/gpl.html)
 
 
-************
-Requirements
-************
+## Requirements ##
 
 * vagrant (yeah, that's all you need)
 
 
-***********
-Quick Start
-***********
+
+## Quick Start ##
 
 To start server:
-
+```
     $ git submodule update --init
     $ vagrant up
-
+````
 
 After this commands server builds all its dependencies and start sh-miR API.
 
 
-*****
-Usage
-*****
 
-There are three services:
+## Usage ##
+
+
+### There are three services: ###
 * mfold
 * creating sh-miR(s) from siRNA
 * creating sh-miR(s) from transcript
@@ -47,7 +43,7 @@ Where:
 * TASK_ID - id of created task
 
 
-**Services**
+## Services ##
 * mfold
     * creator - returns TASK_ID - URL: */mfold/DATA
     * status - returns STATUS (ok, error, fail) - URL: */mfold/status/TASK_ID
@@ -56,11 +52,11 @@ Where:
 Where DATA is a sequence which we would like to fold.
 
 Examples:
-
+```
     $ curl -i http://127.0.0.1:8080/mfold/UUUGUAUUCGCCCUAGCGC
     $ curl -i -X GET http://127.0.0.1:8080/mfold/status/f3591b31-49d9-47da-ae78-898792db26a5
     $ curl -i -X GET http://127.0.0.1:8080/mfold/result/f3591b31-49d9-47da-ae78-898792db26a5
-
+```
 
 * from_sirna
     * creator - returns TASK_ID - URL: */from_sirna/DATA
@@ -71,13 +67,13 @@ Where DATA is a one siRNA strand (active) or two siRNA strands separated by spac
 Pdf is a task ID of mfold. To get this file use mfold service.
 
 Examples:
-
+```
     $ curl -i http://127.0.0.1:8080/from_sirna/UUUGUAUUCGCCCUAGCGC%20CGCUAUGGCGAAUACAAACA
     $ curl -i -X GET http://127.0.0.1:8080/from_sirna/status/f3591b31-49d9-47da-ae78-898792db26a5
     $ curl -i -X GET http://127.0.0.1:8080/from_sirna/result/f3591b31-49d9-47da-ae78-898792db26a5
-
-Here we download folded sh-miR:
-    $ curl -i -X GET http://127.0.0.1:8080/mfold/result/4bbee83a-0337-4efa-a018-13517390ebd1
+```
+Here we download folded sh-miR: <br>
+`$ curl -i -X GET http://127.0.0.1:8080/mfold/result/4bbee83a-0337-4efa-a018-13517390ebd1`
 
 
 * from_transcript
@@ -94,36 +90,36 @@ Where DATA is transcript name from NCBI
 Pdf is task ID of mfold. To get this file use mfold service.
 
 Examples:
-
+```
     $ curl -i http://127.0.0.1:8080/from_transcript/UUUGUAUUCGCCCUAGCGC%20CGCUAUGGCGAAUACAAACA
     $ curl -i -X GET http://127.0.0.1:8080/from_transcript/status/f3591b31-49d9-47da-ae78-898792db26a5
     $ curl -i -X GET http://127.0.0.1:8080/from_transcript/result/f3591b31-49d9-47da-ae78-898792db26a5
+```
+Here we download folded sh-miR:<br>
+    `$ curl -i -X GET http://127.0.0.1:8080/mfold/result/4bbee83a-0337-4efa-a018-13517390ebd1`
 
-Here we download folded sh-miR:
-    $ curl -i -X GET http://127.0.0.1:8080/mfold/result/4bbee83a-0337-4efa-a018-13517390ebd1
 
-
-***********
-Development
-***********
+## Development ##
 
 To log into server use:
-
+```
     $ vagrant ssh
-
+```
 
 After changing code you should restart all queues and flask server:
-
+```
     $ vagrant ssh
     $ restart
     $ exit
-
+```
 
 To debug we recommend celery tool (in code):
-
+```
     from celery.contrib import rdb; rdb.set_trace()
-
+```
 
 And from vagrant connect via 'rdb':
+```
     $ vagrant ssh
     $ rdb PORT
+```
