@@ -1,5 +1,5 @@
 """
-.. module:: main
+.. module:: shmir.designer.design
     :synopsis: provides the executable program
 """
 
