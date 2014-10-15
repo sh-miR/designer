@@ -1,3 +1,4 @@
+import os
 from ConfigParser import (
     ConfigParser,
     Error
@@ -89,3 +90,6 @@ SMTP_SERVER = get_config('email', 'smtp_server', default='smtp.gmail.com')
 SMTP_PORT = get_int('email', 'smtp_port', default=587)
 EMAIL_FROM = get_config('email', 'email_from')
 EMAIL_PASSWORD = get_config('email', 'password')
+
+# Blast
+BLAST_PATH = get_config('blast', 'path', default=os.path.expanduser('~'))
