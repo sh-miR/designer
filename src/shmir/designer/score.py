@@ -9,12 +9,16 @@ from .ss import parse_score
 
 
 def score_frame(frame, frame_ss_file, orginal_frame):
-    """Frame is a tuple of object Backbone and two sequences
-    frame_ss_file is file from mfold
-    orignal_frame is object Backbone from database (not changed)
+    """Scorring function.
 
-    input: sh-miR object, ss_file, ss_file
-    output: int"""
+    Args:
+        frame: tuple of object Backbone and two sequences
+        frame_ss_file: file from mfold
+        ss_file: object Backbone from database (not changed)
+
+    Returns:
+        score: int.
+    """
 
     structure, seq1, seq2 = frame
     structure_ss = parse_ss(frame_ss_file)
@@ -54,8 +58,12 @@ def add_shifts(start, end, frame_ss, value, current):
     because flanking sequences can be shortened or extended during insertion.
     Moreover, the length of the siRNA insert can differ from the natural one.
 
-    input: start, end, frame_ss, value, current.
-    The function has no output"""
+    Args:
+        start: starting number.
+        end: ending number.
+        value: value to add.
+        current: current frame number
+    """
     for num in range(end):
         if num >= start:
             frame_ss[num][0] += value
@@ -66,14 +74,25 @@ def add_shifts(start, end, frame_ss, value, current):
 def score_homogeneity(original_frame):
     """We are taking value homogenity from database and multiply it 3 times
 
-    input: sh-miR object
+    Args:
+        original_frame: sh-miR object
+
+    Returns:
+        Homogeneity score.
     output: sh-miR object with modified homogeneity"""
     return original_frame.homogeneity * 3
 
 
 def score_two_same_strands(seq1, original_frame):
-    """Input: string, pri-miRNA object.
-    The function has no output."""
+    """
+    Args:
+        seq1: String with nucleotides.
+        original_frame: sh-miR object
+
+    Returns:
+        Score number.
+
+    """
     miRNA_s = original_frame.miRNA_s[:2].upper()
     seq = seq1[:2].upper()
     if seq == miRNA_s:
@@ -86,6 +105,10 @@ def score_two_same_strands(seq1, original_frame):
 def score_from_sirna(frame_tuple, original_frame, frame_ss, sequence):
     """
     Function for getting score from siRNA.
+    Args:
+        frame_tuple: Tuple of frame
+        orginal_frame: sh-miR object
+        frame_ss: file from mfold
     input: frame_tuple, original_frame, frame_ss, sequence
     output: tuple.
     """
@@ -99,7 +122,11 @@ def score_from_sirna(frame_tuple, original_frame, frame_ss, sequence):
 def score_offtarget(number):
     """
     Function counts score.
-    input: number
+    Args:
+        number: Count of founded offtargets.
+
+    Returns:
+        score: Int.
     output: int.
     """
     score = 40 - number * 2
@@ -110,8 +137,10 @@ def score_offtarget(number):
 
 def score_regexp(number):
     """
-    input: int.
-    output: int.
+    Args:
+        number: Int.
+    Returns:
+        Int.
     """
     return number * 5
 
@@ -121,8 +150,16 @@ def score_from_transcript(
 ):
     """
     Function which count score from transcript.
-    input: frame_tuple, original_frame, frame_ss, offtarget, regexp
-    output: dict.
+
+    Args:
+        frame_tuple: Tuple of frame
+        original_frame: sh-miR object
+        frame_ss: file from mfold
+        offtarget: Number of transcripts
+        regexp: Number of regular expression
+
+    Returns:
+        Dict.
     """
     sframe = score_frame(frame_tuple, frame_ss, original_frame)
     sofftarget = score_offtarget(offtarget)
