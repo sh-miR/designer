@@ -1,6 +1,4 @@
 # sh-miR API #
-**************
-
 [![GNU License](http://img.shields.io/badge/license-GNU-blue.svg)](http://www.gnu.org/licenses/gpl.html)
 
 
@@ -45,9 +43,9 @@ Where:
 
 ## Services ##
 * mfold
-    * creator - returns TASK_ID - URL: */mfold/DATA
-    * status - returns STATUS (ok, error, fail) - URL: */mfold/status/TASK_ID
-    * result - returns zipped results of folding - URL: */mfold/result/TASK_ID
+    * creator - returns TASK_ID <br> URL: */mfold/DATA
+    * status - returns STATUS (ok, error, fail) <br> URL: */mfold/status/TASK_ID
+    * result - returns zipped results of folding <br> URL: */mfold/result/TASK_ID
 
 Where DATA is a sequence which we would like to fold.
 
