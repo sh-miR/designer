@@ -1,3 +1,7 @@
+"""
+.. module:: shmir.designer.error
+    :synopsis: This module has all possible exceptions
+"""
 import logging
 
 error = 'insert only one siRNA sequence or both strands of one' \

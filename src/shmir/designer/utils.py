@@ -1,5 +1,5 @@
 """
-.. module:: utils
+.. module:: shmir.designer.utils
     :synopsis: This module provides side functions.
 """
 
@@ -16,10 +16,10 @@ def reverse_complement(sequence):
     """Generates reverse complement sequence to given
 
     Args:
-        sequence(str)
+        sequence(str).
 
     Returns:
-        revese complement sequence(str) to given
+        revese complement sequence(str) to given.
     """
     sequence = str(sequence)
     return sequence.translate(maketrans("atcgATCG", "tagcTAGC"))[::-1]
@@ -59,14 +59,14 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
     We cut off nucleotides only from flanking sequences or loop.
 
     Args:
-        seq1(str) first sequence
-        seq2(str) second sequence
-        shift_left(int) - shift on sequence from left side
-        shift_right(int) - shift on sequence from right side
-        all_frames(pri-miRNA objects) frames from which we create sh-miRs
+        seq1(str) first sequence.
+        seq2(str) second sequence.
+        shift_left(int) - shift on sequence from left side.
+        shift_right(int) - shift on sequence from right side.
+        all_frames(pri-miRNA objects) frames from which we create sh-miRs.
 
     Returns:
-        list of tuples (changed frame, first sequence, second sequence)
+        list of tuples (changed frame, first sequence, second sequence).
     """
     frames = []
     for frame in all_frames:
@@ -153,6 +153,8 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
 def unpack_dict_to_list(dict_object):
     """
     Function to unpack dict to list.
+    It "dequeues" {'a': ['b', 'c'], 'd': ['e', 'f'], ...} into
+    ['b', 'e', 'c', 'f'] (for one from each dict)
 
     Args:
         dict_object: Dict object to unpack.
@@ -173,9 +175,9 @@ def remove_none(list_object):
         list_object: List.
 
     Returns:
-        List of object without None.
+        List of object which are not None.
     """
-    return filter(None, list_object)
+    return filter(partial(is_not, None), list_object)
 
 
 def generator_is_empty(generator):

@@ -1,3 +1,7 @@
+"""
+.. module:: shmir.designer.models
+    :synopsis: This module has all database functionality
+"""
 import re
 import json
 import os
@@ -34,7 +38,7 @@ Base = declarative_base()
 
 class Backbone(Base):
     """
-        Backbone class with information about miRNA scaffolds
+    Backbone class with information about miRNA scaffolds
     """
     __tablename__ = 'backbone'
 
@@ -61,7 +65,7 @@ class Backbone(Base):
 
     def template(self, siRNAstrand_1, siRNAstrand_2):
         """Returns the template of DNA (sh-miR)
-    
+
         Args:
             siRNAstrand_1: sequence of first strand
             siRNAstrand_2: sequence of second strand
@@ -104,7 +108,7 @@ class Backbone(Base):
 
 class Immuno(Base):
     """
-        Immuno motives class
+    Immuno motives class
     """
     __tablename__ = 'immuno'
     id = Column(Integer, primary_key=True)
@@ -114,8 +118,7 @@ class Immuno(Base):
 
     @classmethod
     def check_is_in_sequence(cls, input_sequence):
-        """ Checks if input sequence conteins sequences from immuno 
-        database
+        """ Checks if input sequence conteins sequences from immuno database
         Args:
             input_sequence: RNA sequence of about 20nt length
         Returns:
@@ -145,7 +148,7 @@ class InputData(Base):
 
 class Result(Base):
     """
-    sh-miR results
+    sh-miR results table
     """
     __tablename__ = 'result'
 
@@ -181,10 +184,10 @@ Base.metadata.create_all(engine)
 @event.listens_for(Backbone, 'before_insert')
 def generate_regexp_on_insert(mapper, connection, target):
     """The function generates regular expression from insert sequence
-        Args:
-            mapper:
-            connection:
-            target:
+    Args:
+        mapper: sqlalchemy mapper
+        connection: sqlalchemy connection
+        target: sqlalchemy target
     """
     target.generate_regexp()
 
@@ -199,11 +202,11 @@ def create_regexp(seq_list):
     UG... (weight 2): two first nucleotides
     UG...G (weight 3): two first and the last nucleotides
     UG...AG (weight 4): two first and two last nucleotides
-    
-        Args:
-            seq_list: RNA sequence 
-        Returns:
-            Json object
+
+    Args:
+        seq_list: RNA sequence
+    Returns:
+        Json object with generated regexp
     """
 
     acids = '[UTGCA]'  # order is important: U should always be next to T

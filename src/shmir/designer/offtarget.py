@@ -1,3 +1,8 @@
+"""
+.. module:: shmir.designer.offtarget
+    :synopsis: This module connection to Blast and counting offtarget
+"""
+
 from Bio.Application import ApplicationError
 from Bio.Blast import (
     NCBIWWW,
@@ -10,10 +15,11 @@ from shmir.contextmanagers import blast_path
 
 
 def blast_offtarget(fasta_string):
-    """
-    Function which count offtarget using blast.
+    """Function which count offtarget using blast.
+
     :param fasta_string: Fasta sequence.
     :type fasta_string: str.
+
     :returns: int.
     """
     try:

@@ -1,5 +1,6 @@
 """
-Module for connection with ncbi database.
+.. module:: shmir.data.ncbi_api
+    :synopsis: Module for connection with ncbi database.
 """
 
 import json
@@ -44,6 +45,18 @@ def get_data(
 
 
 def get_mRNA(transcript, database=settings.NUCLEOTIDE_DB, email=settings.EMAIL):
+    """Function to connect with NCBI database and get transcript by name
+
+    Args:
+        transcript(str): name of transcript (from NCBI)
+        database: name of database in which we look for (default "nucleotide")
+        email(str): email to which NCBI needs to validate
+
+    Returns:
+        mRNA(str)
+    Raises:
+        NoResultError
+    """
     pattern = re.compile(r'^NM_[0-9]+[.]{1}[0-9]+$')
     mrna = 'mRNA'
 

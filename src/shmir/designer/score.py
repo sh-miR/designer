@@ -17,7 +17,7 @@ def score_frame(frame, frame_ss_file, orginal_frame):
         ss_file: object Backbone from database (not changed)
 
     Returns:
-        score: int.
+        score(int): score given for structure of frame.
     """
 
     structure, seq1, seq2 = frame
@@ -59,8 +59,8 @@ def add_shifts(start, end, frame_ss, value, current):
     Moreover, the length of the siRNA insert can differ from the natural one.
 
     Args:
-        start: starting number.
-        end: ending number.
+        start(int): starting number.
+        end(int): ending number.
         value: value to add.
         current: current frame number
     """
@@ -78,8 +78,8 @@ def score_homogeneity(original_frame):
         original_frame: sh-miR object
 
     Returns:
-        Homogeneity score.
-    output: sh-miR object with modified homogeneity"""
+        Homogeneity score: sh-miR object with modified homogeneity
+    """
     return original_frame.homogeneity * 3
 
 
@@ -90,8 +90,7 @@ def score_two_same_strands(seq1, original_frame):
         original_frame: sh-miR object
 
     Returns:
-        Score number.
-
+        Score for strands (int)
     """
     miRNA_s = original_frame.miRNA_s[:2].upper()
     seq = seq1[:2].upper()
@@ -109,8 +108,9 @@ def score_from_sirna(frame_tuple, original_frame, frame_ss, sequence):
         frame_tuple: Tuple of frame
         orginal_frame: sh-miR object
         frame_ss: file from mfold
-    input: frame_tuple, original_frame, frame_ss, sequence
-    output: tuple.
+
+    Returns:
+        tuple of score of frame, homogeneity and strands
     """
     return (
         score_frame(frame_tuple, frame_ss, original_frame) +
@@ -120,14 +120,13 @@ def score_from_sirna(frame_tuple, original_frame, frame_ss, sequence):
 
 
 def score_offtarget(number):
-    """
-    Function counts score.
+    """Function counts score.
+
     Args:
         number: Count of founded offtargets.
 
     Returns:
-        score: Int.
-    output: int.
+        score(int): Number from 0 to 40, depending on offtarget.
     """
     score = 40 - number * 2
     if score >= 0:
@@ -136,11 +135,13 @@ def score_offtarget(number):
 
 
 def score_regexp(number):
-    """
+    """Function which gives score for regexp of found sequence
+
     Args:
-        number: Int.
-    Returns:
-        Int.
+        number(int): regexp number from database.
+
+    Returns
+        score(int): regexp * 5.
     """
     return number * 5
 
@@ -159,7 +160,7 @@ def score_from_transcript(
         regexp: Number of regular expression
 
     Returns:
-        Dict.
+        Dict of scores for: frame, offtarget, regexp and all together.
     """
     sframe = score_frame(frame_tuple, frame_ss, original_frame)
     sofftarget = score_offtarget(offtarget)
