@@ -15,7 +15,6 @@ from collections import (
 
 from celery import group
 from celery.result import allow_join_result
-from celery.utils.log import get_task_logger
 
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import func
@@ -63,9 +62,6 @@ from shmir.decorators import (
     send_email
 )
 from shmir.result_handlers import zip_files_from_sirna
-
-
-logger = get_task_logger(__name__)
 
 
 @task(bind=True)
@@ -266,7 +262,6 @@ def shmir_from_transcript_sequence(
     :returns: list.
     """
     # check if results are in database
-    logger.info('Checking whether results are in database')
     try:
         stored_input = db_session.query(InputData).filter(
             func.lower(InputData.transcript_name) == transcript_name.lower(),
@@ -283,9 +278,6 @@ def shmir_from_transcript_sequence(
     else:
         return [result.as_json() for result in stored_input.results]
 
-    logger.info('Checked results in database')
-    logger.info('Getting data from NCBI')
-
     # create path string
     path = "_".join(
         map(
@@ -296,9 +288,6 @@ def shmir_from_transcript_sequence(
     )
 
     mRNA = ncbi_api.get_mRNA(transcript_name)
-
-    logger.info('Got data from NCBI')
-    logger.info('Getting original frames')
 
     if scaffold == 'all':
         original_frames = db_session.query(Backbone).all()
@@ -320,9 +309,6 @@ def shmir_from_transcript_sequence(
 
     best_sequences = defaultdict(list)
 
-    logger.info('Got original frames')
-    logger.info('Processing patterns')
-
     for name, patterns_dict in patterns.iteritems():
         for regexp_type, sequences in find_by_patterns(patterns_dict, mRNA).iteritems():
             with allow_join_result():
@@ -342,8 +328,6 @@ def shmir_from_transcript_sequence(
                         ).apply_async().get()
                     )
 
-    logger.info('Patterns processed')
-    logger.info('Unpacking structures')
     results = []
     for name, seq_dict in unpack_dict_to_list(best_sequences):
         if len(results) == 20:
@@ -359,9 +343,6 @@ def shmir_from_transcript_sequence(
 
             if shmir_result:
                 results.extend(shmir_result)
-
-    logger.info('Sctructures unpacked')
-    logger.info('Getting best sequences, offtarget')
 
     if not results:
         best_sequences = []
@@ -385,12 +366,6 @@ def shmir_from_transcript_sequence(
                 )
 
         if best_sequences:
-            logger.info('best seqs: %r...', best_sequences[:5])
-            logger.info('sqs len: %d', len(best_sequences))
-        else:
-            logger.info('no best seqs')
-
-        if best_sequences:
             with allow_join_result():
                 results = chain(*remove_none(
                     group(
@@ -401,9 +376,6 @@ def shmir_from_transcript_sequence(
                         for seq_dict in best_sequences
                     ).apply_async().get()
                 ))
-
-    logger.info('Got best sequences, offtarget calculated')
-    logger.info('Storing DB results')
 
     sorted_results = sorted(
         results,
@@ -432,8 +404,5 @@ def shmir_from_transcript_sequence(
     db_session.add(db_input)
     db_session.add_all(db_results)
     db_session.commit()
-
-    logger.info('DB results stored')
-    logger.info('End of task')
 
     return [result.as_json() for result in db_results]
