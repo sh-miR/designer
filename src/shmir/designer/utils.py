@@ -1,5 +1,5 @@
 """
-.. module:: sutils
+.. module:: utils
     :synopsis: This module provides side functions.
 """
 
@@ -15,8 +15,12 @@ from functools import partial
 def reverse_complement(sequence):
     """Generates reverse complement sequence to given
 
-    input: string
-    output: string"""
+    Args:
+        sequence(str)
+
+    Returns:
+        revese complement sequence(str) to given
+    """
     sequence = str(sequence)
     return sequence.translate(maketrans("atcgATCG", "tagcTAGC"))[::-1]
 
@@ -51,13 +55,19 @@ def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
     AAAGGGGCTTTTagtcttaga
     TTTCCCCGAAAAtcagaatct
 
-    Returns list of tuples (frame, sequence_1 sequence_2)
-
     Nucleotides are always added to the right side of sequences.
     We cut off nucleotides only from flanking sequences or loop.
 
-    input: string, string, int, int, pri-miRNA objects
-    output: List of list of Backbone object, 1st strand 2nd strand   """
+    Args:
+        seq1(str) first sequence
+        seq2(str) second sequence
+        shift_left(int) - shift on sequence from left side
+        shift_right(int) - shift on sequence from right side
+        all_frames(pri-miRNA objects) frames from which we create sh-miRs
+
+    Returns:
+        list of tuples (changed frame, first sequence, second sequence)
+    """
     frames = []
     for frame in all_frames:
         _seq1 = seq1[:]
