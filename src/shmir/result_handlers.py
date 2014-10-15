@@ -1,3 +1,8 @@
+"""
+.. module:: shmir.result_handlers
+    :synopsis: Module with handlers for zip files
+"""
+
 import os
 from email import encoders
 from email.mime.base import MIMEBase

@@ -1,3 +1,7 @@
+"""
+.. module:: shmir.mfold
+    :synopsis: Module which handels mfold
+"""
 from os import (
     fork,
     waitpid,
@@ -17,6 +21,16 @@ from shmir.utils import remove_error_folding
 
 
 def zipped_mfold(task_id, files, tmp_dirname):
+    """Zipping mfold files of specific task
+
+    Args:
+        task_id: Id of task generated via RESTful API
+        files(iterable): files folded via mfold which will be zipped
+        tmp_dirname: temporary dirname
+
+    Returns:
+        path of zipped file
+    """
     zipname = "{}.zip".format(task_id)
 
     with ZipFile(zipname, 'w') as mfold_zip:
@@ -31,6 +45,16 @@ def zipped_mfold(task_id, files, tmp_dirname):
 
 
 def execute_mfold(path_id, sequence, zip_file=True):
+    """Function which executes mfold
+
+    Args:
+        path_id: path where is mfold
+        sequence(str): sequence to be folded via mfold
+        zip_file(bool): tells if files should be zipped (default: True)
+
+    Returns:
+        Path of foleded files
+    """
     with mfold_path(path_id) as tmp_dirname:
         with open('sequence', "w") as f:
             f.write(sequence)
@@ -66,7 +90,10 @@ def execute_mfold(path_id, sequence, zip_file=True):
 @catch_errors(NoResultError)
 @send_email(file_handler=zip_file_mfold)
 def delegate_mfold(self, sequence):
-    """
-    Executes mfold in order to generate appropriate files
+    """Executes mfold in order to generate appropriate files
+    Args:
+        sequence: sequence to be folded
+    Returns:
+        Path of folded files
     """
     return execute_mfold(self.request.id, sequence)

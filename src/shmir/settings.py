@@ -1,3 +1,8 @@
+"""
+.. module:: shmir.settings
+    :synopsis: module with settings and functions which helps getting configs
+"""
+
 import os
 from ConfigParser import (
     ConfigParser,

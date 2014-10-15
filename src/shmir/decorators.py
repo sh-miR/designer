@@ -1,5 +1,6 @@
 """
-Module for decorators
+.. module:: shmir.decorators
+    :synopsis: Module for decorators
 """
 
 from __future__ import unicode_literals
@@ -14,6 +15,12 @@ from shmir import settings
 
 
 def catch_errors(*errors):
+    """Decorator to catch specific errors given
+    Args:
+        *errors: All error which should be catched
+    Returns:
+        dict with error status and its message or function result
+    """
     def wrapper(f):
         @wraps(f)
         def wrapped(*args, **kwargs):
@@ -31,6 +38,10 @@ def catch_errors(*errors):
 
 
 def send_email(file_handler=None):
+    """Decorator to send email after task
+    Args:
+        file_handler: function to handle files
+    """
     def wrapper(f):
         @wraps(f)
         def wrapped(*args, **kwargs):
@@ -61,12 +72,17 @@ def send_email(file_handler=None):
                 for msg_file in file_handler(result):
                     msg.attach(msg_file)
 
-                smtp_server = smtplib.SMTP(settings.SMTP_SERVER,
-                                        settings.SMTP_PORT)
+                smtp_server = smtplib.SMTP(
+                    settings.SMTP_SERVER,
+                    settings.SMTP_PORT
+                )
                 smtp_server.starttls()
                 smtp_server.login(settings.EMAIL_FROM, settings.EMAIL_PASSWORD)
-                smtp_server.sendmail(settings.EMAIL_FROM, email_to,
-                                    msg.as_string())
+                smtp_server.sendmail(
+                    settings.EMAIL_FROM,
+                    email_to,
+                    msg.as_string()
+                )
                 smtp_server.quit()
 
             return result

@@ -1,6 +1,8 @@
 """
-Module to help testing
+.. module:: shmir.testing
+    :synopsis: Module to help testing
 """
+
 import unittest
 
 from sqlalchemy import create_engine

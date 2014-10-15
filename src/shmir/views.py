@@ -1,5 +1,5 @@
 """
-.. module:: views
+.. module:: shmir.views
     :synopsis: module to handle all urls of RESTful
 """
 

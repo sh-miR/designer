@@ -1,3 +1,7 @@
+"""
+.. module:: shmir.async
+    :synopsis: Module to handle celery asynchronous tasks
+"""
 from __future__ import absolute_import
 
 from celery import Celery
@@ -14,8 +18,13 @@ __all__ = ['celery', 'get_async_result', 'task']
 
 
 def make_celery(app_obj):
-    """
-    Wraps Celery with app context and settings
+    """Wraps Celery with app context and settings
+
+    Args:
+        app_obj: Flask application object
+
+    Returns:
+        celery object
     """
     celery = Celery(
         app_obj.import_name,
@@ -52,8 +61,15 @@ task = celery.task
 
 
 def _get_async_result(result, timeout=1.0, only_status=False):
-    """
-    Excepting TimeoutError and handling failures of every result
+    """Excepting TimeoutError and handling failures of every result
+
+    Args:
+        result: task.AsyncResult
+        timeout(float): timeout of task
+        only_status(bool): boolean if function should return only status (default: False)
+
+    Returns:
+        Task response
     """
     if result.failed():
         return {'status': 'fail'}
@@ -75,8 +91,16 @@ def _get_async_result(result, timeout=1.0, only_status=False):
 
 
 def get_async_result(task, task_id, timeout=1.0, only_status=False):
-    """
-    Gets AsyncResult of task, excepting TimeoutError and handling failures
+    """Gets AsyncResult of task, excepting TimeoutError and handling failures
+
+    Args:
+        task: the task from which want extract result from
+        task_id: id of task
+        timeout(float): timeout of task
+        only_status(bool): boolean if function should return only status (default: False)
+
+    Returns:
+        Task response
     """
     result = task.AsyncResult(task_id)
     return _get_async_result(result, timeout=timeout, only_status=only_status)

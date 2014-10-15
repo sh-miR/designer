@@ -1,5 +1,6 @@
 """
-Utilies for handling json
+.. module:: shmir.utils
+    :synopsis: functions which helps with using other functionalities
 """
 
 import os
