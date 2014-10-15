@@ -1,65 +1,90 @@
 """
-Module for decorators
+.. module:: shmir.decorators
+    :synopsis: Module for decorators
 """
 
 from __future__ import unicode_literals
 
-from flask import request
-from flask.json import dumps
-
 import json
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from functools import wraps
 
-from shmir.utils import json_error
+from shmir import settings
 
 
-def require_json(require_data=True, required_data_words=None,
-                 required_data_characters=None, jsonify=True):
-    """
-    Accepts only json requests and sends parsed data to the handlers
-
-    :param require_data: checking whether json request has 'data' attribute
+def catch_errors(*errors):
+    """Decorator to catch specific errors given
+    Args:
+        *errors: All error which should be catched
+    Returns:
+        dict with error status and its message or function result
     """
     def wrapper(f):
-
+        @wraps(f)
         def wrapped(*args, **kwargs):
-            data = request.data.decode('utf-8')
             try:
-                request_json = json.loads(data)
-            except (ValueError, KeyError, TypeError):
-                return json_error('Use JSON to comunicate with our API')
-
-            if not require_data:
-                return f(request_json=request_json, *args, **kwargs)
-            elif 'data' in request_json.keys():
-                data = str(request_json['data']).strip()
-
-                if required_data_words and len(data.split()) != \
-                        required_data_words:
-                    return json_error("Data must have {0} word(s)!".format(
-                                      required_data_words))
-
-                if required_data_characters and len(data) != \
-                        required_data_characters:
-                    return json_error("Data must have {0} characters!".format(
-                                      required_data_characters))
-
-                if jsonify:
-                    return dumps(
-                        f(data=data, request_json=request_json, *args,
-                          **kwargs)
-                    )
-                return f(data=data, request_json=request_json, *args, **kwargs)
-
-            return json_error('Data not provided')
-
+                return f(*args, **kwargs)
+            except errors as e:
+                return {
+                    'status': 'error',
+                    'data': {
+                        'result': e.message,
+                    }
+                }
         return wrapped
     return wrapper
 
 
-def jsonify(f):
+def send_email(file_handler=None):
+    """Decorator to send email after task
+    Args:
+        file_handler: function to handle files
     """
-    Returns JSON
-    """
-    def wrapped(*args, **kwargs):
-        return dumps(f(*args, **kwargs))
-    return wrapped
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            email_to = kwargs.pop('email', None)
+            result = f(*args)
+
+            if settings.EMAIL_ENABLED and email_to is not None:
+                # msg = MIMEText(json.dumps(result))
+                msg = MIMEMultipart('related')
+                msg['Subject'] = 'Task ended'
+                msg['From'] = settings.EMAIL_FROM
+                msg['To'] = email_to
+
+                msg_alternative = MIMEMultipart('alternative')
+
+                msg_text = MIMEText(json.dumps(result), 'plain')
+                msg_alternative.attach(msg_text)
+
+                # TODO change this proof-of-contept
+                msg_html = MIMEText(
+                    "<html><body>{}</body></html>".format(json.dumps(result)),
+                    'html'
+                )
+                msg_alternative.attach(msg_html)
+
+                msg.attach(msg_alternative)
+
+                for msg_file in file_handler(result):
+                    msg.attach(msg_file)
+
+                smtp_server = smtplib.SMTP(
+                    settings.SMTP_SERVER,
+                    settings.SMTP_PORT
+                )
+                smtp_server.starttls()
+                smtp_server.login(settings.EMAIL_FROM, settings.EMAIL_PASSWORD)
+                smtp_server.sendmail(
+                    settings.EMAIL_FROM,
+                    email_to,
+                    msg.as_string()
+                )
+                smtp_server.quit()
+
+            return result
+        return wrapped
+    return wrapper

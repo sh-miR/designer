@@ -1,5 +1,5 @@
 """
-.. module:: validators
+.. module:: shmir.designer.validators
     :synopsis: This module provides input validation.
 """
 
@@ -8,12 +8,21 @@ import math
 import errors
 import logging
 
+from urllib2 import HTTPError
+from shmir.data.models import Immuno
+from shmir.designer.offtarget import blast_offtarget
+
 
 def check_complementary_single(seq1, seq2):
     """The function checks complementary of two sequences
 
-    input: string, string
-    output: int"""
+    Args:
+        seq1(str): first sequence
+        seq1(str): second sequence
+
+    Returns:
+        Percent of complementary(int)
+    """
     seq1, seq2 = seq1.upper(), seq2.upper()
     tran = {
         "A": "T",
@@ -55,9 +64,14 @@ def check_complementary(seq1, seq2):
     output: 'first sequence' (19-21nt), 'second sequence' (19-21nt), left_end
     {-4,-3,-2,-1,0,1,2,3,4}, rigth_end{-4,-3,-2,-1,0,1,2,3,4}
 
-    input: string, string
+    Args:
+        seq1(str): frist sequence
+        seq2(str): second sequence
 
-    output: tuple (string, string, int, int)"""
+    Returns:
+        tuple (first sequence(str), second sequence(str),
+               left offset(int), right offset(int))
+    """
     nr_offset = 5
     tab = []
     end_offset = len(seq1)-len(seq2)
@@ -72,24 +86,33 @@ def check_complementary(seq1, seq2):
             end_offset = len(seq1)-len(seq2)+offset
             tab.append((seq1, seq2, -offset, end_offset))
     if not tab:
-        raise errors.InputException(errors.error)
+        raise errors.ValidationError(errors.error)
     return tab[0]
 
 
 def check_input_single(seq):
     """Function for check sequence from input
-    if a single siRNA strand have only actgu letters and is 19-21 nucleotides long.
+    if a single siRNA strand have only actgu letters and is 19-21 nucleotides
+    long.
     Also rigth end of siRNA is cut if contain 'uu' or 'tt'.
-    Input: string;
-    The function has no output"""
+
+    Args:
+        seq(str): sequence
+
+    Returns:
+        List of sequence, warning(or None), True
+
+    Raises:
+        ValidationError
+    """
     seq = seq.upper().replace('U', 'T')
     pattern = re.compile(r'^[ACGT]{19,21}$')
     cut_warn = "cut 'UU' or 'TT'"
 
     if not pattern.search(seq):
         if len(seq) > 21 or len(seq) < 19:
-            raise errors.InputException('%s' % errors.len_error)
-        raise errors.InputException('%s' % errors.patt_error)
+            raise errors.ValidationError('%s' % errors.len_error)
+        raise errors.ValidationError('%s' % errors.patt_error)
     elif seq[-2:] == "TT" and pattern.search(seq):
         seq = seq[:-2]
         logging.warn(cut_warn)
@@ -119,8 +142,13 @@ def check_input(seq_to_be_check):
     check if both stands are in 5'-3' orientation"
     * "sequence can contain only {actgu} letters
 
-    input: string
-    output: output of check_complementary"""
+    Args:
+        seq_to_be_check: sequence(str) which will be check
+    Returns:
+        tuple from check_complementary
+    Raises:
+        ValidationError
+    """
     sequence = seq_to_be_check.split(" ")
     len_seq = len(sequence)
     if len_seq == 1:
@@ -131,10 +159,18 @@ def check_input(seq_to_be_check):
         if ch_seq1[2] and ch_seq2[2]:
             return check_complementary(ch_seq1[0], ch_seq2[0])
     else:
-        raise errors.InputException('{}'.format(errors.error))
+        raise errors.ValidationError('{}'.format(errors.error))
 
 
 def calculate_gc_content(sequence):
+    """Function to calculate the GC content.
+
+    Args:
+        sequence(str)
+
+    Returns:
+        Content of "GC" in sequence
+    """
     sequence = sequence.upper()
     g_count = sequence.count('G')
     c_count = sequence.count('C')
@@ -143,4 +179,48 @@ def calculate_gc_content(sequence):
 
 
 def validate_gc_content(sequence, min_percent, max_percent):
+    """Function for validate the GC content.
+
+    Args:
+        sequence(str),
+        min_percent(int): minimal percent of GC content
+        max_percent(int): maximal percent of GC content
+
+    Returns:
+        bool if sequence has proper GC content
+    """
     return min_percent <= calculate_gc_content(sequence) <= max_percent
+
+
+def validate_sequence(sequence, max_offtarget, min_gc, max_gc, stimulatory):
+    """Function to validate sequence.
+
+    Args:
+        sequence(str)
+        max_offtarget(int): maximal offtarget
+        min_gc(int): minimal percent of GC
+        max_gc(int): maximal percent of GC
+        stimulatory: "yes", "no", "no_difference"
+
+    Returns:
+        tuple (validated(bool), offtarget value)
+    """
+    gc = validate_gc_content(sequence, min_gc, max_gc)
+    is_immuno = Immuno.check_is_in_sequence(sequence)
+
+    if gc and (
+            stimulatory == 'no_difference' or
+            (is_immuno and stimulatory == 'yes') or
+            (not is_immuno and stimulatory == 'no')
+    ):
+        # when debuging uncomment return
+        # return True, 0
+        try:
+            actual_offtarget = blast_offtarget(sequence)
+        except HTTPError:
+            return False, None
+        offtarget = actual_offtarget <= max_offtarget
+        if offtarget:
+            return True, actual_offtarget
+
+    return False, None

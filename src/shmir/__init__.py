@@ -1,5 +1,6 @@
 """
-Flask server which provide RESTful api for mfold and shmiR designer
+.. module:: shmir
+    :synopsis: Flask server which provide RESTful api for mfold and shmiR designer
 """
 
 import sys
