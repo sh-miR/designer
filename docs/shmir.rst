@@ -45,6 +45,14 @@ shmir.mfold module
     :undoc-members:
     :show-inheritance:
 
+shmir.result_handlers module
+----------------------------
+
+.. automodule:: shmir.result_handlers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 shmir.settings module
 ---------------------
 
