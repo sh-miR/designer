@@ -43,9 +43,9 @@ Where:
 
 ## Services ##
 * mfold
-    * creator - returns TASK_ID <br> URL: */mfold/DATA
-    * status - returns STATUS (ok, error, fail) <br> URL: */mfold/status/TASK_ID
-    * result - returns zipped results of folding <br> URL: */mfold/result/TASK_ID
+    * creator - returns TASK_ID <br> URL: `*/mfold/DATA`
+    * status - returns STATUS (ok, error, fail) <br> URL: `*/mfold/status/TASK_ID`
+    * result - returns zipped results of folding <br> URL: `*/mfold/result/TASK_ID`
 
 Where DATA is a sequence which we would like to fold.
 
@@ -57,9 +57,9 @@ Examples:
 ```
 
 * from_sirna
-    * creator - returns TASK_ID - URL: */from_sirna/DATA
-    * status - returns STATUS (ok, error, fail) - URL: */from_sirna/status/TASK_ID
-    * result - returns list of tuples (score sh-miR, backbone name, pdf) - URL: */from_sirna/result/TASK_ID
+    * creator - returns TASK_ID <br> URL: `*/from_sirna/DATA`
+    * status - returns STATUS (ok, error, fail) <br> URL: `*/from_sirna/status/TASK_ID`
+    * result - returns list of tuples (score sh-miR, backbone name, pdf) <br> URL: `*/from_sirna/result/TASK_ID`
 
 Where DATA is a one siRNA strand (active) or two siRNA strands separated by space (in url "%20"). First strand is active, both are in 5-3 orientation.
 Pdf is a task ID of mfold. To get this file use mfold service.
@@ -75,14 +75,14 @@ Here we download folded sh-miR: <br>
 
 
 * from_transcript
-    * creator - returns TASK_ID - URL: */from_sirna/DATA?optional
+    * creator - returns TASK_ID <br> URL: `*/from_sirna/DATA?optional`
         * min_gc - minimal GC content (default 40)
         * max_gc - maximal GC content (default 60)
         * max_offtarget - maximal offtarget (default 10)
         * mirna_name - name of backbone (default 'all')
         * stymulators - immunostimulatory sequences `['yes', 'no', 'no_difference']` (default 'no_difference')
-    * status - returns STATUS (ok, error, fail) - URL: */from_transcript/status/TASK_ID
-    * result - returns list of dicts with keys: sh_mir, score, pdf, sequence and bacbone - URL: */from_sirna/result/TASK_ID
+    * status - returns STATUS (ok, error, fail) <br> URL: `*/from_transcript/status/TASK_ID`
+    * result - returns list of dicts with keys: sh_mir, score, pdf, sequence and bacbone <br> URL: `*/from_sirna/result/`TASK_ID
 
 Where DATA is transcript name from NCBI
 Pdf is task ID of mfold. To get this file use mfold service.
