@@ -1,6 +1,6 @@
 # sh-miR API #
 [![GNU License](http://img.shields.io/badge/license-GNU-blue.svg)](http://www.gnu.org/licenses/gpl.html)
-
+[![Documentation Status](https://readthedocs.org/projects/shmir-api/badge/?version=latest)](https://readthedocs.org/projects/shmir-api/?badge=latest)
 
 ## Requirements ##
 

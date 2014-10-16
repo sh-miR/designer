@@ -69,23 +69,21 @@ from shmir.result_handlers import zip_files_from_sirna
 def fold_and_score(
     self, seq1, seq2, frame_tuple, original, score_fun, args_fun, prefix=None
 ):
-    """
-    Function for scoring and folding sequnces.
-    :param seq1: First RNA sequence.
-    :type seq1: str.
-    :param seq2: Second RNA sequence.
-    :type seq2: str.
-    :param frame_tuple: Tuple with frame and inserts.
-    :type frame_tuple: tuple.
-    :param orginal: Backbone model.
-    :type orginal: Backbone.
-    :param score_fun: Scoring function.
-    :type score_fun: function.
-    :param score_fun: Scoring function.
-    :type score_fun: function.
-    :param args_fun: Arguments for scoring function.
-    :type args_fun: tuple.
-    :returns: tuple.
+    """Function for scoring and folding sequnces.
+
+    Args:
+        seq1(str): First RNA sequence.
+        seq2(str): Second RNA sequence.
+        frame_tuple(tuple): Tuple with frame and inserts.
+        orginal(Backbone): orginal Backbone model.
+        score_fun(function): Scoring function.
+        args_fun(tuple): Arguments for scoring function.
+
+    Kwargs:
+        prefix(str): prefix for mfold path (default None)
+
+    Returns:
+        tuple with score, sh-miR, name of Backbone, task id and sequences.
     """
     if prefix:
         path_id = "%s/%s" % (prefix, self.request.id)
@@ -117,14 +115,15 @@ def fold_and_score(
 @catch_errors(ValidationError, NoResultError)
 @send_email(file_handler=zip_files_from_sirna)
 def shmir_from_sirna_score(input_str):
-    """
-    Main function takes string input and returns the best results depending
+    """Main function takes string input and returns the best results depending
     on scoring. Single result include sh-miR sequence,
     score and link to 2D structure from mfold program
 
-    :param input_str: Input string contains one or two sequences.
-    :type: str.
-    :returns: list.
+    Args:
+        input_str(str): Input string contains one or two sequences.
+
+    Returns:
+        List of sh-miR(s) sorted by score.
     """
 
     seq1, seq2, shift_left, shift_right = check_input(input_str)
@@ -161,18 +160,16 @@ def shmir_from_sirna_score(input_str):
 @task
 def shmir_from_fasta_string(fasta_string, original_frames,
                             actual_offtarget, regexp_type, path):
-    """
-    Generating function of shmir from fasta string.
-    :param fasta_string: Sequence.
-    :type fasta_string: str.
-    :param original_frames: Backbone object.
-    :type original_frames: Backbone.
-    :param actual_offtarget: Argument for scoring function.
-    :type actual_offtarget: int.
-    :param regexp_type: Number of a regex.
-    :type regexp_type: int.
-    :returns: list.
+    """Generating function of shmir from fasta string.
 
+    Args:
+        fasta_string(str): Sequence.
+        original_frames(Backbone): original Backbone object.
+        actual_offtarget(int): offtarget value
+        regexp_type(int): Number of a regex from database.
+
+    Returns:
+        list of sh-miR(s)
     """
     seq2 = reverse_complement(fasta_string)
 
@@ -205,22 +202,20 @@ def shmir_from_fasta_string(fasta_string, original_frames,
 @task(bind=True, max_retries=10)
 def validate_and_offtarget(self, sequence, maximum_offtarget, minimum_CG,
                            maximum_CG, stimulatory_sequences, regexp_type):
-    """
-    Function for validation and checking the target of sequence.
-    :param sequence: RNA sequence.
-    :type sequence: str.
-    :param maximum_offtarget: Maximum offtarget.
-    :type maximum_offtarget: int.
-    :param minimum_CG: Minimum number of 'C' and 'G' nucleotide in sequence.
-    :type minimum_CG: int.
-    :param maximum_CG: Maximum number of 'C' and 'G' nucleotide in sequence.
-    :type maximum_CG: int.
-    :param stimulatory_sequences: Stimulator sequences.
-    :type stimulatory_sequences: list.
-    :param regexp_type: Number of a regex.
-    :type regexp_type: int.
-    :returns: dict.
-    :raises: ValueError.
+    """Function for validation and checking the target of sequence.
+    Args:
+        sequence(str): RNA sequence.
+        maximum_offtarget(int): Maximum offtarget.
+        minimum_CG(int): Minimum number of 'C' and 'G' nucleotide in sequence.
+        maximum_CG(int): Maximum number of 'C' and 'G' nucleotide in sequence.
+        stimulatory_sequences(str): One of 'yes', 'no', 'no_difference'.
+        regexp_type(int): Number of a regex from database.
+
+    Returns:
+        If dict of sequence, regexp and offtarget value if is validated else None
+
+    Raises:
+        ValueError.
 
     """
     try:
@@ -245,21 +240,17 @@ def shmir_from_transcript_sequence(
     transcript_name, minimum_CG, maximum_CG, maximum_offtarget, scaffold,
     stimulatory_sequences
 ):
-    """
-    Generating function of shmir from transcript sequence.
-    :param transcript_name: Name of transcipt.
-    :type transcript_name: str.
-    :param minimum_CG: Minimum number of 'C' and 'G' nucleotide in sequence.
-    :type minimum_CG: int.
-    :param maximum_CG: Maximum number of 'C' and 'G' nucleotide in sequence.
-    :type maximum_CG: int.
-    :param maximum_offtarget: Maximum offtarget.
-    :type maximum_offtarget: int.
-    :param scaffold: Frames of miRNA.
-    :type scaffold: str.
-    :param stimulatory_sequences: Stimulator sequences.
-    :type stimulatory_sequences: list.
-    :returns: list.
+    """Generating function of shmir from transcript sequence.
+    Args:
+        transcript_name(str): Name of transcipt.
+        minimum_CG(int): Minimum number of 'C' and 'G' nucleotide in sequence.
+        maximum_CG(int): Maximum number of 'C' and 'G' nucleotide in sequence.
+        maximum_offtarget(int): Maximum offtarget.
+        scaffold(str): Name of frame of miRNA or 'all'.
+        stimulatory_sequences(str): One of 'yes', 'no', 'no_difference'.
+
+    Returns:
+        list of sh-miR(s).
     """
     # check if results are in database
     try:

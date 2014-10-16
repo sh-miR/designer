@@ -17,10 +17,11 @@ from shmir.contextmanagers import blast_path
 def blast_offtarget(fasta_string):
     """Function which count offtarget using blast.
 
-    :param fasta_string: Fasta sequence.
-    :type fasta_string: str.
+    Args:
+        fasta_string(str): Fasta sequence.
 
-    :returns: int.
+    Returns:
+        Offtarget value(int).
     """
     try:
         with blast_path():

@@ -17,14 +17,11 @@ def get_data(
     """
     Function responsible to get data from given ncbi database.
 
-    :param email: Email to authorization with ncbi.
-    :type email: str.
-    :param transcript: Transcript to search.
-    :type transcript: str.
-    :param database: Name of database from ncbi.
-    :type database: str.
-    :param ids: List of ids to search.
-    :type ids: list/str.
+    Args:
+        email(str): Email to authorization with ncbi.
+        transcript(str): Transcript to search.
+        database(str): Name of database from ncbi.
+        ids(list of str): List of ids to search.
     """
     Entrez.email = email
     handle = Entrez.esearch(
