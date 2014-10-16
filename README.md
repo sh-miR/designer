@@ -75,14 +75,14 @@ Here we download folded sh-miR: <br>
 
 
 * from_transcript
-    * creator - returns TASK_ID <br> URL: `*/from_sirna/DATA?optional`
+    * creator - returns TASK_ID <br> URL: `*/from_transcript/DATA?optional`
         * min_gc - minimal GC content (default 40)
         * max_gc - maximal GC content (default 60)
         * max_offtarget - maximal offtarget (default 10)
         * mirna_name - name of backbone (default 'all')
         * stymulators - immunostimulatory sequences `['yes', 'no', 'no_difference']` (default 'no_difference')
     * status - returns STATUS (ok, error, fail) <br> URL: `*/from_transcript/status/TASK_ID`
-    * result - returns list of dicts with keys: sh_mir, score, pdf, sequence and bacbone <br> URL: `*/from_sirna/result/`TASK_ID
+    * result - returns list of dicts with keys: sh_mir, score, pdf, sequence and bacbone <br> URL: `*/from_transcript/result/`TASK_ID
 
 Where DATA is transcript name from NCBI
 Pdf is task ID of mfold. To get this file use mfold service.
