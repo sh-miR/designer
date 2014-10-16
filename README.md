@@ -55,7 +55,7 @@ Examples:
     $ curl -i -X GET http://127.0.0.1:8080/mfold/status/f3591b31-49d9-47da-ae78-898792db26a5
     $ curl -i -X GET http://127.0.0.1:8080/mfold/result/f3591b31-49d9-47da-ae78-898792db26a5
 ```
-
+<br>
 * from_sirna
     * creator - returns TASK_ID <br> URL: `*/from_sirna/DATA`
     * status - returns STATUS (ok, error, fail) <br> URL: `*/from_sirna/status/TASK_ID`
@@ -70,10 +70,10 @@ Examples:
     $ curl -i -X GET http://127.0.0.1:8080/from_sirna/status/f3591b31-49d9-47da-ae78-898792db26a5
     $ curl -i -X GET http://127.0.0.1:8080/from_sirna/result/f3591b31-49d9-47da-ae78-898792db26a5
 ```
-Here we download folded sh-miR: <br>
+Then we download folded sh-miR: <br>
 `$ curl -i -X GET http://127.0.0.1:8080/mfold/result/4bbee83a-0337-4efa-a018-13517390ebd1`
 
-
+<br>
 * from_transcript
     * creator - returns TASK_ID <br> URL: `*/from_transcript/DATA?optional`
         * min_gc - minimal GC content (default 40)
@@ -82,7 +82,7 @@ Here we download folded sh-miR: <br>
         * mirna_name - name of backbone (default 'all')
         * stymulators - immunostimulatory sequences `['yes', 'no', 'no_difference']` (default 'no_difference')
     * status - returns STATUS (ok, error, fail) <br> URL: `*/from_transcript/status/TASK_ID`
-    * result - returns list of dicts with keys: sh_mir, score, pdf, sequence and bacbone <br> URL: `*/from_transcript/result/`TASK_ID
+    * result - returns list of dicts with keys: sh_mir, score, pdf, sequence and bacbone <br> URL: `*/from_transcript/result/TASK_ID`
 
 Where DATA is transcript name from NCBI
 Pdf is task ID of mfold. To get this file use mfold service.
@@ -93,7 +93,7 @@ Examples:
     $ curl -i -X GET http://127.0.0.1:8080/from_transcript/status/f3591b31-49d9-47da-ae78-898792db26a5
     $ curl -i -X GET http://127.0.0.1:8080/from_transcript/result/f3591b31-49d9-47da-ae78-898792db26a5
 ```
-Here we download folded sh-miR:<br>
+Then we download folded sh-miR:<br>
     `$ curl -i -X GET http://127.0.0.1:8080/mfold/result/4bbee83a-0337-4efa-a018-13517390ebd1`
 
 
