@@ -16,8 +16,10 @@ from shmir import settings
 
 def catch_errors(*errors):
     """Decorator to catch specific errors given
+
     Args:
         *errors: All error which should be catched
+
     Returns:
         dict with error status and its message or function result
     """
@@ -39,6 +41,7 @@ def catch_errors(*errors):
 
 def send_email(file_handler=None):
     """Decorator to send email after task
+
     Args:
         file_handler: function to handle files
     """

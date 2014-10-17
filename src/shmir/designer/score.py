@@ -84,7 +84,8 @@ def score_homogeneity(original_frame):
 
 
 def score_two_same_strands(seq1, original_frame):
-    """
+    """Points if two strands are indentical
+
     Args:
         seq1: String with nucleotides.
         original_frame: sh-miR object
@@ -102,8 +103,8 @@ def score_two_same_strands(seq1, original_frame):
 
 
 def score_from_sirna(frame_tuple, original_frame, frame_ss, sequence):
-    """
-    Function for getting score from siRNA.
+    """Function for getting score from siRNA.
+
     Args:
         frame_tuple: Tuple of frame
         orginal_frame: sh-miR object

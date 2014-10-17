@@ -18,6 +18,7 @@ def json_error(error):
 
     Args:
         error(str): error message
+
     Returns:
         Json object
     """

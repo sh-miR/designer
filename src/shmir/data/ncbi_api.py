@@ -51,6 +51,7 @@ def get_mRNA(transcript, database=settings.NUCLEOTIDE_DB, email=settings.EMAIL):
 
     Returns:
         mRNA(str)
+
     Raises:
         NoResultError
     """

@@ -26,6 +26,7 @@ def get_config(section, option, default=None):
     Args:
         section(str): section of settings
         option(str): option of settings
+
     Returns:
         config or default value
     """
@@ -45,6 +46,7 @@ def get_int(section, option, default=None):
     Args:
         section(str): section of settings
         option(str): option of settings
+
     Returns:
         config(int) or default value
     """
@@ -60,6 +62,7 @@ def get_bool(section, option, default=None):
     Args:
         section(str): section of settings
         option(str): option of settings
+
     Returns:
         config(bool) or default value
     """

@@ -144,8 +144,10 @@ def check_input(seq_to_be_check):
 
     Args:
         seq_to_be_check: sequence(str) which will be check
+
     Returns:
         tuple from check_complementary
+
     Raises:
         ValidationError
     """
