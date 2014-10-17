@@ -84,7 +84,7 @@ try:
     FCONN = CONN_STR.format(
         dbname=get_db_config('name'), user=get_db_config('user'),
         password=get_db_config('password'), host=get_db_config('host'),
-        port=get_db_config('port', default='5432')
+        port=get_db_config('port')
     )
 except Error:
     FCONN = 'sqlite:///:memory:'

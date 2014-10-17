@@ -48,11 +48,10 @@ def send_email(file_handler=None):
     def wrapper(f):
         @wraps(f)
         def wrapped(*args, **kwargs):
-            email_to = kwargs.pop('email', None)
+            email_to = kwargs.pop('email_notify', None)
             result = f(*args)
 
             if settings.EMAIL_ENABLED and email_to is not None:
-                # msg = MIMEText(json.dumps(result))
                 msg = MIMEMultipart('related')
                 msg['Subject'] = 'Task ended'
                 msg['From'] = settings.EMAIL_FROM
