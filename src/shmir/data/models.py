@@ -119,8 +119,10 @@ class Immuno(Base):
     @classmethod
     def check_is_in_sequence(cls, input_sequence):
         """ Checks if input sequence conteins sequences from immuno database
+
         Args:
             input_sequence: RNA sequence of about 20nt length
+
         Returns:
             Bool if the input_sequence contains immunostimulatory motifs
         """
@@ -184,6 +186,7 @@ Base.metadata.create_all(engine)
 @event.listens_for(Backbone, 'before_insert')
 def generate_regexp_on_insert(mapper, connection, target):
     """The function generates regular expression from insert sequence
+
     Args:
         mapper: sqlalchemy mapper
         connection: sqlalchemy connection

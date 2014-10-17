@@ -168,8 +168,7 @@ def unpack_dict_to_list(dict_object):
 
 
 def remove_none(list_object):
-    """
-    Function which removes None objects from list.
+    """Function which removes None objects from list.
 
     Args:
         list_object: List.
@@ -181,8 +180,8 @@ def remove_none(list_object):
 
 
 def generator_is_empty(generator):
-    """
-    Function which check if a generator is empty.
+    """Function which check if a generator is empty.
+
     Args:
         generator: Generator object.
 
