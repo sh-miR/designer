@@ -61,7 +61,10 @@ from shmir.decorators import (
     catch_errors,
     send_email
 )
-from shmir.result_handlers import zip_files_from_sirna
+from shmir.result_handlers import (
+    zip_files_from_sirna,
+    zip_files_from_transcript
+)
 
 
 @task(bind=True)
@@ -236,6 +239,7 @@ def validate_and_offtarget(self, sequence, maximum_offtarget, minimum_CG,
 
 @task
 @catch_errors(IncorrectDataError, NoResultError)
+@send_email(file_handler=zip_files_from_transcript)
 def shmir_from_transcript_sequence(
     transcript_name, minimum_CG, maximum_CG, maximum_offtarget, scaffold,
     stimulatory_sequences

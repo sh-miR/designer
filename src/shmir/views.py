@@ -213,8 +213,10 @@ def transcript_handler(transcript_name):
         for key, default, param_type in params
     ])
 
-    resource = shmir_from_transcript_sequence.apply_async(args=args,
-                                                          queue='design')
+    resource = shmir_from_transcript_sequence.apply_async(
+        args=args,
+        kwargs={'email_notify': request.args.get('email_notify')},
+        queue='design')
 
     return jsonify({'task_id': resource.task_id})
 

@@ -52,3 +52,28 @@ def zip_files_from_sirna(struct):
                            filename=os.path.basename(path))
 
         yield zip_msg
+
+
+def zip_files_from_transcript(struct):
+    """Function which generates email msg from transcript
+
+    Args:
+        struct: sh-miR struct
+
+    Returns:
+        zip message
+    """
+    for element in struct:
+        path = element['pdf']
+        task_id = path.split('/')[-1]
+        with app.app_context():
+            path = get_zip_path(path, task_id)
+
+        zip_msg = MIMEBase('application', 'zip')
+        with open(path) as zip_file:
+            zip_msg.set_payload(zip_file.read())
+        encoders.encode_base64(zip_msg)
+        zip_msg.add_header('Content-Disposition', 'attachment',
+                           filename=os.path.basename(path))
+
+        yield zip_msg
