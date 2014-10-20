@@ -4,7 +4,7 @@
 
 ## Requirements ##
 
-* vagrant (yeah, that's all you need)
+* docker (yeah, that's all you need)
 
 
 
@@ -13,7 +13,8 @@
 To start server:
 ```
     $ git submodule update --init
-    $ vagrant up
+    $ docker build -t shmir .
+    $ docker run -ti shmir
 ````
 
 After this commands server builds all its dependencies and start sh-miR API.
