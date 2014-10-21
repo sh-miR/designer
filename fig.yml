@@ -1,0 +1,17 @@
+shmir:
+    build: .
+    working_dir: /opt/shmir
+    command: supervisord
+    links:
+    - db
+    - rabbitmq
+    - redis
+    ports:
+    - "8080:8080"
+    - "5555:5555"
+db:
+    image: postgres
+rabbitmq:
+    image: fedora/rabbitmq
+redis:
+    image: fedora/redis
