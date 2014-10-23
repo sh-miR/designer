@@ -13,6 +13,5 @@ db:
     image: postgres
 rabbitmq:
     image: jplock/rabbitmq
-    # image: fedora/rabbitmq
 redis:
     image: fedora/redis
