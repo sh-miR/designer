@@ -7,8 +7,12 @@ supervisor gcc-gfortran texlive-epstopdf ImageMagick perl-Archive-Tar \
 perl-Digest-MD5 perl-File-Temp make tar
 RUN rpm -Uhv ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.2.29+-1.x86_64.rpm
 
+RUN pip install supervisor-stdout
+
 ADD . /opt/shmir
+# COPY etc /etc
 COPY etc/supervisord.conf /etc/supervisord.conf
+COPY etc/shmir.conf /etc/shmir.conf
 
 RUN sh /opt/shmir/scripts/mfold-docker.sh
 

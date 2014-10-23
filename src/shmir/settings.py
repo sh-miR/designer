@@ -36,8 +36,9 @@ def get_config(section, option, default=None):
         return default
 
 
-def get_db_config(option):
-    return config.get('database', option)
+def get_db_config(option, default=None):
+    # return config.get('database', option)
+    return get_config('database', option, default=default)
 
 
 def get_int(section, option, default=None):
@@ -79,21 +80,27 @@ DEBUG = True
 
 # SQLAlchemy engine
 
-CONN_STR = "postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}"
-try:
-    FCONN = CONN_STR.format(
-        dbname=get_db_config('name'), user=get_db_config('user'),
-        password=get_db_config('password'), host=get_db_config('host'),
-        port=get_db_config('port')
-    )
-except Error:
-    FCONN = 'sqlite:///:memory:'
+# CONN_STR = "postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}"
+CONN_STR = "postgresql+psycopg2://{user}@{host}:{port}/{dbname}"
+# try:
+FCONN = CONN_STR.format(
+    dbname=get_db_config('name', 'postgres'),
+    user=get_db_config('user', 'postgres'),
+    # password=get_db_config('password'),
+    host=get_db_config('host', 'db'),
+    port=get_db_config('port', '5432')
+)
+# except Error:
+#     FCONN = 'sqlite:///:memory:'
 
 # Celery
 # CELERY_BROKER = get_celery_config('broker')
 # CELERY_RESULT_BACKEND = get_celery_config('result_backend')
-CELERY_BROKER = 'amqp://'
-CELERY_RESULT_BACKEND = 'redis://'
+# CELERY_BROKER = 'amqp://guest:guest@rabbitmq:5672/'
+# CELERY_BROKER = 'amqp://rabbitmq/{}'.format(
+#     os.environ.get('RABBITMQ_ENV_DEVEL_VHOST_NAME', '/'))
+CELERY_BROKER = 'amqp://rabbitmq'
+CELERY_RESULT_BACKEND = 'redis://redis'
 CELERYD_FORCE_EXECV = True
 CELERY_QUEUES = (
     Queue('design', routing_key='design'),
@@ -106,7 +113,8 @@ CELERY_QUEUES = (
 
 
 # Mfold
-MFOLD_PATH = '/home/shmir/shmir/mfold/mfold'  # script path
+# MFOLD_PATH = '/home/shmir/shmir/mfold/mfold'  # script path
+MFOLD_PATH = '/opt/shmir/mfold/mfold'
 MFOLD_FILES = '/tmp/mfold_files'  # Path where mfold fiels are generated
 
 
@@ -121,6 +129,7 @@ if DEBUG:
     CACHE_DEFAULT_TIMEOUT = get_config('cache', 'timeout', 1)
 else:
     CACHE_DEFAULT_TIMEOUT = get_config('cache', 'timeout', 3600)
+CACHE_REDIS_HOST = 'redis'
 
 # Email
 EMAIL_ENABLED = get_bool('email', 'enabled', default=False)

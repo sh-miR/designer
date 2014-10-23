@@ -12,6 +12,7 @@ shmir:
 db:
     image: postgres
 rabbitmq:
-    image: fedora/rabbitmq
+    image: jplock/rabbitmq
+    # image: fedora/rabbitmq
 redis:
     image: fedora/redis
