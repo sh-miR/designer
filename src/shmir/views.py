@@ -107,7 +107,7 @@ def mfold_data_handler(data):
     """
     resource = delegate_mfold.apply_async(args=(data.upper(),),
                                           kwargs=request.args.to_dict(),
-                                          queue='score')
+                                          queue='sirna')
     return jsonify({'task_id': resource.task_id})
 
 
@@ -155,7 +155,7 @@ def design_handler(data):
         Task id
     """
     resource = shmir_from_sirna_score.apply_async(
-        args=(data.upper(),), kwargs=request.args.to_dict(), queue='score')
+        args=(data.upper(),), kwargs=request.args.to_dict(), queue='sirna')
     return jsonify({'task_id': resource.task_id})
 
 

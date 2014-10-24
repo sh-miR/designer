@@ -147,7 +147,7 @@ def shmir_from_sirna_score(input_str):
                 original,
                 score_from_sirna,
                 (seq1,)
-            ).set(queue="subtasks")
+            ).set(queue="sirna_fold")
             for frame_tuple, original in zip(frames, original_frames)
         ).apply_async().get()
 
@@ -188,7 +188,7 @@ def shmir_from_fasta_string(fasta_string, original_frames,
                 score_from_transcript,
                 (actual_offtarget, regexp_type),
                 path
-            ).set(queue="subtasks")
+            ).set(queue="transcript_fold")
             for frame_tuple, original in zip(frames, original_frames)
         ).apply_async().get()
 
@@ -334,7 +334,7 @@ def shmir_from_transcript_sequence(
                 seq_dict['offtarget'],
                 seq_dict['regexp'],
                 path
-            ).set(queue="score").apply_async().get()
+            ).set(queue="transcript_shmir").apply_async().get()
 
             if shmir_result:
                 results.extend(shmir_result)
@@ -367,7 +367,7 @@ def shmir_from_transcript_sequence(
                         shmir_from_fasta_string.s(
                             seq_dict['sequence'], original_frames,
                             seq_dict['offtarget'], seq_dict['regexp'], path
-                        ).set(queue="score")
+                        ).set(queue="transcript_shmir")
                         for seq_dict in best_sequences
                     ).apply_async().get()
                 ))
