@@ -5,8 +5,8 @@ KEY_FILE=/opt/shmir/etc/oauth2_key
 SECRET_FILE=/opt/shmir/etc/oauth2_secret
 REDIRECT_FILE=/opt/shmir/etc/oauth2_redirect
 
-if [ -a $FILE ]; then
-    /usr/bin/celery -A shmir.async.celery flower --auth="`cat $FILE`" --oauth2_key="`cat $KEY_FILE`" --oauth2_secret="`cat $SECRET_FILE`" --oauth2_redirect_uri="`cat $REDIRECT_FILE`"
+if [ -a $USERS_FILE ]; then
+    /usr/bin/celery -A shmir.async.celery flower --auth="`cat $USERS_FILE`" --oauth2_key="`cat $KEY_FILE`" --oauth2_secret="`cat $SECRET_FILE`" --oauth2_redirect_uri="`cat $REDIRECT_FILE`"
 else
     /usr/bin/celery -A shmir.async.celery flower
 fi
