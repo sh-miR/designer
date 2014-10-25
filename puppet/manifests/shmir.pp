@@ -142,36 +142,54 @@ nginx::resource::vhost { 'localhost':
     proxy => 'http://127.0.0.1:8080'
 }
 
-supervisor::program { 'shmir-celery-worker1':
+supervisor::program { 'shmir-celery-design':
     ensure    => present,
-    command   => '/usr/bin/celery -A shmir.async.celery worker -l info -n worker1.%%h -Q design',
+    command   => '/usr/bin/celery -A shmir.async.celery worker --concurrency=2 -l info -n worker1.%%h -Q design',
     directory => '/home/shmir/shmir/src/',
     user      => 'vagrant',
     group     => 'vagrant',
     require   => [ File['/etc/shmir.conf'], Class['python'] ]
 }
 
-supervisor::program { 'shmir-celery-worker2':
+supervisor::program { 'shmir-celery-transcript-shmir':
     ensure    => present,
-    command   => '/usr/bin/celery -A shmir.async.celery worker -l info -n worker2.%%h -Q score',
+    command   => '/usr/bin/celery -A shmir.async.celery worker --concurrency=3 -l info -n worker2.%%h -Q transcript_shmir',
     directory => '/home/shmir/shmir/src/',
     user      => 'vagrant',
     group     => 'vagrant',
     require   => [ File['/etc/shmir.conf'], Class['python'] ]
 }
 
-supervisor::program { 'shmir-celery-worker3':
+supervisor::program { 'shmir-celery-transcript-fold':
     ensure    => present,
-    command   => '/usr/bin/celery -A shmir.async.celery worker --concurrency=4 -l info -n worker3.%%h -Q subtasks',
+    command   => '/usr/bin/celery -A shmir.async.celery worker --concurrency=5 -l info -n worker3.%%h -Q transcript_fold',
     directory => '/home/shmir/shmir/src/',
     user      => 'vagrant',
     group     => 'vagrant',
     require   => [ File['/etc/shmir.conf'], Class['python'] ]
 }
 
-supervisor::program { 'shmir-celery-worker4':
+supervisor::program { 'shmir-celery-blast':
     ensure    => present,
-    command   => '/usr/bin/celery -A shmir.async.celery worker --concurrency=8 -l info -n worker4.%%h -Q blast',
+    command   => '/usr/bin/celery -A shmir.async.celery worker --concurrency=15 -l info -n worker4.%%h -Q blast',
+    directory => '/home/shmir/shmir/src/',
+    user      => 'vagrant',
+    group     => 'vagrant',
+    require   => [ File['/etc/shmir.conf'], Class['python'] ]
+}
+
+supervisor::program { 'shmir-celery-sirna':
+    ensure    => present,
+    command   => '/usr/bin/celery -A shmir.async.celery worker --concurrency=1 -l info -n worker5.%%h -Q sirna',
+    directory => '/home/shmir/shmir/src/',
+    user      => 'vagrant',
+    group     => 'vagrant',
+    require   => [ File['/etc/shmir.conf'], Class['python'] ]
+}
+
+supervisor::program { 'shmir-celery-sirna-fold':
+    ensure    => present,
+    command   => '/usr/bin/celery -A shmir.async.celery worker --concurrency=4 -l info -n worker6.%%h -Q sirna_fold',
     directory => '/home/shmir/shmir/src/',
     user      => 'vagrant',
     group     => 'vagrant',
