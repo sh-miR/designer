@@ -18,3 +18,6 @@ mfold_files
 _build
 shmir.conf
 flower_openid
+oauth2_key
+oauth2_secret
+oauth2_redirect
