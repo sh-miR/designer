@@ -1,0 +1,9 @@
+#!/bin/bash
+
+FILE=/opt/shmir/etc/flower_openid
+
+if [ -a $FILE ]; then
+    /usr/bin/celery -A shmir.async.celery flower --auth="`cat $FILE`"
+else
+    /usr/bin/celery -A shmir.async.celery flower
+fi
