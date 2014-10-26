@@ -84,7 +84,7 @@ DEBUG = True
 CONN_STR = "postgresql+psycopg2://{user}@{host}:{port}/{dbname}"
 # try:
 FCONN = CONN_STR.format(
-    dbname=get_db_config('name', 'postgres'),
+    dbname=get_db_config('name', 'shmird'),
     user=get_db_config('user', 'postgres'),
     # password=get_db_config('password'),
     host=get_db_config('host', 'db'),
