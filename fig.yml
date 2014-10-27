@@ -2,6 +2,8 @@ shmir:
     build: .
     working_dir: /opt/shmir
     command: supervisord
+    volumes:
+    - .:/opt/shmir
     links:
     - db
     - rabbitmq
