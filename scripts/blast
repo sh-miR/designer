@@ -1,0 +1,4 @@
+#!/bin/bash
+
+update_blastdb.pl --decompress refseq_rna
+update_blastdb.pl --decompress taxdb
