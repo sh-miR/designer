@@ -21,3 +21,4 @@ flower_openid
 oauth2_key
 oauth2_secret
 oauth2_redirect
+supervisord.pid
