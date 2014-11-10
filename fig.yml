@@ -12,6 +12,7 @@ shmir:
     ports:
     - "8080:8080"
     - "5555:5555"
+    net: "host"
 db:
     image: postgres
 rabbitmq:
