@@ -1,0 +1,8 @@
+[database]
+name = shmird
+user = postgres
+host = db
+port = 5432
+
+[email]
+enabled = no

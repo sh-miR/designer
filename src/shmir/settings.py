@@ -80,27 +80,20 @@ DEBUG = True
 
 # SQLAlchemy engine
 
-# CONN_STR = "postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}"
 CONN_STR = "postgresql+psycopg2://{user}@{host}:{port}/{dbname}"
-# try:
 FCONN = CONN_STR.format(
     dbname=get_db_config('name', 'shmird'),
     user=get_db_config('user', 'postgres'),
     # password=get_db_config('password'),
-    host=get_db_config('host', 'db'),
+    host=get_db_config('host', os.environ.get('DB_PORT_5432_TCP_ADDR')),
     port=get_db_config('port', '5432')
 )
-# except Error:
-#     FCONN = 'sqlite:///:memory:'
 
 # Celery
-# CELERY_BROKER = get_celery_config('broker')
-# CELERY_RESULT_BACKEND = get_celery_config('result_backend')
-# CELERY_BROKER = 'amqp://guest:guest@rabbitmq:5672/'
-# CELERY_BROKER = 'amqp://rabbitmq/{}'.format(
-#     os.environ.get('RABBITMQ_ENV_DEVEL_VHOST_NAME', '/'))
-CELERY_BROKER = 'amqp://rabbitmq'
-CELERY_RESULT_BACKEND = 'redis://redis'
+CELERY_BROKER = 'amqp://{}'.format(
+    os.environ.get('RABBITMQ_PORT_5672_TCP_ADDR'))
+CELERY_RESULT_BACKEND = 'redis://{}'.format(
+    os.environ.get('REDIS_PORT_6379_TCP_ADDR'))
 CELERYD_FORCE_EXECV = True
 CELERY_QUEUES = (
     Queue('design', routing_key='design'),
@@ -113,7 +106,6 @@ CELERY_QUEUES = (
 
 
 # Mfold
-# MFOLD_PATH = '/home/shmir/shmir/mfold/mfold'  # script path
 MFOLD_PATH = '/opt/shmir/mfold/mfold'
 MFOLD_FILES = '/tmp/mfold_files'  # Path where mfold fiels are generated
 

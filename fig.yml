@@ -4,6 +4,7 @@ shmir:
     command: supervisord
     volumes:
     - .:/opt/shmir
+    - etc:/etc
     links:
     - db
     - rabbitmq
