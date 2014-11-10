@@ -121,7 +121,7 @@ if DEBUG:
     CACHE_DEFAULT_TIMEOUT = get_config('cache', 'timeout', 1)
 else:
     CACHE_DEFAULT_TIMEOUT = get_config('cache', 'timeout', 3600)
-CACHE_REDIS_HOST = 'redis'
+CACHE_REDIS_HOST = os.environ.get('REDIS_PORT_6379_TCP_ADDR')
 
 # Email
 EMAIL_ENABLED = get_bool('email', 'enabled', default=False)
