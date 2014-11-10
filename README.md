@@ -4,7 +4,7 @@
 
 ## Requirements ##
 
-* docker (yeah, that's all you need)
+* docker, [fig](http://fig.sh) (yeah, that's all you need)
 
 
 
@@ -13,8 +13,7 @@
 To start server:
 ```
     $ git submodule update --init
-    $ docker build -t shmir .
-    $ docker run -ti shmir
+    $ fig up
 ````
 
 After this commands server builds all its dependencies and start sh-miR API.
