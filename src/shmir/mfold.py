@@ -2,12 +2,7 @@
 .. module:: shmir.mfold
     :synopsis: Module which handels mfold
 """
-from os import (
-    fork,
-    waitpid,
-    execl,
-    path,
-)
+import os
 from zipfile import ZipFile
 
 from shmir.decorators import catch_errors
@@ -20,7 +15,7 @@ from shmir.settings import MFOLD_PATH
 from shmir.utils import remove_error_folding
 
 
-def zipped_mfold(task_id, files, tmp_dirname):
+def zip_file(task_id, files, tmp_dirname):
     """Zipping mfold files of specific task
 
     Args:
@@ -39,48 +34,48 @@ def zipped_mfold(task_id, files, tmp_dirname):
                 filename, "{}/{}".format(*filename.split('/')[-2:])
             )
 
-    result = path.join(tmp_dirname, zipname)
+    result = os.path.join(tmp_dirname, zipname)
 
     return result
 
 
-def execute_mfold(path_id, sequence, zip_file=True):
+def execute(directory, sequence, to_zip=True):
     """Function which executes mfold
 
     Args:
-        path_id: path where is mfold
+        directory: directory in which mfold is executed & output files are stored
         sequence(str): sequence to be folded via mfold
-        zip_file(bool): tells if files should be zipped (default: True)
+        to_zip(bool): tells if files should be zipped (default: True)
 
     Returns:
         Path of foleded files
     """
-    with mfold_path(path_id) as tmp_dirname:
+    with mfold_path(directory) as tmp_dirname:
         with open('sequence', "w") as f:
             f.write(sequence)
 
-        pid = fork()
+        pid = os.fork()
 
         if pid == 0:
-            execl(MFOLD_PATH, 'mfold', 'SEQ=sequence')
+            os.execl(MFOLD_PATH, 'mfold', 'SEQ=sequence')
 
-        process_id, status = waitpid(pid, 0)
+        process_id, status = os.waitpid(pid, 0)
         # Status in 0 - 255
         status = (status & 0xff00) >> 8
 
         if status == 0:
             result = map(
-                lambda mfold_path: path.join(
+                lambda mfold_path: os.path.join(
                     tmp_dirname, mfold_path.format('sequence')
                 ),
                 ["{}_1.pdf", "{}_1.ss"]
             )
 
-            if zip_file:
-                result = zipped_mfold(path_id, result, tmp_dirname)
+            if to_zip:
+                result = zip_file(directory, result, tmp_dirname)
 
     if status != 0:
-        remove_error_folding(path_id)
+        remove_error_folding(directory)
         raise NoResultError("No foldings for %s" % sequence)
 
     return result
@@ -89,11 +84,11 @@ def execute_mfold(path_id, sequence, zip_file=True):
 @task(bind=True)
 @catch_errors(NoResultError)
 @send_email(file_handler=zip_file_mfold)
-def delegate_mfold(self, sequence):
+def delegate(self, sequence):
     """Executes mfold in order to generate appropriate files
     Args:
         sequence: sequence to be folded
     Returns:
         Path of folded files
     """
-    return execute_mfold(self.request.id, sequence)
+    return execute(self.request.id, sequence)

@@ -53,8 +53,8 @@ from shmir.data.models import (
 )
 from shmir.data import ncbi_api
 from shmir.mfold import (
-    execute_mfold,
-    zipped_mfold
+    execute,
+    zip_file
 )
 from shmir.utils import remove_bad_foldings
 from shmir.decorators import (
@@ -95,7 +95,7 @@ def fold_and_score(
 
     frame, insert1, insert2 = frame_tuple
 
-    mfold_data = execute_mfold(
+    mfold_data = execute(
         path_id, frame.template(insert1, insert2), zip_file=False
     )
 
@@ -103,7 +103,7 @@ def fold_and_score(
     score = score_fun(frame_tuple, original, ss, *args_fun)
 
     with mfold_path(path_id) as tmp_dirname:
-        zipped_mfold(self.request.id, [pdf, ss], tmp_dirname)
+        zip_file(self.request.id, [pdf, ss], tmp_dirname)
 
     return [
         score,
