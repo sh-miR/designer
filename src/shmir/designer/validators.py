@@ -7,18 +7,21 @@ import re
 import math
 import errors
 import logging
+import operator
 
+from shmir.decorators import catch_errors
+from utils import reverse_complement
 from urllib2 import HTTPError
 from shmir.data.models import Immuno
 from shmir.designer.offtarget import blast_offtarget
 
 
-def check_complementary_single(seq1, seq2):
-    """The function checks complementary of two sequences
+def complementarity_level(seq1, seq2):
+    """The function gives complementary level of two sequences
 
     Args:
         seq1(str): first sequence
-        seq1(str): second sequence
+        seq2(str): second sequence
 
     Returns:
         Percent of complementary(int)
@@ -34,14 +37,14 @@ def check_complementary_single(seq1, seq2):
     seq2 = seq2[::-1]
     mini = float(min(len(seq1), len(seq2)))
     count = 0
-    for mol1, mol2 in zip(seq1, seq2):
-        if tran[mol1] == mol2:
+    for molecule1, molecule2 in zip(seq1, seq2):
+        if tran[molecule1] == molecule2:
             count += 1
     proc = (count/mini)*100
     return math.floor(proc)
 
 
-def check_complementary(seq1, seq2):
+def best_complementarity(seq1, seq2):
     """Test for complementary, if both strands are in 5'-3' orientation
     class perform only when there are two strands given; should take as input
     both strand,
@@ -74,54 +77,71 @@ def check_complementary(seq1, seq2):
     """
     nr_offset = 5
     tab = []
-    end_offset = len(seq1)-len(seq2)
-    if check_complementary_single(seq1, seq2) >= 80:
+    seq1_len = len(seq1)
+    seq2_len = len(seq2)
+    end_offset = seq1_len-seq2_len
+
+    if complementarity_level(seq1, seq2) >= 80:
         tab.append((seq1, seq2, 0, end_offset))
 
     for offset in range(1, nr_offset):
-        if check_complementary_single(seq1[offset:], seq2) >= 80:
-            end_offset = len(seq1)-len(seq2)-offset
-            tab.append((seq1, seq2, offset, end_offset))
-        if check_complementary_single(seq1, seq2[:-offset]) >= 80:
-            end_offset = len(seq1)-len(seq2)+offset
-            tab.append((seq1, seq2, -offset, end_offset))
+        level = complementarity_level(seq1[offset:], seq2)
+        if level >= 80:
+            end_offset = seq1_len-seq2_len-offset
+            tab.append((seq1, seq2, offset, end_offset, level))
+
+        level = complementarity_level(seq1, seq2[:-offset])
+        if level >= 80:
+            end_offset = seq1_len-seq2_len+offset
+            tab.append((seq1, seq2, -offset, end_offset, level))
+
     if not tab:
         raise errors.ValidationError(errors.error)
-    return tab[0]
+
+    return max(tab, key=operator.itemgetter(-1))[:-1]
 
 
-def check_input_single(seq):
+def replace_mocules(sequence):
+    """This function replaces 'u' with 't' molecules
+    Rigth end of siRNA is cut if contain 'uu' or 'tt'.
+
+    Args:
+        sequence(str)
+    Returns
+        Tuple of sequence, warning(or None)
+    """
+    sequence = sequence.upper().replace('U', 'T')
+    cut_warn = "cut 'UU' or 'TT'"
+
+    if sequence[-2:] == "TT":
+        sequence = sequence[:-2]
+        logging.warn(cut_warn)
+        return sequence
+
+    return sequence
+
+
+def validate_sirna(sequence):
     """Function for check sequence from input
     if a single siRNA strand have only actgu letters and is 19-21 nucleotides
     long.
-    Also rigth end of siRNA is cut if contain 'uu' or 'tt'.
 
     Args:
-        seq(str): sequence
-
-    Returns:
-        List of sequence, warning(or None), True
+        sequence(str): sequence
 
     Raises:
         ValidationError
     """
-    seq = seq.upper().replace('U', 'T')
     pattern = re.compile(r'^[ACGT]{19,21}$')
-    cut_warn = "cut 'UU' or 'TT'"
 
-    if not pattern.search(seq):
-        if len(seq) > 21 or len(seq) < 19:
+    if not pattern.search(sequence):
+        if len(sequence) > 21 or len(sequence) < 19:
             raise errors.ValidationError('%s' % errors.len_error)
         raise errors.ValidationError('%s' % errors.patt_error)
-    elif seq[-2:] == "TT" and pattern.search(seq):
-        seq = seq[:-2]
-        logging.warn(cut_warn)
-        return [seq, cut_warn, True]
-    elif pattern.search(seq):
-        return [seq, None, True]
 
 
-def check_input(seq_to_be_check):
+@catch_errors(errors.ValidationError)
+def parse_input(sirna):
     """Function for checking many sequences and throw error if wrong input
     input limitations: possible letters: {ACTGUactgu}, change all 'u' to 't',
     length 19-21, one strand or two strands splitted by space,
@@ -143,25 +163,26 @@ def check_input(seq_to_be_check):
     * "sequence can contain only {actgu} letters
 
     Args:
-        seq_to_be_check: sequence(str) which will be check
+        sirna: sequence(str) which will be check
 
     Returns:
-        tuple from check_complementary
+        tuple from best_complementarity
 
     Raises:
         ValidationError
     """
-    sequence = seq_to_be_check.split(" ")
-    len_seq = len(sequence)
-    if len_seq == 1:
-        return (check_input_single(sequence[0])[0], '', 0, 0)
-    elif len_seq == 2:
-        ch_seq1 = check_input_single(sequence[0])
-        ch_seq2 = check_input_single(sequence[1])
-        if ch_seq1[2] and ch_seq2[2]:
-            return check_complementary(ch_seq1[0], ch_seq2[0])
+    if " " in sirna:
+        sequence1, sequence2 = map(replace_mocules, sirna.split(" ", 1))
     else:
-        raise errors.ValidationError('{}'.format(errors.error))
+        sequence1, sequence2 = map(
+            replace_mocules,
+            [sirna, reverse_complement(sirna)]
+        )
+
+    for seq in [sequence1, sequence2]:
+        validate_sirna(seq)
+
+    return best_complementarity(sequence1, sequence2)
 
 
 def calculate_gc_content(sequence):

@@ -13,6 +13,7 @@ from shmir import (
     app,
     cache
 )
+from shmir.designer.validators import parse_input
 from shmir.async import get_async_result
 from shmir.designer.design import (
     shmir_from_sirna_score,
@@ -86,7 +87,7 @@ def mfold_task_creator(data):
 
 
 @app.route('/from_sirna/status/<task_id>')
-def designer_task_status(task_id):
+def sirna_task_status(task_id):
     """Handler to check status of task which creates sh-miR from siRNA
 
     Args:
@@ -102,7 +103,7 @@ def designer_task_status(task_id):
 
 
 @app.route('/from_sirna/result/<task_id>')
-def designer_task_result(task_id):
+def sirna_task_result(task_id):
     """Handler to give result of sh-miR(s) created from siRNA
 
     Args:
@@ -119,7 +120,7 @@ def designer_task_result(task_id):
 
 @app.route('/from_sirna/<data>')
 @cache.memoize()
-def designer_task_creator(data):
+def sirna_task_creator(data):
     """Handler to initialize task which creates sh-miR(s) from siRNA
 
     Args:
@@ -128,8 +129,12 @@ def designer_task_creator(data):
     Returns:
         Task id
     """
+    parsed = parse_input(data)
+    if isinstance(parsed, dict):
+        return jsonify(parsed)
+
     resource = shmir_from_sirna_score.apply_async(
-        args=(data.upper(),), kwargs=request.args.to_dict(), queue='score')
+        args=parsed, kwargs=request.args.to_dict(), queue='score')
     return jsonify({'task_id': resource.task_id})
 
 
