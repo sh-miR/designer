@@ -1,0 +1,10 @@
+#!/bin/bash
+
+BROKER_ARG="-b amqp://guest@\$RABBITMQ_PORT_5672_TCP_ADDR//"
+
+fig run shmir /bin/bash -c "celery purge $BROKER_ARG -f"
+fig run shmir /bin/bash -c "celery amqp queue.purge $BROKER_ARG design"
+fig run shmir /bin/bash -c "celery amqp queue.purge $BROKER_ARG score"
+fig run shmir /bin/bash -c "celery amqp queue.purge $BROKER_ARG subtasks"
+fig run shmir /bin/bash -c "celery amqp queue.purge $BROKER_ARG blast"
+fig run redis /bin/bash -c "redis-cli FLUSHALL"
