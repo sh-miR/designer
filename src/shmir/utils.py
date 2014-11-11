@@ -43,7 +43,7 @@ def get_dirname(task_id):
 
 
 @cache.memoize()
-def get_zip_path(path, task_id):
+def get_zip_path(path):
     """Gets path of zip via mfold task id
 
     Args:
@@ -53,7 +53,7 @@ def get_zip_path(path, task_id):
     Returns:
         Path where zip is
     """
-    return os.path.join(get_dirname(path), '{}.zip'.format(task_id))
+    return os.path.join(get_dirname(path), '{}.zip'.format(path))
 
 
 def remove_bad_foldings(path_id, good_ids):

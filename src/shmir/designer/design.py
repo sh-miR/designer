@@ -20,7 +20,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import func
 
 from shmir.designer.validators import (
-    check_input,
+    parse_input,
     validate_sequence,
 )
 from shmir.designer.utils import (
@@ -53,8 +53,8 @@ from shmir.data.models import (
 )
 from shmir.data import ncbi_api
 from shmir.mfold import (
-    execute_mfold,
-    zipped_mfold
+    execute,
+    zip_file
 )
 from shmir.utils import remove_bad_foldings
 from shmir.decorators import (
@@ -95,15 +95,15 @@ def fold_and_score(
 
     frame, insert1, insert2 = frame_tuple
 
-    mfold_data = execute_mfold(
-        path_id, frame.template(insert1, insert2), zip_file=False
+    mfold_data = execute(
+        path_id, frame.template(insert1, insert2), to_zip=False
     )
 
     pdf, ss = mfold_data
     score = score_fun(frame_tuple, original, ss, *args_fun)
 
     with mfold_path(path_id) as tmp_dirname:
-        zipped_mfold(self.request.id, [pdf, ss], tmp_dirname)
+        zip_file(self.request.id, [pdf, ss], tmp_dirname)
 
     return [
         score,
@@ -117,7 +117,7 @@ def fold_and_score(
 @task
 @catch_errors(ValidationError, NoResultError)
 @send_email(file_handler=zip_files_from_sirna)
-def shmir_from_sirna_score(input_str):
+def shmir_from_sirna_score(seq1, seq2, shift_left, shift_right):
     """Main function takes string input and returns the best results depending
     on scoring. Single result include sh-miR sequence,
     score and link to 2D structure from mfold program
@@ -128,11 +128,6 @@ def shmir_from_sirna_score(input_str):
     Returns:
         List of sh-miR(s) sorted by score.
     """
-
-    seq1, seq2, shift_left, shift_right = check_input(input_str)
-    if not seq2:
-        seq2 = reverse_complement(seq1)
-
     original_frames = db_session.query(Backbone).all()
 
     frames = get_frames(seq1, seq2,
