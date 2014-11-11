@@ -25,7 +25,7 @@ from shmir.designer.validators import (
 )
 from shmir.designer.utils import (
     generator_is_empty,
-    get_frames,
+    adjusted_frames,
     reverse_complement,
     unpack_dict_to_list,
     remove_none,
@@ -52,10 +52,7 @@ from shmir.data.models import (
     db_session,
 )
 from shmir.data import ncbi_api
-from shmir.mfold import (
-    execute,
-    zip_file
-)
+from shmir import mfold
 from shmir.utils import remove_bad_foldings
 from shmir.decorators import (
     catch_errors,
@@ -95,7 +92,7 @@ def fold_and_score(
 
     frame, insert1, insert2 = frame_tuple
 
-    mfold_data = execute(
+    mfold_data = mfold.execute(
         path_id, frame.template(insert1, insert2), to_zip=False
     )
 
@@ -103,7 +100,7 @@ def fold_and_score(
     score = score_fun(frame_tuple, original, ss, *args_fun)
 
     with mfold_path(path_id) as tmp_dirname:
-        zip_file(self.request.id, [pdf, ss], tmp_dirname)
+        mfold.zip_file(self.request.id, [pdf, ss], tmp_dirname)
 
     return [
         score,
@@ -112,6 +109,21 @@ def fold_and_score(
         path_id,
         (seq1, seq2),
     ]
+
+
+@task(bind=True)
+def fold(self, shmiR):
+    task_id = self.request.id
+    pdf, ss = mfold.execute(
+        task_id, shmiR, to_zip=False
+    )
+    with mfold_path(task_id) as tmp_dirname:
+        mfold.zip_file(task_id, [pdf, ss], tmp_dirname)
+
+    return {
+        'task_id': task_id,
+        'ss': ss,
+    }
 
 
 @task
@@ -130,29 +142,48 @@ def shmir_from_sirna_score(seq1, seq2, shift_left, shift_right):
     """
     original_frames = db_session.query(Backbone).all()
 
-    frames = get_frames(seq1, seq2,
-                        shift_left, shift_right,
-                        deepcopy(original_frames))
+    frames = adjusted_frames(seq1, seq2,
+                             shift_left, shift_right,
+                             deepcopy(original_frames))
 
+    shmiRs = [frame.template(_seq1, _seq2) for frame, _seq1, _seq2 in frames]
+
+    # folding via mfold
     with allow_join_result():
-        frames_with_score = group(
-            fold_and_score.s(
-                seq1, seq2,
-                frame_tuple,
-                original,
-                score_from_sirna,
-                (seq1,)
-            ).set(queue="subtasks")
-            for frame_tuple, original in zip(frames, original_frames)
+        foldings = group(
+            fold.s(
+                shmiR
+            ).set(queue="subtasks") for shmiR in shmiRs
         ).apply_async().get()
 
-    sorted_frames = [
-        elem[:-1] for elem in sorted(
-            frames_with_score, key=operator.itemgetter(0), reverse=True
-        ) if elem[0] > 60
-    ][:3]
+    # scoring results
+    with allow_join_result():
+        scores = group(
+            score_from_sirna.s(
+                frame,
+                original,
+                folding['ss']
+            ).set(queue="subtasks")
+            for frame, original, folding in zip(frames, original_frames, foldings)
+        ).apply_async().get()
 
-    return sorted_frames
+    shmiRs = [
+        {
+            'score': score,
+            'shmiR': shmiR,
+            'scaffold_name': frame[0].name,
+            'pdf_reference': folding['task_id'],
+            'scaffolds': (frame[1], frame[2]),
+        }
+        for score, shmiR, frame, folding in zip(scores, shmiRs, frames, foldings)
+        if score['all'] > 60
+    ]
+
+    return sorted(
+        shmiRs,
+        key=lambda elem: elem['score']['all'],
+        reverse=True
+    )[:3]
 
 
 @task
@@ -171,7 +202,7 @@ def shmir_from_fasta_string(fasta_string, original_frames,
     """
     seq2 = reverse_complement(fasta_string)
 
-    frames = get_frames(fasta_string, seq2, 0, 0, deepcopy(original_frames))
+    frames = adjusted_frames(fasta_string, seq2, 0, 0, deepcopy(original_frames))
 
     with allow_join_result():
         frames_with_score = group(

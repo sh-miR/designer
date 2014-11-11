@@ -25,8 +25,8 @@ def reverse_complement(sequence):
     return sequence.translate(maketrans("atcgATCG", "tagcTAGC"))[::-1]
 
 
-def get_frames(seq1, seq2, shift_left, shift_right, all_frames):
-    """Take output of check_input function and insert into flanking sequences.
+def adjusted_frames(seq1, seq2, shift_left, shift_right, all_frames):
+    """Take output of parse_input function and insert into flanking sequences.
     take from database all miRNA results and check if ends of input is suitable
     for flanking sequences.
     If first value == and miRNA_end_5 second value == miRNA_end_3 then simply

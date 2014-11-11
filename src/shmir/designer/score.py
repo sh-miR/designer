@@ -6,9 +6,10 @@
 from math import ceil
 from .ss import parse_ss
 from .ss import parse_score
+from shmir.async import task
 
 
-def score_frame(frame, frame_ss_file, orginal_frame):
+def score_structure(frame, frame_ss_file, orginal_frame):
     """Scorring function.
 
     Args:
@@ -102,7 +103,8 @@ def score_two_same_strands(seq1, original_frame):
     return 0
 
 
-def score_from_sirna(frame_tuple, original_frame, frame_ss, sequence):
+@task
+def score_from_sirna(frame_tuple, original_frame, frame_ss):
     """Function for getting score from siRNA.
 
     Args:
@@ -113,11 +115,16 @@ def score_from_sirna(frame_tuple, original_frame, frame_ss, sequence):
     Returns:
         tuple of score of frame, homogeneity and strands
     """
-    return (
-        score_frame(frame_tuple, frame_ss, original_frame) +
-        score_homogeneity(original_frame) +
-        score_two_same_strands(sequence, original_frame)
-    )
+    structure = score_structure(frame_tuple, frame_ss, original_frame)
+    homogeneity = score_homogeneity(original_frame)
+    same_ends = score_two_same_strands(frame_tuple[1], original_frame)
+
+    return {
+        'structure': structure,
+        'homogeneity': homogeneity,
+        'same_ends': same_ends,
+        'all': structure + homogeneity + same_ends
+    }
 
 
 def score_offtarget(number):
@@ -163,7 +170,7 @@ def score_from_transcript(
     Returns:
         Dict of scores for: frame, offtarget, regexp and all together.
     """
-    sframe = score_frame(frame_tuple, frame_ss, original_frame)
+    sframe = score_structure(frame_tuple, frame_ss, original_frame)
     sofftarget = score_offtarget(offtarget)
     sregexp = score_regexp(regexp)
     return {
