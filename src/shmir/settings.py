@@ -132,3 +132,6 @@ EMAIL_PASSWORD = get_config('email', 'password')
 
 # Blast
 BLAST_PATH = get_config('blast', 'path', default='/opt/shmir/blast')
+
+# UPdb
+PDB_SOCKET = '/opt/shmir/pdb.sock'
