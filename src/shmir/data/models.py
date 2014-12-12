@@ -63,18 +63,16 @@ class Backbone(Base):
     active_strand = Column(Integer, nullable=False)
     regexp = Column(Unicode(1000))
 
-    def template(self, siRNAstrand_1, siRNAstrand_2):
+    def template(self):
         """Returns the template of DNA (sh-miR)
 
-        Args:
-            siRNAstrand_1: sequence of first strand
-            siRNAstrand_2: sequence of second strand
+        siRNA1 and siRNA2 are siRNA strands and they must be initialized before using this method
 
         Returns:
             Sequence of sh-miR molecule on the base of chosen miRNA scaffold
         """
-        return (self.flanks5_s + siRNAstrand_1 + self.loop_s +
-                siRNAstrand_2 + self.flanks3_s).upper()
+        return (self.flanks5_s + self.siRNA1 + self.loop_s +
+                self.siRNA2 + self.flanks3_s).upper()
 
     def generate_regexp(self):
         """Function creates regexps based on active_strand

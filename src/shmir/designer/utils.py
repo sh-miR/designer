@@ -146,7 +146,10 @@ def adjusted_frames(seq1, seq2, shift_left, shift_right, all_frames):
                     _seq1 += reverse_complement(
                         _seq2[-frame.miRNA_end_3:-shift_right])
 
-            frames.append([frame, _seq1, _seq2])
+            # adding sequences as attribues
+            frame.siRNA1 = _seq1
+            frame.siRNA2 = _seq2
+            frames.append(frame)
     return frames
 
 

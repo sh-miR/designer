@@ -146,7 +146,7 @@ def shmir_from_sirna_score(seq1, seq2, shift_left, shift_right):
                              shift_left, shift_right,
                              deepcopy(original_frames))
 
-    shmiRs = [frame.template(_seq1, _seq2) for frame, _seq1, _seq2 in frames]
+    shmiRs = [frame.template() for frame in frames]
 
     # folding via mfold
     with allow_join_result():
@@ -171,9 +171,9 @@ def shmir_from_sirna_score(seq1, seq2, shift_left, shift_right):
         {
             'score': score,
             'shmiR': shmiR,
-            'scaffold_name': frame[0].name,
+            'scaffold_name': frame.name,
             'pdf_reference': folding['task_id'],
-            'scaffolds': (frame[1], frame[2]),
+            'scaffolds': (frame.siRNA1, frame.siRNA2),
         }
         for score, shmiR, frame, folding in zip(scores, shmiRs, frames, foldings)
         if score['all'] > 60
