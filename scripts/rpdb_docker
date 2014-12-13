@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+CONTAINER=$(docker ps | grep shmir_shmir | awk '{print $1;}')
+docker exec $CONTAINER telnet 127.0.0.1 4444
