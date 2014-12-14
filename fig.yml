@@ -1,17 +1,18 @@
 shmir:
     build: .
     working_dir: /opt/shmir
-    command: supervisord
+    command: supervisord -c /etc/supervisor/supervisord.conf
     volumes:
-    - .:/opt/shmir
-    - etc:/etc
+        - .:/opt/shmir
+        - etc/shmir:/etc/shmir
+        - etc/supervisor:/etc/supervisor
     links:
-    - db
-    - rabbitmq
-    - redis
+        - db
+        - rabbitmq
+        - redis
     ports:
-    - "8080:8080"
-    - "5555:5555"
+        - "8080:8080"
+        - "5555:5555"
 db:
     image: postgres
 rabbitmq:
