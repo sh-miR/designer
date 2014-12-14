@@ -15,7 +15,7 @@ from kombu import Queue
 # Parsing config file
 
 config = ConfigParser()
-config.read('/etc/shmir.conf')
+config.read('/etc/shmir/shmir.conf')
 
 # Config getters
 
