@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 
 CONTAINER=$(docker ps | grep shmir_shmir | awk '{print $1;}')
-PID=$(docker inspect --format '{{.State.Pid}}' $CONTAINER)
-sudo nsenter --mount --uts --ipc --net --pid --target $PID telnet 127.0.0.1 4444
+docker exec -ti $CONTAINER nc 127.0.0.1 4444
