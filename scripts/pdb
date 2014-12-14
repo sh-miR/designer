@@ -1,3 +1,0 @@
-#!/bin/bash
-
-fig run shmir /bin/bash -c "nc -U /opt/shmir/pdb.sock"

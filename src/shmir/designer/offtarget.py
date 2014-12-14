@@ -12,9 +12,11 @@ from Bio.Blast.Applications import NcbiblastnCommandline
 import cStringIO
 
 from shmir.contextmanagers import blast_path
+from shmir.async import task
 
 
-def blast_offtarget(fasta_string):
+@task(bind=True, max_retries=10)
+def blast_offtarget(self, fasta_string):
     """Function which count offtarget using blast.
 
     Args:
@@ -40,12 +42,17 @@ def blast_offtarget(fasta_string):
 
         return len(blast_lines)
     except ApplicationError:
-        result_handle = NCBIWWW.qblast(
-            "blastn", "refseq_rna", fasta_string,
-            entrez_query="txid9606 [ORGN]", expect=100, gapcosts="5 2",
-            genetic_code=1, hitlist_size=100,
-            word_size=len(fasta_string), megablast=True
-        )
+
+        try:
+            result_handle = NCBIWWW.qblast(
+                "blastn", "refseq_rna", fasta_string,
+                entrez_query="txid9606 [ORGN]", expect=100, gapcosts="5 2",
+                genetic_code=1, hitlist_size=100,
+                word_size=len(fasta_string), megablast=True
+            )
+        except ValueError as exc:
+            raise self.retry(exc=exc)
+
         blast_results = result_handle.read()
 
         blast_in = cStringIO.StringIO(blast_results)

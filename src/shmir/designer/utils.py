@@ -196,3 +196,7 @@ def generator_is_empty(generator):
     except StopIteration:
         return True, None
     return False, chain([first], generator)
+
+
+def create_path_string(*args):
+    return "_".join(map(str, args))

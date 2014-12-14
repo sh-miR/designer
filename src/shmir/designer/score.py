@@ -13,7 +13,7 @@ def score_structure(frame, folding_file, original_frame):
     """Scorring function.
 
     Args:
-        frame: tuple of object Backbone and two sequences
+        frame: Backbone object with added siRNAs
         folding_file: file from mfold
         ss_file: object Backbone from database (not changed)
 

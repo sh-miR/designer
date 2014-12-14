@@ -215,6 +215,17 @@ def validate_gc_content(sequence, min_percent, max_percent):
     return min_percent <= calculate_gc_content(sequence) <= max_percent
 
 
+def validate_immuno(sequence, immuno):
+    if immuno == "no_difference":
+        return True
+
+    is_immuno = Immuno.check_is_in_sequence(sequence)
+    if (is_immuno and immuno == 'yes') or (not is_immuno and immuno == 'no'):
+        return True
+
+    return False
+
+
 def validate_sequence(sequence, max_offtarget, min_gc, max_gc, stimulatory):
     """Function to validate sequence.
 

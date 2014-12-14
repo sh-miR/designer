@@ -94,7 +94,7 @@ CELERY_BROKER = 'amqp://{}'.format(
     os.environ.get('RABBITMQ_PORT_5672_TCP_ADDR'))
 CELERY_RESULT_BACKEND = 'redis://{}'.format(
     os.environ.get('REDIS_PORT_6379_TCP_ADDR'))
-CELERYD_FORCE_EXECV = True
+# CELERYD_FORCE_EXECV = True
 CELERY_QUEUES = (
     Queue('design', routing_key='design'),
     Queue('score', routing_key='score'),
@@ -132,6 +132,3 @@ EMAIL_PASSWORD = get_config('email', 'password')
 
 # Blast
 BLAST_PATH = get_config('blast', 'path', default='/opt/shmir/blast')
-
-# UPdb
-PDB_SOCKET = '/opt/shmir/pdb.sock'

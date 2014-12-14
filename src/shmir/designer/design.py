@@ -7,7 +7,10 @@ import operator
 import json
 from copy import deepcopy
 
-from itertools import chain
+from itertools import (
+    chain,
+    ifilter,
+)
 from collections import (
     defaultdict,
     OrderedDict
@@ -16,12 +19,11 @@ from collections import (
 from celery import group
 from celery.result import allow_join_result
 
-from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.sql import func
-
 from shmir.designer.validators import (
     parse_input,
     validate_sequence,
+    validate_gc_content,
+    validate_immuno,
 )
 from shmir.designer.utils import (
     generator_is_empty,
@@ -29,6 +31,7 @@ from shmir.designer.utils import (
     reverse_complement,
     unpack_dict_to_list,
     remove_none,
+    create_path_string,
 )
 from shmir.designer.score import (
     score_from_sirna,
@@ -43,6 +46,7 @@ from shmir.designer.errors import (
     ValidationError,
     IncorrectDataError,
 )
+from shmir.designer.offtarget import blast_offtarget
 from shmir.async import task
 from shmir.contextmanagers import mfold_path
 from shmir.data.models import (
@@ -52,6 +56,10 @@ from shmir.data.models import (
     db_session,
 )
 from shmir.data import ncbi_api
+from shmir.data.db_api import (
+    get_results,
+    frames_by_scaffold,
+)
 from shmir import mfold
 from shmir.utils import remove_bad_foldings
 from shmir.decorators import (
@@ -146,14 +154,14 @@ def shmir_from_sirna_score(seq1, seq2, shift_left, shift_right):
                              shift_left, shift_right,
                              deepcopy(original_frames))
 
-    shmiRs = [frame.template() for frame in frames]
+    shmirs = [frame.template() for frame in frames]
 
     # folding via mfold
     with allow_join_result():
         foldings = group(
             fold.s(
-                shmiR
-            ).set(queue="subtasks") for shmiR in shmiRs
+                shmir
+            ).set(queue="subtasks") for shmir in shmirs
         ).apply_async().get()
 
     # scoring results
@@ -167,20 +175,20 @@ def shmir_from_sirna_score(seq1, seq2, shift_left, shift_right):
             for frame, original, folding in zip(frames, original_frames, foldings)
         ).apply_async().get()
 
-    shmiRs = [
+    full_reference = [
         {
             'score': score,
-            'shmiR': shmiR,
+            'shmir': shmir,
             'scaffold_name': frame.name,
             'pdf_reference': folding['task_id'],
             'scaffolds': (frame.siRNA1, frame.siRNA2),
         }
-        for score, shmiR, frame, folding in zip(scores, shmiRs, frames, foldings)
+        for score, shmir, frame, folding in zip(scores, shmirs, frames, foldings)
         if score['all'] > 60
     ]
 
     return sorted(
-        shmiRs,
+        full_reference,
         key=lambda elem: elem['score']['all'],
         reverse=True
     )[:3]
@@ -264,11 +272,65 @@ def validate_and_offtarget(self, sequence, maximum_offtarget, minimum_CG,
 
 
 @task
+def validate_sequences(
+    sequences, regexp, name,
+    minimum_CG, maximum_CG, maximum_offtarget, immuno
+):
+    """
+    Here we remove all bad sequences (siRNA) by validators
+    """
+
+    # filter sequences here by no expensive features
+    preprocessed = filter(
+        lambda sequence:
+        all([
+            validate_gc_content(
+                sequence,
+                minimum_CG,
+                maximum_CG
+            ),
+            validate_immuno(
+                sequence,
+                immuno
+            )]),
+        sequences
+    )
+    # uncomment if debuging
+    return {
+        name: [{
+            "sequence": seq,
+            "regexp": int(regexp),
+            "offtarget": 0}
+            for seq in preprocessed]
+    }
+
+    # counting offtarget is expensive
+    with allow_join_result():
+        offtarget = group(
+            blast_offtarget.s(
+                sequence,
+            ).set(queue="blast")
+            for sequence in preprocessed
+        ).apply_async().get()
+
+    return {
+        name: [{
+            "sequence": sequence,
+            "regexp": int(regexp),
+            "offtarget": actual_offtarget}
+
+            for sequence, actual_offtarget
+            in zip(preprocessed, offtarget)
+            if actual_offtarget <= maximum_offtarget]
+    }
+
+
+@task
 @catch_errors(IncorrectDataError, NoResultError)
 @send_email(file_handler=zip_files_from_transcript)
 def shmir_from_transcript_sequence(
     transcript_name, minimum_CG, maximum_CG, maximum_offtarget, scaffold,
-    stimulatory_sequences
+    immunostimulatory
 ):
     """Generating function of shmir from transcript sequence.
     Args:
@@ -283,42 +345,35 @@ def shmir_from_transcript_sequence(
         list of sh-miR(s).
     """
     # check if results are in database
-    try:
-        stored_input = db_session.query(InputData).filter(
-            func.lower(InputData.transcript_name) == transcript_name.lower(),
-            InputData.minimum_CG == minimum_CG,
-            InputData.maximum_CG == maximum_CG,
-            InputData.maximum_offtarget == maximum_offtarget,
-            func.lower(InputData.scaffold) == scaffold.lower(),
-            func.lower(
-                InputData.stimulatory_sequences
-            ) == stimulatory_sequences.lower()
-        ).outerjoin(InputData.results).one()
-    except NoResultFound:
-        pass
-    else:
-        return [result.as_json() for result in stored_input.results]
+    results = get_results(
+        transcript_name,
+        minimum_CG,
+        maximum_CG,
+        maximum_offtarget,
+        scaffold,
+        immunostimulatory
+    )
 
-    # create path string
-    path = "_".join(
-        map(
-            str,
-            [transcript_name, minimum_CG, maximum_CG, maximum_offtarget,
-             scaffold, stimulatory_sequences]
-        )
+    # sometimes results is an empty list
+    if results is not None:
+        return results
+
+    path = create_path_string(
+        transcript_name,
+        minimum_CG,
+        maximum_CG,
+        maximum_offtarget,
+        scaffold,
+        immunostimulatory
     )
 
     mRNA = ncbi_api.get_mRNA(transcript_name)
 
-    if scaffold == 'all':
-        original_frames = db_session.query(Backbone).all()
-    else:
-        original_frames = db_session.query(Backbone).filter(
-            func.lower(Backbone.name) == scaffold.lower()
-        ).all()
+    original_frames = frames_by_scaffold(scaffold)
 
     frames_by_name = {frame.name: frame for frame in original_frames}
 
+    # best patters should be choosen first
     patterns = {
         frame.name: OrderedDict(
             sorted(
@@ -328,26 +383,28 @@ def shmir_from_transcript_sequence(
         ) for frame in original_frames
     }
 
-    best_sequences = defaultdict(list)
+    with allow_join_result():
+        validated = group(
+            validate_sequences.s(
+                list(sequences),  # generators are not serializable
+                regexp_type,
+                name,
+                minimum_CG,
+                maximum_CG,
+                maximum_offtarget,
+                immunostimulatory).set(queue="score")
 
-    for name, patterns_dict in patterns.iteritems():
-        for regexp_type, sequences in find_by_patterns(patterns_dict, mRNA).iteritems():
-            with allow_join_result():
-                is_empty, sequences = generator_is_empty(sequences)
-                if not is_empty:
-                    best_sequences[name] = remove_none(
-                        group(
-                            validate_and_offtarget.s(
-                                sequence,
-                                maximum_offtarget,
-                                minimum_CG,
-                                maximum_CG,
-                                stimulatory_sequences,
-                                int(regexp_type)
-                            ).set(queue="blast")
-                            for sequence in sequences
-                        ).apply_async().get()
-                    )
+            for name, patterns_dict in patterns.iteritems()
+            for regexp_type, sequences
+            in find_by_patterns(patterns_dict, mRNA).iteritems()
+
+            ).apply_async().get()
+
+    # merge results by name
+    best_sequences = defaultdict(list)
+    for valid_group in validated:
+        for name, sequences in valid_group.iteritems():
+            best_sequences[name].append(sequences)
 
     results = []
     for name, seq_dict in unpack_dict_to_list(best_sequences):
@@ -379,7 +436,7 @@ def shmir_from_transcript_sequence(
                             maximum_offtarget,
                             minimum_CG,
                             maximum_CG,
-                            stimulatory_sequences,
+                            immunostimulatory,
                             0
                         ).set(queue="blast")
                         for sequence in sequences
@@ -419,7 +476,7 @@ def shmir_from_transcript_sequence(
         maximum_CG=maximum_CG,
         maximum_offtarget=maximum_offtarget,
         scaffold=scaffold,
-        stimulatory_sequences=stimulatory_sequences,
+        stimulatory_sequences=immunostimulatory,
         results=db_results
     )
     db_session.add(db_input)

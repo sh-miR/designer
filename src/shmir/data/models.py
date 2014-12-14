@@ -62,11 +62,14 @@ class Backbone(Base):
     miRBase_link = Column(Unicode(200), nullable=False)
     active_strand = Column(Integer, nullable=False)
     regexp = Column(Unicode(1000))
+    siRNA1 = None
+    siRNA2 = None
 
     def template(self):
         """Returns the template of DNA (sh-miR)
 
-        siRNA1 and siRNA2 are siRNA strands and they must be initialized before using this method
+        siRNA1 and siRNA2 are siRNA strands and they must be initialized
+        before using this method
 
         Returns:
             Sequence of sh-miR molecule on the base of chosen miRNA scaffold
@@ -142,7 +145,7 @@ class InputData(Base):
     maximum_CG = Column(Integer, nullable=False)
     maximum_offtarget = Column(Integer, nullable=False)
     scaffold = Column(Unicode(10), default=u'all')
-    stimulatory_sequences = Column(Unicode(15), default=u'no_difference')
+    immunostimulatory = Column(Unicode(15), default=u'no_difference')
     results = relationship('Result', backref='input_data')
 
 
