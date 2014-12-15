@@ -296,13 +296,13 @@ def validate_sequences(
         sequences
     )
     # uncomment if debuging
-    return {
-        name: [{
-            "sequence": seq,
-            "regexp": int(regexp),
-            "offtarget": 0}
-            for seq in preprocessed]
-    }
+    # return {
+    #     name: [{
+    #         "sequence": seq,
+    #         "regexp": int(regexp),
+    #         "offtarget": 0}
+    #         for seq in preprocessed]
+    # }
 
     # counting offtarget is expensive
     with allow_join_result():
@@ -368,6 +368,7 @@ def shmir_from_transcript_sequence(
     )
 
     mRNA = ncbi_api.get_mRNA(transcript_name)
+    reversed_mRNA = reverse_complement(mRNA)
 
     original_frames = frames_by_scaffold(scaffold)
 
@@ -396,19 +397,19 @@ def shmir_from_transcript_sequence(
 
             for name, patterns_dict in patterns.iteritems()
             for regexp_type, sequences
-            in find_by_patterns(patterns_dict, mRNA).iteritems()
+            in find_by_patterns(patterns_dict, reversed_mRNA).iteritems()
 
-            ).apply_async().get()
+        ).apply_async().get()
 
     # merge results by name
     best_sequences = defaultdict(list)
     for valid_group in validated:
         for name, sequences in valid_group.iteritems():
-            best_sequences[name].append(sequences)
+            best_sequences[name] += sequences
 
     results = []
     for name, seq_dict in unpack_dict_to_list(best_sequences):
-        if len(results) == 20:
+        if len(results) == 20: # all
             break
         with allow_join_result():
             shmir_result = shmir_from_fasta_string.s(
@@ -424,7 +425,7 @@ def shmir_from_transcript_sequence(
 
     if not results:
         best_sequences = []
-        sequences = all_possible_sequences(mRNA, 19, 21)
+        sequences = all_possible_sequences(reversed_mRNA, 21) #21 only
 
         with allow_join_result():
             is_empty, sequences = generator_is_empty(sequences)
@@ -459,7 +460,8 @@ def shmir_from_transcript_sequence(
         results,
         key=operator.itemgetter(0),
         reverse=True
-    )[:10]
+    )[:25]
+
     db_results = [Result(
         score=score,
         sh_mir=shmir,

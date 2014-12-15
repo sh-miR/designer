@@ -4,8 +4,10 @@
 """
 
 from math import ceil
-from .ss import parse_ss
-from .ss import parse_score
+from shmir.designer.ss import (
+    parse_ss,
+    parse_score
+)
 from shmir.async import task
 
 

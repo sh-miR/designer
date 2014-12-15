@@ -24,3 +24,4 @@ oauth2_redirect
 supervisord.pid
 pdb.sock
 fasta
+blast

@@ -7,6 +7,7 @@ from string import maketrans
 from itertools import (
     chain,
     izip_longest,
+    ifilter,
 )
 from operator import is_not
 from functools import partial
@@ -157,7 +158,7 @@ def unpack_dict_to_list(dict_object):
     """
     Function to unpack dict to list.
     It "dequeues" {'a': ['b', 'c'], 'd': ['e', 'f'], ...} into
-    ['b', 'e', 'c', 'f'] (for one from each dict)
+    [('a', 'b'), ('d', 'e'), ('a', 'c'), ('d', 'f')] (for one from each dict)
 
     Args:
         dict_object: Dict object to unpack.
@@ -165,9 +166,9 @@ def unpack_dict_to_list(dict_object):
     Returns:
         List of unpacked values from dict.
     """
+    # create tuples (key, value)
     to_zip = [[(key, elem) for elem in dict_object[key]] for key in dict_object]
-    return (elem for inner_list in izip_longest(*to_zip)
-            for elem in inner_list if elem is not None)
+    return ifilter(None, chain(*izip_longest(*to_zip)))
 
 
 def remove_none(list_object):
