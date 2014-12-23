@@ -157,13 +157,13 @@ def score_regexp(number):
 
 
 def score_from_transcript(
-    frame_tuple, original_frame, frame_ss, offtarget, regexp
+    frame, original_frame, frame_ss, offtarget, regexp
 ):
     """
     Function which count score from transcript.
 
     Args:
-        frame_tuple: Tuple of frame
+        frame: backbone object
         original_frame: sh-miR object
         frame_ss: file from mfold
         offtarget: Number of transcripts
@@ -172,12 +172,12 @@ def score_from_transcript(
     Returns:
         Dict of scores for: frame, offtarget, regexp and all together.
     """
-    sframe = score_structure(frame_tuple, frame_ss, original_frame)
-    sofftarget = score_offtarget(offtarget)
-    sregexp = score_regexp(regexp)
+    structure_points = score_structure(frame, frame_ss, original_frame)
+    offtarget_points = score_offtarget(offtarget)
+    regexp_points = score_regexp(regexp)
     return {
-        'frame': sframe,
-        'offtarget': sofftarget,
-        'regexp': sregexp,
-        'all': sframe + sofftarget + sregexp,
+        'structure': structure_points,
+        'offtarget': offtarget_points,
+        'regexp': regexp_points,
+        'all': structure_points + offtarget_points + regexp_points
     }

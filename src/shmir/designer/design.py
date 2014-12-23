@@ -3,35 +3,30 @@
     :synopsis: provides the executable program
 """
 
-import operator
 import json
 from copy import deepcopy
 
 from itertools import (
     chain,
-    ifilter,
 )
 from collections import (
-    defaultdict,
-    OrderedDict
+    OrderedDict,
 )
 
 from celery import group
 from celery.result import allow_join_result
 
 from shmir.designer.validators import (
-    parse_input,
-    validate_sequence,
     validate_gc_content,
     validate_immuno,
+    validate_transcript_by_score,
 )
 from shmir.designer.utils import (
-    generator_is_empty,
     adjusted_frames,
     reverse_complement,
     unpack_dict_to_list,
-    remove_none,
     create_path_string,
+    merge_results,
 )
 from shmir.designer.score import (
     score_from_sirna,
@@ -49,16 +44,11 @@ from shmir.designer.errors import (
 from shmir.designer.offtarget import blast_offtarget
 from shmir.async import task
 from shmir.contextmanagers import mfold_path
-from shmir.data.models import (
-    Backbone,
-    InputData,
-    Result,
-    db_session,
-)
 from shmir.data import ncbi_api
 from shmir.data.db_api import (
     get_results,
     frames_by_scaffold,
+    store_results,
 )
 from shmir import mfold
 from shmir.utils import remove_bad_foldings
@@ -73,63 +63,20 @@ from shmir.result_handlers import (
 
 
 @task(bind=True)
-@catch_errors(NoResultError)
-def fold_and_score(
-    self, seq1, seq2, frame_tuple, original, score_fun, args_fun, prefix=None
-):
-    """Function for scoring and folding sequnces.
-
-    Args:
-        seq1(str): First RNA sequence.
-        seq2(str): Second RNA sequence.
-        frame_tuple(tuple): Tuple with frame and inserts.
-        orginal(Backbone): orginal Backbone model.
-        score_fun(function): Scoring function.
-        args_fun(tuple): Arguments for scoring function.
-
-    Kwargs:
-        prefix(str): prefix for mfold path (default None)
-
-    Returns:
-        tuple with score, sh-miR, name of Backbone, task id and sequences.
-    """
-    if prefix:
-        path_id = "%s/%s" % (prefix, self.request.id)
-    else:
-        path_id = self.request.id
-
-    frame, insert1, insert2 = frame_tuple
-
-    mfold_data = mfold.execute(
-        path_id, frame.template(insert1, insert2), to_zip=False
-    )
-
-    pdf, ss = mfold_data
-    score = score_fun(frame_tuple, original, ss, *args_fun)
-
-    with mfold_path(path_id) as tmp_dirname:
-        mfold.zip_file(self.request.id, [pdf, ss], tmp_dirname)
-
-    return [
-        score,
-        frame.template(insert1, insert2),
-        frame.name,
-        path_id,
-        (seq1, seq2),
-    ]
-
-
-@task(bind=True)
-def fold(self, shmiR):
+def fold(self, shmiR, prefix=None):
     task_id = self.request.id
+
+    if prefix is not None:
+        task_id = "%s/%s" % (prefix, task_id)
+
     pdf, ss = mfold.execute(
         task_id, shmiR, to_zip=False
     )
     with mfold_path(task_id) as tmp_dirname:
-        mfold.zip_file(task_id, [pdf, ss], tmp_dirname)
+        mfold.zip_file(self.request.id, [pdf, ss], tmp_dirname)
 
     return {
-        'task_id': task_id,
+        'path_id': task_id,
         'ss': ss,
     }
 
@@ -148,7 +95,7 @@ def shmir_from_sirna_score(seq1, seq2, shift_left, shift_right):
     Returns:
         List of sh-miR(s) sorted by score.
     """
-    original_frames = db_session.query(Backbone).all()
+    original_frames = frames_by_scaffold('all')
 
     frames = adjusted_frames(seq1, seq2,
                              shift_left, shift_right,
@@ -192,83 +139,6 @@ def shmir_from_sirna_score(seq1, seq2, shift_left, shift_right):
         key=lambda elem: elem['score']['all'],
         reverse=True
     )[:3]
-
-
-@task
-def shmir_from_fasta_string(fasta_string, original_frames,
-                            actual_offtarget, regexp_type, path):
-    """Generating function of shmir from fasta string.
-
-    Args:
-        fasta_string(str): Sequence.
-        original_frames(Backbone): original Backbone object.
-        actual_offtarget(int): offtarget value
-        regexp_type(int): Number of a regex from database.
-
-    Returns:
-        list of sh-miR(s)
-    """
-    seq2 = reverse_complement(fasta_string)
-
-    frames = adjusted_frames(fasta_string, seq2, 0, 0, deepcopy(original_frames))
-
-    with allow_join_result():
-        frames_with_score = group(
-            fold_and_score.s(
-                fasta_string,
-                seq2,
-                frame_tuple,
-                original,
-                score_from_transcript,
-                (actual_offtarget, regexp_type),
-                path
-            ).set(queue="subtasks")
-            for frame_tuple, original in zip(frames, original_frames)
-        ).apply_async().get()
-
-    filtered_frames = []
-    for frame in frames_with_score:
-        notes = frame[0]
-        if notes['frame'] > 60 and notes['all'] > 100:
-            frame[0] = notes['all']
-            filtered_frames.append(frame)
-
-    return sorted(filtered_frames, key=operator.itemgetter(0), reverse=True) or None
-
-
-@task(bind=True, max_retries=10)
-def validate_and_offtarget(self, sequence, maximum_offtarget, minimum_CG,
-                           maximum_CG, stimulatory_sequences, regexp_type):
-    """Function for validation and checking the target of sequence.
-    Args:
-        sequence(str): RNA sequence.
-        maximum_offtarget(int): Maximum offtarget.
-        minimum_CG(int): Minimum number of 'C' and 'G' nucleotide in sequence.
-        maximum_CG(int): Maximum number of 'C' and 'G' nucleotide in sequence.
-        stimulatory_sequences(str): One of 'yes', 'no', 'no_difference'.
-        regexp_type(int): Number of a regex from database.
-
-    Returns:
-        If dict of sequence, regexp and offtarget value if is validated else None
-
-    Raises:
-        ValueError.
-
-    """
-    try:
-        validated, actual_offtarget = validate_sequence(
-            sequence, maximum_offtarget, minimum_CG,
-            maximum_CG, stimulatory_sequences
-        )
-    except ValueError as exc:
-        raise self.retry(exc=exc)
-
-    if validated:
-        return {
-            'sequence': sequence,
-            'regexp': regexp_type,
-            'offtarget': actual_offtarget
-        }
 
 
 @task
@@ -326,6 +196,47 @@ def validate_sequences(
 
 
 @task
+def shmir_from_fasta(siRNA, offtarget, regexp, original_frames, prefix):
+    siRNA2 = reverse_complement(siRNA)
+
+    frames = adjusted_frames(
+        siRNA,
+        siRNA2,
+        0, 0,  # we do not have shifts here
+        deepcopy(original_frames)
+    )
+
+    shmirs = [frame.template() for frame in frames]
+
+    with allow_join_result():
+        foldings = group(
+            fold.s(
+                shmir,
+                prefix=prefix
+            ).set(queue="subtasks")
+            for shmir in shmirs
+        ).apply_async().get()
+
+    results = []
+    for frame, original_frame, folding in zip(frames, original_frames, foldings):
+        score = score_from_transcript(
+            frame,
+            original_frame,
+            folding['ss'],
+            offtarget,
+            regexp,
+        )
+        if validate_transcript_by_score(score):
+            results.append({
+                "score": score,
+                "frame": frame,
+                "folding": folding,
+                "found_sequence": siRNA,
+            })
+    return results
+
+
+@task
 @catch_errors(IncorrectDataError, NoResultError)
 @send_email(file_handler=zip_files_from_transcript)
 def shmir_from_transcript_sequence(
@@ -368,7 +279,7 @@ def shmir_from_transcript_sequence(
     )
 
     mRNA = ncbi_api.get_mRNA(transcript_name)
-    reversed_mRNA = reverse_complement(mRNA)
+    reversed_mRNA = reverse_complement(mRNA)[:100]
 
     original_frames = frames_by_scaffold(scaffold)
 
@@ -401,88 +312,68 @@ def shmir_from_transcript_sequence(
 
         ).apply_async().get()
 
-    # merge results by name
-    best_sequences = defaultdict(list)
-    for valid_group in validated:
-        for name, sequences in valid_group.iteritems():
-            best_sequences[name] += sequences
+    best_sequences = merge_results(validated)
 
-    results = []
-    for name, seq_dict in unpack_dict_to_list(best_sequences):
-        if len(results) == 20: # all
-            break
-        with allow_join_result():
-            shmir_result = shmir_from_fasta_string.s(
-                seq_dict['sequence'],
+    with allow_join_result():
+        results = group(
+            shmir_from_fasta.s(
+                siRNA['sequence'],
+                siRNA['offtarget'],
+                siRNA['regexp'],
                 [frames_by_name[name]],
-                seq_dict['offtarget'],
-                seq_dict['regexp'],
-                path
-            ).set(queue="score").apply_async().get()
+                path,
+            ).set(queue="score")
+            for name, siRNA in unpack_dict_to_list(best_sequences)
+        ).apply_async().get()
 
-            if shmir_result:
-                results.extend(shmir_result)
+    # merge
+    results = list(chain(*results))
 
     if not results:
-        best_sequences = []
-        sequences = all_possible_sequences(reversed_mRNA, 21) #21 only
-
         with allow_join_result():
-            is_empty, sequences = generator_is_empty(sequences)
-            if not is_empty:
-                best_sequences = remove_none(
-                    group(
-                        validate_and_offtarget.s(
-                            sequence,
-                            maximum_offtarget,
-                            minimum_CG,
-                            maximum_CG,
-                            immunostimulatory,
-                            0
-                        ).set(queue="blast")
-                        for sequence in sequences
-                    ).apply_async().get()
-                )
+            validated = validate_sequences.s(
+                list(all_possible_sequences(reversed_mRNA, 21)),  # not serializable
+                0,
+                'all',
+                minimum_CG,
+                maximum_CG,
+                maximum_offtarget,
+                immunostimulatory
+            ).apply_async(queue="subtasks").get()
+        best_sequences = merge_results([validated])
 
         if best_sequences:
             with allow_join_result():
-                results = chain(*remove_none(
-                    group(
-                        shmir_from_fasta_string.s(
-                            seq_dict['sequence'], original_frames,
-                            seq_dict['offtarget'], seq_dict['regexp'], path
-                        ).set(queue="score")
-                        for seq_dict in best_sequences
-                    ).apply_async().get()
-                ))
+                results = group(
+                    shmir_from_fasta.s(
+                        siRNA['sequence'],
+                        siRNA['offtarget'],
+                        siRNA['regexp'],
+                        original_frames,
+                        path
+                    ).set(queue="score")
+                    for name, siRNA in unpack_dict_to_list(best_sequences)
+                ).apply_async().get()
+
+            # merge
+            results = chain(*results)
 
     sorted_results = sorted(
         results,
-        key=operator.itemgetter(0),
+        key=lambda result: result['score']['all'],
         reverse=True
     )[:25]
 
-    db_results = [Result(
-        score=score,
-        sh_mir=shmir,
-        pdf=path_id,
-        backbone=frames_by_name[frame_name].id,
-        sequence=found_sequences[0],
-    ) for score, shmir, frame_name, path_id, found_sequences in sorted_results]
+    db_results = store_results(
+        transcript_name,
+        minimum_CG,
+        maximum_CG,
+        maximum_offtarget,
+        scaffold,
+        immunostimulatory,
+        sorted_results,
+    )
 
     remove_bad_foldings(path, (result.get_task_id() for result in db_results))
-
-    db_input = InputData(
-        transcript_name=transcript_name,
-        minimum_CG=minimum_CG,
-        maximum_CG=maximum_CG,
-        maximum_offtarget=maximum_offtarget,
-        scaffold=scaffold,
-        stimulatory_sequences=immunostimulatory,
-        results=db_results
-    )
-    db_session.add(db_input)
-    db_session.add_all(db_results)
-    db_session.commit()
 
     return [result.as_json() for result in db_results]

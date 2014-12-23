@@ -14,6 +14,7 @@ from sqlalchemy import (
     event,
     ForeignKey,
 )
+from sqlalchemy.dialects.postgresql import JSON as psqlJSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import (
     relationship,
@@ -157,7 +158,7 @@ class Result(Base):
 
     id = Column(Integer, primary_key=True)
     sh_mir = Column(Unicode(300), nullable=False)
-    score = Column(Integer, nullable=False)
+    score = Column(psqlJSON, nullable=False)
     pdf = Column(Unicode(150), nullable=False)
     sequence = Column(Unicode(30), nullable=False)
     backbone = Column(Integer, ForeignKey(Backbone.id))

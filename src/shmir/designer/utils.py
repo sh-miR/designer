@@ -9,8 +9,9 @@ from itertools import (
     izip_longest,
     ifilter,
 )
-from operator import is_not
-from functools import partial
+from collections import (
+    defaultdict,
+)
 
 
 def reverse_complement(sequence):
@@ -171,33 +172,13 @@ def unpack_dict_to_list(dict_object):
     return ifilter(None, chain(*izip_longest(*to_zip)))
 
 
-def remove_none(list_object):
-    """Function which removes None objects from list.
-
-    Args:
-        list_object: List.
-
-    Returns:
-        List of object which are not None.
-    """
-    return filter(partial(is_not, None), list_object)
-
-
-def generator_is_empty(generator):
-    """Function which check if a generator is empty.
-
-    Args:
-        generator: Generator object.
-
-    Returns:
-        List with 2 elements: (Bool, Generator) or (Bool, None)
-    """
-    try:
-        first = next(generator)
-    except StopIteration:
-        return True, None
-    return False, chain([first], generator)
-
-
 def create_path_string(*args):
     return "_".join(map(str, args))
+
+
+def merge_results(validated):
+    best_sequences = defaultdict(list)
+    for valid_group in validated:
+        for name, sequences in valid_group.iteritems():
+            best_sequences[name] += sequences
+    return best_sequences
