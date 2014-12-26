@@ -8,6 +8,7 @@ from copy import deepcopy
 
 from itertools import (
     chain,
+    izip,
 )
 from collections import (
     OrderedDict,
@@ -119,7 +120,7 @@ def shmir_from_sirna_score(seq1, seq2, shift_left, shift_right):
                 original,
                 folding['ss']
             ).set(queue="subtasks")
-            for frame, original, folding in zip(frames, original_frames, foldings)
+            for frame, original, folding in izip(frames, original_frames, foldings)
         ).apply_async().get()
 
     full_reference = [
@@ -130,7 +131,7 @@ def shmir_from_sirna_score(seq1, seq2, shift_left, shift_right):
             'pdf_reference': folding['task_id'],
             'scaffolds': (frame.siRNA1, frame.siRNA2),
         }
-        for score, shmir, frame, folding in zip(scores, shmirs, frames, foldings)
+        for score, shmir, frame, folding in izip(scores, shmirs, frames, foldings)
         if score['all'] > 60
     ]
 
@@ -190,7 +191,7 @@ def validate_sequences(
             "offtarget": actual_offtarget}
 
             for sequence, actual_offtarget
-            in zip(preprocessed, offtarget)
+            in izip(preprocessed, offtarget)
             if actual_offtarget <= maximum_offtarget]
     }
 
@@ -218,7 +219,7 @@ def shmir_from_fasta(siRNA, offtarget, regexp, original_frames, prefix):
         ).apply_async().get()
 
     results = []
-    for frame, original_frame, folding in zip(frames, original_frames, foldings):
+    for frame, original_frame, folding in izip(frames, original_frames, foldings):
         score = score_from_transcript(
             frame,
             original_frame,
@@ -279,7 +280,7 @@ def shmir_from_transcript_sequence(
     )
 
     mRNA = ncbi_api.get_mRNA(transcript_name)
-    reversed_mRNA = reverse_complement(mRNA)[:100]
+    reversed_mRNA = reverse_complement(mRNA)
 
     original_frames = frames_by_scaffold(scaffold)
 
@@ -342,21 +343,20 @@ def shmir_from_transcript_sequence(
             ).apply_async(queue="subtasks").get()
         best_sequences = merge_results([validated])
 
-        if best_sequences:
-            with allow_join_result():
-                results = group(
-                    shmir_from_fasta.s(
-                        siRNA['sequence'],
-                        siRNA['offtarget'],
-                        siRNA['regexp'],
-                        original_frames,
-                        path
-                    ).set(queue="score")
-                    for name, siRNA in unpack_dict_to_list(best_sequences)
-                ).apply_async().get()
+        with allow_join_result():
+            results = group(
+                shmir_from_fasta.s(
+                    siRNA['sequence'],
+                    siRNA['offtarget'],
+                    siRNA['regexp'],
+                    original_frames,
+                    path
+                ).set(queue="score")
+                for name, siRNA in unpack_dict_to_list(best_sequences)
+            ).apply_async().get()
 
-            # merge
-            results = chain(*results)
+        # merge
+        results = chain(*results)
 
     sorted_results = sorted(
         results,
