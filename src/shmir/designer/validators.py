@@ -215,35 +215,18 @@ def validate_gc_content(sequence, min_percent, max_percent):
     return min_percent <= calculate_gc_content(sequence) <= max_percent
 
 
-def validate_sequence(sequence, max_offtarget, min_gc, max_gc, stimulatory):
-    """Function to validate sequence.
+def validate_immuno(sequence, immuno):
+    if immuno == "no_difference":
+        return True
 
-    Args:
-        sequence(str)
-        max_offtarget(int): maximal offtarget
-        min_gc(int): minimal percent of GC
-        max_gc(int): maximal percent of GC
-        stimulatory: "yes", "no", "no_difference"
-
-    Returns:
-        tuple (validated(bool), offtarget value)
-    """
-    gc = validate_gc_content(sequence, min_gc, max_gc)
     is_immuno = Immuno.check_is_in_sequence(sequence)
+    if (is_immuno and immuno == 'yes') or (not is_immuno and immuno == 'no'):
+        return True
 
-    if gc and (
-            stimulatory == 'no_difference' or
-            (is_immuno and stimulatory == 'yes') or
-            (not is_immuno and stimulatory == 'no')
-    ):
-        # when debuging uncomment return
-        # return True, 0
-        try:
-            actual_offtarget = blast_offtarget(sequence)
-        except HTTPError:
-            return False, None
-        offtarget = actual_offtarget <= max_offtarget
-        if offtarget:
-            return True, actual_offtarget
+    return False
 
-    return False, None
+
+def validate_transcript_by_score(score):
+    if score['structure'] > 60 and score['all'] > 100:
+        return True
+    return False

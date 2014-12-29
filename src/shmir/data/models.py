@@ -14,6 +14,7 @@ from sqlalchemy import (
     event,
     ForeignKey,
 )
+from sqlalchemy.dialects.postgresql import JSON as psqlJSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import (
     relationship,
@@ -62,19 +63,20 @@ class Backbone(Base):
     miRBase_link = Column(Unicode(200), nullable=False)
     active_strand = Column(Integer, nullable=False)
     regexp = Column(Unicode(1000))
+    siRNA1 = None
+    siRNA2 = None
 
-    def template(self, siRNAstrand_1, siRNAstrand_2):
+    def template(self):
         """Returns the template of DNA (sh-miR)
 
-        Args:
-            siRNAstrand_1: sequence of first strand
-            siRNAstrand_2: sequence of second strand
+        siRNA1 and siRNA2 are siRNA strands and they must be initialized
+        before using this method
 
         Returns:
             Sequence of sh-miR molecule on the base of chosen miRNA scaffold
         """
-        return (self.flanks5_s + siRNAstrand_1 + self.loop_s +
-                siRNAstrand_2 + self.flanks3_s).upper()
+        return (self.flanks5_s + self.siRNA1 + self.loop_s +
+                self.siRNA2 + self.flanks3_s).upper()
 
     def generate_regexp(self):
         """Function creates regexps based on active_strand
@@ -144,7 +146,7 @@ class InputData(Base):
     maximum_CG = Column(Integer, nullable=False)
     maximum_offtarget = Column(Integer, nullable=False)
     scaffold = Column(Unicode(10), default=u'all')
-    stimulatory_sequences = Column(Unicode(15), default=u'no_difference')
+    immunostimulatory = Column(Unicode(15), default=u'no_difference')
     results = relationship('Result', backref='input_data')
 
 
@@ -156,7 +158,7 @@ class Result(Base):
 
     id = Column(Integer, primary_key=True)
     sh_mir = Column(Unicode(300), nullable=False)
-    score = Column(Integer, nullable=False)
+    score = Column(psqlJSON, nullable=False)
     pdf = Column(Unicode(150), nullable=False)
     sequence = Column(Unicode(30), nullable=False)
     backbone = Column(Integer, ForeignKey(Backbone.id))

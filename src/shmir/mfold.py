@@ -2,6 +2,7 @@
 .. module:: shmir.mfold
     :synopsis: Module which handels mfold
 """
+
 import os
 from zipfile import ZipFile
 

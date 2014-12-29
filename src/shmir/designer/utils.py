@@ -7,9 +7,11 @@ from string import maketrans
 from itertools import (
     chain,
     izip_longest,
+    ifilter,
 )
-from operator import is_not
-from functools import partial
+from collections import (
+    defaultdict,
+)
 
 
 def reverse_complement(sequence):
@@ -146,7 +148,10 @@ def adjusted_frames(seq1, seq2, shift_left, shift_right, all_frames):
                     _seq1 += reverse_complement(
                         _seq2[-frame.miRNA_end_3:-shift_right])
 
-            frames.append([frame, _seq1, _seq2])
+            # adding sequences as attribues
+            frame.siRNA1 = _seq1
+            frame.siRNA2 = _seq2
+            frames.append(frame)
     return frames
 
 
@@ -154,7 +159,7 @@ def unpack_dict_to_list(dict_object):
     """
     Function to unpack dict to list.
     It "dequeues" {'a': ['b', 'c'], 'd': ['e', 'f'], ...} into
-    ['b', 'e', 'c', 'f'] (for one from each dict)
+    [('a', 'b'), ('d', 'e'), ('a', 'c'), ('d', 'f')] (for one from each dict)
 
     Args:
         dict_object: Dict object to unpack.
@@ -162,34 +167,18 @@ def unpack_dict_to_list(dict_object):
     Returns:
         List of unpacked values from dict.
     """
+    # create tuples (key, value)
     to_zip = [[(key, elem) for elem in dict_object[key]] for key in dict_object]
-    return (elem for inner_list in izip_longest(*to_zip)
-            for elem in inner_list if elem is not None)
+    return ifilter(None, chain(*izip_longest(*to_zip)))
 
 
-def remove_none(list_object):
-    """Function which removes None objects from list.
-
-    Args:
-        list_object: List.
-
-    Returns:
-        List of object which are not None.
-    """
-    return filter(partial(is_not, None), list_object)
+def create_path_string(*args):
+    return "_".join(map(str, args))
 
 
-def generator_is_empty(generator):
-    """Function which check if a generator is empty.
-
-    Args:
-        generator: Generator object.
-
-    Returns:
-        List with 2 elements: (Bool, Generator) or (Bool, None)
-    """
-    try:
-        first = next(generator)
-    except StopIteration:
-        return True, None
-    return False, chain([first], generator)
+def merge_results(validated):
+    best_sequences = defaultdict(list)
+    for valid_group in validated:
+        for name, sequences in valid_group.iteritems():
+            best_sequences[name] += sequences
+    return best_sequences

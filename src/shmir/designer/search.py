@@ -50,7 +50,7 @@ def find_by_patterns(patterns, mRNA):
     ], reverse=True))
 
 
-def all_possible_sequences(mRNA, min_len, max_len):
+def all_possible_sequences(mRNA, min_len, max_len=None):
     """This function returns all possible sequneces.
 
     Args:
@@ -61,6 +61,9 @@ def all_possible_sequences(mRNA, min_len, max_len):
     Returns:
         generator of all possible from min_len to max_len on given mRNA.
     """
+    if max_len is None:
+        max_len = min_len
+
     for i in xrange(len(mRNA) - min_len + 1):
         for j in xrange(min_len, max_len + 1):
             sequence = mRNA[i:i+j]

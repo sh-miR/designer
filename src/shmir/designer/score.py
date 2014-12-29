@@ -4,36 +4,37 @@
 """
 
 from math import ceil
-from .ss import parse_ss
-from .ss import parse_score
+from shmir.designer.ss import (
+    parse_ss,
+    parse_score
+)
 from shmir.async import task
 
 
-def score_structure(frame, frame_ss_file, orginal_frame):
+def score_structure(frame, folding_file, original_frame):
     """Scorring function.
 
     Args:
-        frame: tuple of object Backbone and two sequences
-        frame_ss_file: file from mfold
+        frame: Backbone object with added siRNAs
+        folding_file: file from mfold
         ss_file: object Backbone from database (not changed)
 
     Returns:
         score(int): score given for structure of frame.
     """
 
-    structure, seq1, seq2 = frame
-    structure_ss = parse_ss(frame_ss_file)
-    max_score, orginal_score = parse_score(u'.' + orginal_frame.structure)
+    structure_ss = parse_ss(folding_file)
+    max_score, orginal_score = parse_score(original_frame.structure)
 
     # differences
-    flanks5 = len(orginal_frame.flanks5_s) - len(structure.flanks5_s)
-    insertion1 = len(orginal_frame.miRNA_s) - len(seq1)
-    loop = len(orginal_frame.loop_s) - len(structure.loop_s)
-    insertion2 = len(orginal_frame.miRNA_a) - len(seq2)
-    flanks3 = len(orginal_frame.flanks3_s) - len(structure.flanks3_s)
+    flanks5 = len(original_frame.flanks5_s) - len(frame.flanks5_s)
+    insertion1 = len(original_frame.miRNA_s) - len(frame.siRNA1)
+    loop = len(original_frame.loop_s) - len(frame.loop_s)
+    insertion2 = len(original_frame.miRNA_a) - len(frame.siRNA2)
+    flanks3 = len(original_frame.flanks3_s) - len(frame.flanks3_s)
 
-    position = len(structure.flanks5_s)  # position in sequence (list)
-    structure_len = len(structure.template(seq1, seq2))
+    position = len(frame.flanks5_s)  # position in sequence (list)
+    structure_len = len(frame.template())
     current = position + flanks5  # current position (after changes)
 
     if flanks5 < 0:
@@ -41,8 +42,8 @@ def score_structure(frame, frame_ss_file, orginal_frame):
     else:
         add_shifts(position, structure_len,
                    structure_ss, flanks5, current)
-    for diff, nucleotides in [(insertion1, seq1), (loop, structure.loop_s),
-                              (insertion2, seq2), (flanks3, '')]:
+    for diff, nucleotides in [(insertion1, frame.siRNA1), (loop, frame.loop_s),
+                              (insertion2, frame.siRNA2), (flanks3, '')]:
         position += len(nucleotides)
         current = position + diff
         add_shifts(position, structure_len, structure_ss, diff, current)
@@ -54,10 +55,11 @@ def score_structure(frame, frame_ss_file, orginal_frame):
     return int(ceil(score/max_score * 100))
 
 
-def add_shifts(start, end, frame_ss, value, current):
+def add_shifts(start, end, fold_ss, value, current):
     """The numbers assigned to the nucleotides have to be verified,
     because flanking sequences can be shortened or extended during insertion.
     Moreover, the length of the siRNA insert can differ from the natural one.
+    It dynamicly changes fold_ss
 
     Args:
         start(int): starting number.
@@ -67,12 +69,12 @@ def add_shifts(start, end, frame_ss, value, current):
     """
     for num in range(end):
         if num >= start:
-            frame_ss[num][0] += value
-        if frame_ss[num][1] != 0 and frame_ss[num][1] > current:
-            frame_ss[num][1] += value
+            fold_ss[num][0] += value
+        if fold_ss[num][1] != 0 and fold_ss[num][1] > current:
+            fold_ss[num][1] += value
 
 
-def score_homogeneity(original_frame):
+def score_homogeneity(frame):
     """We are taking value homogenity from database and multiply it 3 times
 
     Args:
@@ -81,7 +83,7 @@ def score_homogeneity(original_frame):
     Returns:
         Homogeneity score: sh-miR object with modified homogeneity
     """
-    return original_frame.homogeneity * 3
+    return frame.homogeneity * 3
 
 
 def score_two_same_strands(seq1, original_frame):
@@ -104,20 +106,20 @@ def score_two_same_strands(seq1, original_frame):
 
 
 @task
-def score_from_sirna(frame_tuple, original_frame, frame_ss):
+def score_from_sirna(frame, original_frame, folding_file):
     """Function for getting score from siRNA.
 
     Args:
         frame_tuple: Tuple of frame
-        orginal_frame: sh-miR object
-        frame_ss: file from mfold
+        original_frame: sh-miR object
+        folding_file: folded structure from mfold
 
     Returns:
         tuple of score of frame, homogeneity and strands
     """
-    structure = score_structure(frame_tuple, frame_ss, original_frame)
-    homogeneity = score_homogeneity(original_frame)
-    same_ends = score_two_same_strands(frame_tuple[1], original_frame)
+    structure = score_structure(frame, folding_file, original_frame)
+    homogeneity = score_homogeneity(frame)
+    same_ends = score_two_same_strands(frame.siRNA1, original_frame)
 
     return {
         'structure': structure,
@@ -155,13 +157,13 @@ def score_regexp(number):
 
 
 def score_from_transcript(
-    frame_tuple, original_frame, frame_ss, offtarget, regexp
+    frame, original_frame, frame_ss, offtarget, regexp
 ):
     """
     Function which count score from transcript.
 
     Args:
-        frame_tuple: Tuple of frame
+        frame: backbone object
         original_frame: sh-miR object
         frame_ss: file from mfold
         offtarget: Number of transcripts
@@ -170,12 +172,12 @@ def score_from_transcript(
     Returns:
         Dict of scores for: frame, offtarget, regexp and all together.
     """
-    sframe = score_structure(frame_tuple, frame_ss, original_frame)
-    sofftarget = score_offtarget(offtarget)
-    sregexp = score_regexp(regexp)
+    structure_points = score_structure(frame, frame_ss, original_frame)
+    offtarget_points = score_offtarget(offtarget)
+    regexp_points = score_regexp(regexp)
     return {
-        'frame': sframe,
-        'offtarget': sofftarget,
-        'regexp': sregexp,
-        'all': sframe + sofftarget + sregexp,
+        'structure': structure_points,
+        'offtarget': offtarget_points,
+        'regexp': regexp_points,
+        'all': structure_points + offtarget_points + regexp_points
     }

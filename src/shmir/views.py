@@ -130,6 +130,7 @@ def sirna_task_creator(data):
         Task id
     """
     parsed = parse_input(data)
+    # if error
     if isinstance(parsed, dict):
         return jsonify(parsed)
 
@@ -185,7 +186,7 @@ def transcript_task_creator(transcript_name):
         ('max_gc', 60, int),
         ('max_offtarget', 10, int),
         ('mirna_name', 'all', str),
-        ('stymulators', 'no_difference', str)
+        ('immuno', 'no_difference', str)
     )
     args = tuple([transcript_name] + [
         param_type(request.args.get(key, default))
