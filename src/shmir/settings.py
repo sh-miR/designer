@@ -114,6 +114,9 @@ MFOLD_FILES = '/tmp/mfold_files'  # Path where mfold fiels are generated
 NUCLEOTIDE_DB = 'nucleotide'
 EMAIL = 'amupoznan@gmail.com'
 
+# from transcript
+TRANSCRIPT_RESULT_LIMIT = 25
+
 # Cache
 CACHE_TYPE = 'redis'
 # for coding purposes

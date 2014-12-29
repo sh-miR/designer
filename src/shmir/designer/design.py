@@ -61,6 +61,7 @@ from shmir.result_handlers import (
     zip_files_from_sirna,
     zip_files_from_transcript
 )
+from shmir.settings import TRANSCRIPT_RESULT_LIMIT
 
 
 @task(bind=True)
@@ -68,7 +69,7 @@ def fold(self, shmiR, prefix=None):
     task_id = self.request.id
 
     if prefix is not None:
-        task_id = "%s/%s" % (prefix, task_id)
+        task_id = "{}/{}".format(prefix, task_id)
 
     pdf, ss = mfold.execute(
         task_id, shmiR, to_zip=False
@@ -362,7 +363,7 @@ def shmir_from_transcript_sequence(
         results,
         key=lambda result: result['score']['all'],
         reverse=True
-    )[:25]
+    )[:TRANSCRIPT_RESULT_LIMIT]
 
     db_results = store_results(
         transcript_name,
