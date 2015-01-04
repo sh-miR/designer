@@ -129,7 +129,7 @@ def shmir_from_sirna_score(seq1, seq2, shift_left, shift_right):
             'score': score,
             'shmir': shmir,
             'scaffold_name': frame.name,
-            'pdf_reference': folding['task_id'],
+            'pdf_reference': folding['path_id'],
             'scaffolds': (frame.siRNA1, frame.siRNA2),
         }
         for score, shmir, frame, folding in izip(scores, shmirs, frames, foldings)
