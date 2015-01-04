@@ -4,8 +4,8 @@
 """
 import logging
 
-error = 'insert only one siRNA sequence or both strands of one' \
-        'siRNA at a time; check if both stands are in 5-3 orientation'
+orientation_error = 'insert only one siRNA sequence or both strands of one' \
+                    'siRNA at a time; check if both stands are in 5-3 orientation'
 len_error = "sequence(s) too long or too short"
 patt_error = 'sequence(s) can contain only {actgu} letters'
 
@@ -22,14 +22,11 @@ class BaseException(Exception):
 
 class ValidationError(BaseException):
     """Exception error class for incorrect input"""
-    pass
 
 
 class IncorrectDataError(BaseException):
     """Exception error class for incorrect data input"""
-    pass
 
 
 class NoResultError(BaseException):
     """Exception error class for no results"""
-    pass

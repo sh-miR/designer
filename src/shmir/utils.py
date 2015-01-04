@@ -6,23 +6,8 @@
 import os
 import shutil
 import glob
-
-from flask import jsonify
-
 from shmir import cache
 from shmir.settings import MFOLD_FILES
-
-
-def json_error(error):
-    """Creates json object from given error
-
-    Args:
-        error(str): error message
-
-    Returns:
-        Json object
-    """
-    return jsonify(error=error)
 
 
 def get_dirname(task_id):
