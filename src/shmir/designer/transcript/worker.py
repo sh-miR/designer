@@ -1,6 +1,6 @@
 """
-.. module:: shmir.designer.design
-    :synopsis: provides the executable program
+.. module:: shmir.designer.transcript.worker
+    :synopsis: provides function
 """
 
 import json
@@ -10,137 +10,54 @@ from itertools import (
     chain,
     izip,
 )
-from collections import (
-    OrderedDict,
-)
+from collections import OrderedDict
+
 
 from celery import group
 from celery.result import allow_join_result
+from shmir.async import task
 
-from shmir.designer.validators import (
-    validate_gc_content,
-    validate_immuno,
-    validate_transcript_by_score,
+from shmir.settings import TRANSCRIPT_RESULT_LIMIT
+
+from shmir.result_handlers import zip_files_from_transcript
+from shmir.decorators import (
+    catch_errors,
+    send_email
+)
+from shmir.designer.errors import (
+    NoResultError,
+    IncorrectDataError,
 )
 from shmir.designer.utils import (
     adjusted_frames,
     reverse_complement,
-    unpack_dict_to_list,
-    create_path_string,
-    merge_results,
 )
-from shmir.designer.score import (
-    score_from_sirna,
-    score_from_transcript,
-)
-from shmir.designer.search import (
-    find_by_patterns,
-    all_possible_sequences,
-)
-from shmir.designer.errors import (
-    NoResultError,
-    ValidationError,
-    IncorrectDataError,
-)
-from shmir.designer.offtarget import blast_offtarget
-from shmir.async import task
-from shmir.contextmanagers import mfold_path
 from shmir.data import ncbi_api
 from shmir.data.db_api import (
     get_results,
     frames_by_scaffold,
     store_results,
 )
-from shmir import mfold
-from shmir.utils import remove_bad_foldings
-from shmir.decorators import (
-    catch_errors,
-    send_email
+
+from shmir.designer.transcript.utils import (
+    unpack_dict_to_list,
+    create_path_string,
+    merge_results,
 )
-from shmir.result_handlers import (
-    zip_files_from_sirna,
-    zip_files_from_transcript
+from shmir.designer.transcript.validators import (
+    validate_gc_content,
+    validate_immuno,
+    validate_transcript_by_score,
 )
-from shmir.settings import TRANSCRIPT_RESULT_LIMIT
+from shmir.designer.transcript.score import score_from_transcript
+from shmir.designer.transcript.search import (
+    find_by_patterns,
+    all_possible_sequences,
+)
+from shmir.designer.transcript.offtarget import blast_offtarget
 
-
-@task(bind=True)
-def fold(self, shmiR, prefix=None):
-    task_id = self.request.id
-
-    if prefix is not None:
-        task_id = "{}/{}".format(prefix, task_id)
-
-    pdf, ss = mfold.execute(
-        task_id, shmiR, to_zip=False
-    )
-    with mfold_path(task_id) as tmp_dirname:
-        mfold.zip_file(self.request.id, [pdf, ss], tmp_dirname)
-
-    return {
-        'path_id': task_id,
-        'ss': ss,
-    }
-
-
-@task
-@catch_errors(ValidationError, NoResultError)
-@send_email(file_handler=zip_files_from_sirna)
-def shmir_from_sirna_score(seq1, seq2, shift_left, shift_right):
-    """Main function takes string input and returns the best results depending
-    on scoring. Single result include sh-miR sequence,
-    score and link to 2D structure from mfold program
-
-    Args:
-        input_str(str): Input string contains one or two sequences.
-
-    Returns:
-        List of sh-miR(s) sorted by score.
-    """
-    original_frames = frames_by_scaffold('all')
-
-    frames = adjusted_frames(seq1, seq2,
-                             shift_left, shift_right,
-                             deepcopy(original_frames))
-
-    shmirs = [frame.template() for frame in frames]
-
-    # folding via mfold
-    with allow_join_result():
-        foldings = group(
-            fold.s(
-                shmir
-            ).set(queue="subtasks") for shmir in shmirs
-        ).apply_async().get()
-
-    # scoring results
-    with allow_join_result():
-        scores = group(
-            score_from_sirna.s(
-                frame,
-                original,
-                folding['ss']
-            ).set(queue="subtasks")
-            for frame, original, folding in izip(frames, original_frames, foldings)
-        ).apply_async().get()
-
-    full_reference = [
-        {
-            'score': score,
-            'shmir': shmir,
-            'scaffold_name': frame.name,
-            'pdf_reference': folding['path_id'],
-            'scaffolds': (frame.siRNA1, frame.siRNA2),
-        }
-        for score, shmir, frame, folding in izip(scores, shmirs, frames, foldings)
-        if score['all'] > 60
-    ]
-
-    return sorted(
-        full_reference,
-        key=lambda elem: elem['score']['all'],
-        reverse=True
-    )[:3]
+from shmir.designer.mfold.worker import fold
+from shmir.designer.mfold.cleaner import remove_bad_foldings
 
 
 @task

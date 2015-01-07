@@ -5,10 +5,8 @@
 from contextlib import contextmanager
 import os
 
-from shmir import (
-    settings,
-    utils
-)
+from shmir import settings
+from shmir.designer.mfold.cleaner import get_dirname
 
 
 def generic_path(path):
@@ -32,7 +30,7 @@ def mfold_path(task_id):
     Args:
         task_id: id of mfold task
     """
-    for path in generic_path(utils.get_dirname(task_id)):
+    for path in generic_path(get_dirname(task_id)):
         yield path
 
 

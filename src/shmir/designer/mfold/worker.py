@@ -1,19 +1,24 @@
 """
-.. module:: shmir.mfold
-    :synopsis: Module which handels mfold
+.. module:: shmir.designer.mfold.worker
+    :synopsis: provides functions to work with mfold tool
 """
 
 import os
 from zipfile import ZipFile
 
-from shmir.decorators import catch_errors
-from shmir.designer.errors import NoResultError
-from shmir.contextmanagers import mfold_path
-from shmir.async import task
-from shmir.decorators import send_email
-from shmir.result_handlers import zip_file_mfold
 from shmir.settings import MFOLD_PATH
-from shmir.utils import remove_error_folding
+from shmir.async import task
+
+from shmir.decorators import (
+    catch_errors,
+    send_email,
+)
+from shmir.contextmanagers import mfold_path
+
+from shmir.designer.errors import NoResultError
+from shmir.designer.mfold.cleaner import remove_error_folding
+
+from shmir.result_handlers import zip_file_mfold
 
 
 def zip_file(task_id, files, tmp_dirname):
@@ -80,6 +85,25 @@ def execute(directory, sequence, to_zip=True):
         raise NoResultError("No foldings for %s" % sequence)
 
     return result
+
+
+@task(bind=True)
+def fold(self, shmiR, prefix=None):
+    task_id = self.request.id
+
+    if prefix is not None:
+        task_id = "{}/{}".format(prefix, task_id)
+
+    pdf, ss = execute(
+        task_id, shmiR, to_zip=False
+    )
+    with mfold_path(task_id) as tmp_dirname:
+        zip_file(self.request.id, [pdf, ss], tmp_dirname)
+
+    return {
+        'path_id': task_id,
+        'ss': ss,
+    }
 
 
 @task(bind=True)

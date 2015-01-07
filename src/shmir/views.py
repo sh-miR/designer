@@ -13,14 +13,16 @@ from shmir import (
     app,
     cache
 )
-from shmir.designer.validators import parse_input
 from shmir.async import get_async_result
-from shmir.designer.design import (
-    shmir_from_sirna_score,
-    shmir_from_transcript_sequence
-)
-from shmir.mfold import delegate
-from shmir.utils import get_zip_path
+
+from shmir.designer.sirna.validators import parse_input
+from shmir.designer.sirna.worker import shmir_from_sirna_score
+
+from shmir.designer.transcript.worker import shmir_from_transcript_sequence
+
+from shmir.designer.mfold.worker import delegate
+from shmir.designer.mfold.cleaner import get_zip_path
+
 from data.models import (
     Backbone,
     db_session,
