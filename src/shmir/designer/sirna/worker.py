@@ -10,6 +10,8 @@ from celery import group
 from celery.result import allow_join_result
 from shmir.async import task
 
+from shmir.settings import SIRNA_RESULT_LIMIT
+
 from shmir.result_handlers import zip_files_from_sirna
 from shmir.decorators import (
     catch_errors,
@@ -84,4 +86,4 @@ def shmir_from_sirna_score(seq1, seq2, shift_left, shift_right):
         full_reference,
         key=lambda elem: elem['score']['all'],
         reverse=True
-    )[:3]
+    )[:SIRNA_RESULT_LIMIT]

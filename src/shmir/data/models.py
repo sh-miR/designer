@@ -28,6 +28,7 @@ from shmir.settings import (
     FCONN
 )
 
+__all__ = ['db_session', 'Backbone', 'Immuno', 'InputData', 'Result']
 
 engine = create_engine(FCONN)
 

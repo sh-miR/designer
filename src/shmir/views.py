@@ -21,7 +21,7 @@ from shmir.designer.sirna.worker import shmir_from_sirna_score
 from shmir.designer.transcript.worker import shmir_from_transcript_sequence
 
 from shmir.designer.mfold.worker import delegate
-from shmir.designer.mfold.cleaner import get_zip_path
+from shmir.designer.mfold.path import get_zip_path
 
 from data.models import (
     Backbone,

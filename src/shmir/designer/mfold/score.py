@@ -4,6 +4,7 @@
 """
 
 from math import ceil
+
 from shmir.data.ss import (
     parse_ss,
     parse_score

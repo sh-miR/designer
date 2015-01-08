@@ -117,6 +117,9 @@ EMAIL = 'amupoznan@gmail.com'
 # from transcript
 TRANSCRIPT_RESULT_LIMIT = 25
 
+# from sirna
+SIRNA_RESULT_LIMIT = 3
+
 # Cache
 CACHE_TYPE = 'redis'
 # for coding purposes
