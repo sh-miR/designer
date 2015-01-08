@@ -57,7 +57,7 @@ from shmir.designer.transcript.search import (
 from shmir.designer.transcript.offtarget import blast_offtarget
 
 from shmir.designer.mfold.worker import fold
-from shmir.designer.mfold.cleaner import remove_bad_foldings
+from shmir.designer.mfold.path import remove_bad_foldings
 
 
 @task

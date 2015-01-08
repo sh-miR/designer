@@ -6,7 +6,7 @@ from contextlib import contextmanager
 import os
 
 from shmir import settings
-from shmir.designer.mfold.cleaner import get_dirname
+from shmir.designer.mfold.path import get_dirname
 
 
 def generic_path(path):

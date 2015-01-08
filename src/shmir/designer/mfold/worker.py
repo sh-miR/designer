@@ -16,7 +16,7 @@ from shmir.decorators import (
 from shmir.contextmanagers import mfold_path
 
 from shmir.designer.errors import NoResultError
-from shmir.designer.mfold.cleaner import remove_error_folding
+from shmir.designer.mfold.path import remove_error_folding
 
 from shmir.result_handlers import zip_file_mfold
 

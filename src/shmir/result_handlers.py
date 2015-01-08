@@ -8,7 +8,7 @@ from email import encoders
 from email.mime.base import MIMEBase
 
 from shmir import app
-from shmir.designer.mfold.cleaner import get_zip_path
+from shmir.designer.mfold.path import get_zip_path
 
 
 def zip_file_mfold(path):
