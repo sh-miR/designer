@@ -46,7 +46,7 @@ def store_results(
     db_results = [
         Result(
             score=result_dict['score'],
-            sh_mir=result_dict['frame'].template(),
+            shmir=result_dict['frame'].template(),
             pdf=result_dict['folding']['path_id'],
             backbone=result_dict['frame'].id,
             sequence=result_dict['found_sequence'],

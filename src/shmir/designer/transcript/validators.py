@@ -41,13 +41,8 @@ def validate_immuno(sequence, immuno):
         return True
 
     is_immuno = Immuno.check_is_in_sequence(sequence)
-    if (is_immuno and immuno == 'yes') or (not is_immuno and immuno == 'no'):
-        return True
-
-    return False
+    return (is_immuno and immuno == 'yes') or (not is_immuno and immuno == 'no')
 
 
 def validate_transcript_by_score(score):
-    if score['structure'] > 60 and score['all'] > 100:
-        return True
-    return False
+    return score['structure'] > 60 and score['all'] > 100

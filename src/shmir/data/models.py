@@ -158,7 +158,7 @@ class Result(Base):
     __tablename__ = 'result'
 
     id = Column(Integer, primary_key=True)
-    sh_mir = Column(Unicode(300), nullable=False)
+    shmir = Column(Unicode(300), nullable=False)
     score = Column(psqlJSON, nullable=False)
     pdf = Column(Unicode(150), nullable=False)
     sequence = Column(Unicode(30), nullable=False)
@@ -167,7 +167,7 @@ class Result(Base):
 
     def as_json(self):
         return {
-            'sh_mir': str(self.sh_mir),
+            'shmir': str(self.shmir),
             'score': self.score,
             'pdf': str(self.pdf),
             'sequence': str(self.sequence),
