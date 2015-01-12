@@ -5,27 +5,28 @@
 
 from flask import (
     jsonify,
+    render_template,
     request,
     send_file
 )
 
 from shmir import (
     app,
-    cache
+    cache,
+    oauth
 )
+from shmir.auth import models as auth_models
+from shmir.designer.validators import parse_input
 from shmir.async import get_async_result
-
-from shmir.designer.sirna.validators import parse_input
-from shmir.designer.sirna.worker import shmir_from_sirna_score
-
-from shmir.designer.transcript.worker import shmir_from_transcript_sequence
-
-from shmir.designer.mfold.worker import delegate
-from shmir.designer.mfold.path import get_zip_path
-
-from data.models import (
-    Backbone,
-    db_session,
+from shmir.designer.design import (
+    shmir_from_sirna_score,
+    shmir_from_transcript_sequence
+)
+from shmir.mfold import delegate
+from shmir.utils import get_zip_path
+from shmir.data import db_session
+from shmir.data.models import (
+    Backbone
 )
 
 
@@ -223,3 +224,30 @@ def scaffolds():
         'templates': [
             columns[0] for columns in db_session.query(Backbone.name)]
     })
+
+
+@app.route('/oauth/authorize', methods=['GET', 'POST'])
+@oauth.authorize_handler
+def authorize(*args, **kwargs):
+    if request.method == 'GET':
+        client_id = kwargs.get('client_id')
+        client = db_session(auth_models.Client).filter_by(
+            client_id=client_id).first()
+        kwargs['client'] = client
+        return render_template('oauthorize.html', **kwargs)
+
+    confirm = request.form.get('confirm', 'no')
+    return confirm == 'yes'
+
+
+@app.route('/oauth/token')
+@oauth.token_handler
+def access_token():
+    return None
+
+
+@app.route('/me')
+@oauth.require_oauth('email')
+def me():
+    user = request.oauth.user
+    return jsonify(email=user.email, username=user.username)

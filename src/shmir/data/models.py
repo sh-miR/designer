@@ -7,7 +7,6 @@ import json
 import os
 
 from sqlalchemy import (
-    create_engine,
     Column,
     Integer,
     Unicode,
@@ -19,22 +18,14 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import (
     relationship,
 )
-from sqlalchemy.orm import (
-    scoped_session,
-    sessionmaker
-)
 
-from shmir.settings import (
-    FCONN
+from shmir.data import (
+    db_session,
+    engine
 )
 
 __all__ = ['db_session', 'Backbone', 'Immuno', 'InputData', 'Result']
 
-engine = create_engine(FCONN)
-
-db_session = scoped_session(sessionmaker(
-    autocommit=False, autoflush=False, bind=engine
-))
 Base = declarative_base()
 
 

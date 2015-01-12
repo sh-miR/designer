@@ -15,3 +15,4 @@ Sphinx==1.2.3
 sphinxcontrib-fulltoc==1.0
 rpdb==0.1.5
 rpcpdb==0.4.2
+Flask-OAuthlib==0.7.0
