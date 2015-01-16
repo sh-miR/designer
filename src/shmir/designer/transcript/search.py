@@ -39,15 +39,20 @@ def find_by_patterns(patterns, mRNA):
         mRNA(str): mRNA sequnece.
 
     Returns:
-        OrderedDict -- all sequences found by patterns.
+        OrderedDict -- all sequences found by patterns grouped by key
     """
-    return OrderedDict(sorted([
-        (key, chain(*(
-            findall_overlapping(pattern, mRNA)
-            for pattern in patt_list)
-        ))
-        for key, patt_list in patterns.items()
-    ], reverse=True))
+    return OrderedDict(
+        sorted([
+            (
+                key,
+                chain(
+                    *(findall_overlapping(pattern, mRNA)
+                      for pattern in patt_list)
+                )
+            )
+            for key, patt_list in patterns.items()
+        ], reverse=True)
+    )
 
 
 def all_possible_sequences(mRNA, min_len, max_len=None):
@@ -60,6 +65,7 @@ def all_possible_sequences(mRNA, min_len, max_len=None):
 
     Returns:
         generator of all possible from min_len to max_len on given mRNA.
+        if max_len is not given we generate only min_len sequneces
     """
     if max_len is None:
         max_len = min_len

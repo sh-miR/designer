@@ -1,5 +1,5 @@
 """
-.. module:: shmir.designer.offtarget
+.. module:: shmir.designer.transcript.offtarget
     :synopsis: This module connection to Blast and counting offtarget
 """
 

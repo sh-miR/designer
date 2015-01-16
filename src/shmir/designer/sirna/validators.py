@@ -1,19 +1,17 @@
 """
-.. module:: shmir.designer.validators
+.. module:: shmir.designer.sirna.validators
     :synopsis: This module provides input validation.
 """
 
 import re
 import math
-import errors
+
 import logging
 import operator
 
+from shmir.designer import errors
 from shmir.decorators import catch_errors
-from utils import reverse_complement
-from urllib2 import HTTPError
-from shmir.data.models import Immuno
-from shmir.designer.offtarget import blast_offtarget
+from shmir.designer.utils import reverse_complement
 
 
 def complementarity_level(seq1, seq2):
@@ -85,20 +83,18 @@ def best_complementarity(seq1, seq2):
         tab.append((seq1, seq2, 0, end_offset))
 
     for offset in range(1, nr_offset):
-        level = complementarity_level(seq1[offset:], seq2)
-        if level >= 80:
+        if complementarity_level(seq1[offset:], seq2) >= 80:
             end_offset = seq1_len-seq2_len-offset
-            tab.append((seq1, seq2, offset, end_offset, level))
+            tab.append((seq1, seq2, offset, end_offset))
 
-        level = complementarity_level(seq1, seq2[:-offset])
-        if level >= 80:
+        if complementarity_level(seq1, seq2[:-offset]) >= 80:
             end_offset = seq1_len-seq2_len+offset
-            tab.append((seq1, seq2, -offset, end_offset, level))
+            tab.append((seq1, seq2, -offset, end_offset))
 
     if not tab:
-        raise errors.ValidationError(errors.error)
+        raise errors.ValidationError(errors.orientation_error)
 
-    return max(tab, key=operator.itemgetter(-1))[:-1]
+    return max(tab, key=operator.itemgetter(-1))
 
 
 def replace_mocules(sequence):
@@ -172,61 +168,14 @@ def parse_input(sirna):
         ValidationError
     """
     if " " in sirna:
-        sequence1, sequence2 = map(replace_mocules, sirna.split(" ", 1))
+        sequences = map(replace_mocules, sirna.split(" ", 1))
     else:
-        sequence1, sequence2 = map(
+        sequences = map(
             replace_mocules,
             [sirna, reverse_complement(sirna)]
         )
 
-    for seq in [sequence1, sequence2]:
-        validate_sirna(seq)
+    for sequence in sequences:
+        validate_sirna(sequence)
 
-    return best_complementarity(sequence1, sequence2)
-
-
-def calculate_gc_content(sequence):
-    """Function to calculate the GC content.
-
-    Args:
-        sequence(str)
-
-    Returns:
-        Content of "GC" in sequence
-    """
-    sequence = sequence.upper()
-    g_count = sequence.count('G')
-    c_count = sequence.count('C')
-
-    return int((float(g_count + c_count) / len(sequence)) * 100)
-
-
-def validate_gc_content(sequence, min_percent, max_percent):
-    """Function for validate the GC content.
-
-    Args:
-        sequence(str),
-        min_percent(int): minimal percent of GC content
-        max_percent(int): maximal percent of GC content
-
-    Returns:
-        bool if sequence has proper GC content
-    """
-    return min_percent <= calculate_gc_content(sequence) <= max_percent
-
-
-def validate_immuno(sequence, immuno):
-    if immuno == "no_difference":
-        return True
-
-    is_immuno = Immuno.check_is_in_sequence(sequence)
-    if (is_immuno and immuno == 'yes') or (not is_immuno and immuno == 'no'):
-        return True
-
-    return False
-
-
-def validate_transcript_by_score(score):
-    if score['structure'] > 60 and score['all'] > 100:
-        return True
-    return False
+    return best_complementarity(*sequences)
