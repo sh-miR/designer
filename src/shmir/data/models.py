@@ -169,9 +169,9 @@ class Result(Base):
         return {
             'shmir': str(self.shmir),
             'score': self.score,
-            'pdf': str(self.pdf),
+            'pdf_reference': str(self.pdf),
             'sequence': str(self.sequence),
-            'backbone': str(
+            'scaffold_name': str(
                 db_session.query(Backbone.name).filter(
                     Backbone.id == self.backbone
                 ).one()[0]
@@ -179,7 +179,7 @@ class Result(Base):
         }
 
     def get_task_id(self):
-        return os.path.basename(os.path.dirname(self.pdf))
+        return os.path.basename(self.pdf)
 
 
 # Creating tables which does not exist

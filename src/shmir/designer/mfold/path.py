@@ -39,6 +39,9 @@ def get_zip_path(path):
     Returns:
         Path where zip is
     """
+    subpaths = path.split('/')
+    if len(subpaths) > 1:
+        return os.path.join(get_dirname(path), '{}.zip'.format(subpaths[-1]))
     return os.path.join(get_dirname(path), '{}.zip'.format(path))
 
 
@@ -49,7 +52,7 @@ def remove_bad_foldings(path_id, good_ids):
         path_id: name of path where we should delete bad foldings
         good_ids(list): list of all ids which should be not deleted
     """
-    for dirname in glob.glob(os.path.join(MFOLD_FILES, path_id)):
+    for dirname in glob.glob(os.path.join(MFOLD_FILES, path_id) + "/*"):
         if not os.path.basename(dirname) in good_ids:
             shutil.rmtree(dirname)
 

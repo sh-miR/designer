@@ -292,6 +292,6 @@ def shmir_from_transcript_sequence(
         sorted_results,
     )
 
-    remove_bad_foldings(path, (result.get_task_id() for result in db_results))
+    remove_bad_foldings(path, [result.get_task_id() for result in db_results])
 
     return [result.as_json() for result in db_results]
