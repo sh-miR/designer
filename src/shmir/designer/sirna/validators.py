@@ -84,15 +84,15 @@ def best_complementarity(seq1, seq2):
 
     for offset in range(1, nr_offset):
         if complementarity_level(seq1[offset:], seq2) >= 80:
-            end_offset = seq1_len-seq2_len-offset
+            end_offset = seq1_len - seq2_len - offset
             tab.append((seq1, seq2, offset, end_offset))
 
         if complementarity_level(seq1, seq2[:-offset]) >= 80:
-            end_offset = seq1_len-seq2_len+offset
+            end_offset = seq1_len - seq2_len + offset
             tab.append((seq1, seq2, -offset, end_offset))
 
     if not tab:
-        raise errors.ValidationError(errors.orientation_error)
+        raise errors.ValidationError(errors.ORIENTATION_ERROR)
 
     return max(tab, key=operator.itemgetter(-1))
 
@@ -107,12 +107,10 @@ def replace_mocules(sequence):
         Tuple of sequence, warning(or None)
     """
     sequence = sequence.upper().replace('U', 'T')
-    cut_warn = "cut 'UU' or 'TT'"
 
     if sequence[-2:] == "TT":
         sequence = sequence[:-2]
-        logging.warn(cut_warn)
-        return sequence
+        logging.warn(errors.CUT_WARNING)
 
     return sequence
 
@@ -132,8 +130,8 @@ def validate_sirna(sequence):
 
     if not pattern.search(sequence):
         if len(sequence) > 21 or len(sequence) < 19:
-            raise errors.ValidationError('%s' % errors.len_error)
-        raise errors.ValidationError('%s' % errors.patt_error)
+            raise errors.ValidationError(errors.LENGTH_ERROR)
+        raise errors.ValidationError(errors.PATTERN_ERROR)
 
 
 @catch_errors(errors.ValidationError)
