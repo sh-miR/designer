@@ -1,4 +1,4 @@
-DROP DATABASE shmird;
+DROP DATABASE IF EXISTS shmird;
 CREATE DATABASE shmird;
 \c shmird;
 
