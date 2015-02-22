@@ -57,9 +57,9 @@ def mfold_task_result(task_id):
         return jsonify({
             'status': 'error',
             'error': 'Task is not ready or has failed'
-        })
+        }), 400
     elif status['status'] == 'error':
-        return jsonify(status)
+        return jsonify(status), 400
 
     zip_file = get_zip_path(task_id)
     try:
@@ -68,7 +68,7 @@ def mfold_task_result(task_id):
         return jsonify({
             'status': 'error',
             'error': 'File does not exist'
-        })
+        }), 400
 
 
 @app.route('/mfold/<data>')
@@ -82,9 +82,11 @@ def mfold_task_creator(data):
     Returns:
         Task id of this task
     """
-    resource = delegate.apply_async(args=(data.upper(),),
-                                    kwargs=request.args.to_dict(),
-                                    queue='score')
+    resource = delegate.apply_async(
+        args=(data.upper(),),
+        kwargs=request.args.to_dict(),
+        queue='score'
+    )
     return jsonify({'task_id': resource.task_id})
 
 
@@ -117,6 +119,9 @@ def sirna_task_result(task_id):
     """
     result = get_async_result(shmir_from_sirna_score, task_id)
 
+    if result['status'] != 'ok':
+        return jsonify(result), 400
+
     return jsonify(result)
 
 
@@ -134,7 +139,7 @@ def sirna_task_creator(data):
     parsed = parse_input(data)
     # if error
     if isinstance(parsed, dict):
-        return jsonify(parsed)
+        return jsonify(parsed), 400
 
     resource = shmir_from_sirna_score.apply_async(
         args=parsed, kwargs=request.args.to_dict(), queue='score')
@@ -168,6 +173,9 @@ def transcript_task_result(task_id):
         [sh-miR, score, pdf(id to download pdf via mfold), sequence and backbone name...]
     """
     result = get_async_result(shmir_from_transcript_sequence, task_id)
+
+    if result['status'] != 'ok':
+        return jsonify(result), 400
 
     return jsonify(result)
 
