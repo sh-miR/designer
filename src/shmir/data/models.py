@@ -182,18 +182,6 @@ class Result(Base):
         return os.path.basename(self.pdf)
 
 
-# Creating tables which do not exist
-def create_all():
-    DB_LOCKER_FILE = '/tmp/.shmir-database.lock'
-    if not os.path.exists(DB_LOCKER_FILE):
-        with open(DB_LOCKER_FILE, 'a'):
-            os.utime(DB_LOCKER_FILE, None)
-        Base.metadata.create_all(engine)
-        os.unlink(DB_LOCKER_FILE)
-
-create_all()
-
-
 @event.listens_for(Backbone, 'before_insert')
 def generate_regexp_on_insert(mapper, connection, target):
     """The function generates regular expression from insert sequence

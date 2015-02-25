@@ -8,6 +8,7 @@ import os
 
 from flask import Flask
 from flask.ext.cache import Cache
+from sqlalchemy import exc as sqlalchemy_exc
 
 from data.models import Backbone
 
@@ -22,8 +23,10 @@ cache = Cache(app)
 # Fixing celery path
 sys.path.append(os.getcwd())
 
-# Import which is needed to register views
-# pylint: disable=W0611
-import shmir.views
+import shmir.views  # noqa
 
-Backbone.generate_regexp_all()
+# Generating all regexps, if database exists
+try:
+    Backbone.generate_regexp_all()
+except (sqlalchemy_exc.OperationalError, sqlalchemy_exc.ProgrammingError):
+    pass
