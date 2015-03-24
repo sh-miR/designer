@@ -4,24 +4,24 @@
 
 ## Requirements ##
 
-* docker, [fig](http://fig.sh) (yeah, that's all you need)
+* [docker](https://www.docker.com)
+* [fig](http://fig.sh)
 
+That's all you need, how cool is that? :)
 
 
 ## Quick Start ##
 
 To start server:
 ```
-    $ git submodule update --init
+    $ ./scripts/db_docker
     $ fig up
-````
+```
 
-After this commands server builds all its dependencies and start sh-miR API.
-
+After this commands server builds all its dependencies and start sh-miR RESTful API.
 
 
 ## Usage ##
-
 
 ### There are three services: ###
 * mfold
@@ -89,7 +89,7 @@ Pdf is task ID of mfold. To get this file use mfold service.
 
 Examples:
 ```
-    $ curl -i http://127.0.0.1:8080/from_transcript/UUUGUAUUCGCCCUAGCGC%20CGCUAUGGCGAAUACAAACA
+    $ curl -i http://127.0.0.1:8080/from_transcript/NM_001164782.1
     $ curl -i -X GET http://127.0.0.1:8080/from_transcript/status/f3591b31-49d9-47da-ae78-898792db26a5
     $ curl -i -X GET http://127.0.0.1:8080/from_transcript/result/f3591b31-49d9-47da-ae78-898792db26a5
 ```
@@ -99,25 +99,17 @@ Then we download folded sh-miR:<br>
 
 ## Development ##
 
-To log into server use:
-```
-    $ vagrant ssh
-```
+### Debuging
+Put somewhere in the code:
+`import rpdb; rpdb.set_trace()`
+Connecting to rpdb:
+`$ ./scripts/rpdb_docker`
 
-After changing code you should restart all queues and flask server:
-```
-    $ vagrant ssh
-    $ restart
-    $ exit
-```
+### Downloading own blast database
+`$ ./scripts/blast_docker`
 
-To debug we recommend celery tool (in code):
-```
-    from celery.contrib import rdb; rdb.set_trace()
-```
+### Clearing caches
+`$ ./scripts/flush`
 
-And from vagrant connect via 'rdb':
-```
-    $ vagrant ssh
-    $ rdb PORT
-```
+### Watching celery tasks (flower):
+Go to: <i>$DOCKER_IP</i>:5555/

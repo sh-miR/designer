@@ -3,8 +3,10 @@
     :synopsis: Module to help testing
 """
 
+import os
 import unittest
 
+import mock
 from sqlalchemy import create_engine
 from sqlalchemy.orm import (
     scoped_session,
@@ -17,14 +19,40 @@ from shmir.data import models
 class TestModelBase(unittest.TestCase):
 
     def setUp(self):
-        self.engine = create_engine('sqlite:///:memory:')
+        engine_uri_base = \
+            'postgresql+psycopg2://postgres@{}:5432/'.format(
+                os.environ.get('DB_PORT_5432_TCP_ADDR')
+            )
+        engine_uri_postgres = engine_uri_base + 'postgres'
+        self.engine_postgres = create_engine(engine_uri_postgres)
+        conn = self.engine_postgres.connect()
+        conn.execute('commit;')
+        try:
+            conn.execute('create database shmird_test;')
+        except:
+            pass
+        conn.close()
+
+        engine_uri = engine_uri_base + 'shmird_test'
+
+        self.engine = create_engine(engine_uri)
         self.db_session = scoped_session(sessionmaker(
             autocommit=False, autoflush=False, bind=self.engine
         ))
-        models.Base.metadata.create_all(bind=self.engine)
+        models.Base.metadata.drop_all(self.engine)
+        models.Base.metadata.create_all(self.engine)
+
+        self.db_patcher = \
+            mock.patch('sqlalchemy.ext.declarative.declarative_base')
+        self.db_patcher.start()
 
     def tearDown(self):
+        models.Base.metadata.drop_all(self.engine_postgres)
+
         self.engine.dispose()
+        self.engine_postgres.dispose()
+
+        self.db_patcher.stop()
 
     def put_to_db(self, obj):
         self.db_session.add(obj)
@@ -59,4 +87,6 @@ def create_backbone():
         homogeneity=32,
         miRBase_link='test_miRBase_link',
         active_strand=44,
+        siRNA1='test_siRNA1',
+        siRNA2='test_siRNA2'
     )

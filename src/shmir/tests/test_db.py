@@ -29,11 +29,11 @@ class TestBackboneModel(TestModelBase):
 
     def test_template(self):
         backbone = create_backbone()
-        template = backbone.template('strand1', 'strand2')
+        template = backbone.template()
         self.assertEqual(
             template,
             ''.join(
-                ['test_flanks5_s', 'strand1',
-                 'test_loop_s', 'strand2', 'test_flanks3_s']
+                ['test_flanks5_s', 'test_siRNA1',
+                 'test_loop_s', 'test_siRNA2', 'test_flanks3_s']
             ).upper()
         )

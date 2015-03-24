@@ -182,10 +182,6 @@ class Result(Base):
         return os.path.basename(self.pdf)
 
 
-# Creating tables which does not exist
-Base.metadata.create_all(engine)
-
-
 @event.listens_for(Backbone, 'before_insert')
 def generate_regexp_on_insert(mapper, connection, target):
     """The function generates regular expression from insert sequence
