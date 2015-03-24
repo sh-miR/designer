@@ -18,7 +18,6 @@ def findall_overlapping(pattern, string_obj):
     Returns:
         set -- all unique overlapping matches of pattern in string.
     """
-    # import ipdb; ipdb.set_trace()
     regex = re.compile(pattern)
     results = []
     pos = 0
