@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd /opt/shmir/
-python setup.py test
+cd /opt/shmir
+tox

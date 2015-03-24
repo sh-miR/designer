@@ -1,4 +1,4 @@
-from pip.req import parse_requirements
+import pip
 from setuptools import setup, find_packages
 
 setup(
@@ -10,9 +10,13 @@ setup(
     package_data={'': ['structures/*']},
     packages=find_packages('src'),
     entry_points=('[console_scripts]\n'
-                  'shmir = shmir:run'),
+                  'shmir = shmir:run\n'
+                  'shmir-db-manage = shmir.data.migration.cli:main\n'
+                  'shmir-db-seed = shmir.data.cli:main'),
     install_requires=[
-        str(package.req) for package in parse_requirements('requirements.txt')
+        str(package.req)
+        for package in pip.req.parse_requirements(
+            'requirements.txt', session=pip.download.PipSession())
     ],
     test_suite='shmir.tests',
 )

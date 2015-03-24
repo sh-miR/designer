@@ -1,12 +1,12 @@
 import unittest
 
-from shmir.designer.validators import (
+from shmir.designer.transcript.validators import (
     calculate_gc_content,
     validate_gc_content,
 )
 
 
-class TestValidators(unittest.TestCase):
+class TestTranscriptValidators(unittest.TestCase):
 
     def test_calculate_gc_content(self):
         seq_percent = calculate_gc_content('ACGT')
