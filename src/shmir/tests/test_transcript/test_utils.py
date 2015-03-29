@@ -7,7 +7,7 @@ from shmir.designer.transcript.utils import (
 )
 
 
-class TestUtils(unittest.TestCase):
+class TestTranscriptUtils(unittest.TestCase):
 
     def test_unpack_dict_to_list(self):
         result = unpack_dict_to_list({'a': ['b', 'c'], 'd': ['e', 'f']})

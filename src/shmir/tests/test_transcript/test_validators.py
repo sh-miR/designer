@@ -1,5 +1,4 @@
 import unittest
-from shmir.testing import TestModelBase
 
 from shmir.designer.transcript import validators
 
@@ -29,11 +28,6 @@ class TestValidators(unittest.TestCase):
 
     def test_validate_immuno_no_difference(self):
         self.assertTrue(validators.validate_immuno('aaa', 'no_difference'))
-
-    # def test_validate_immuno(self):
-    #     from shmir.data.models import Immuno
-    #     self.put_to_db(Immuno())
-    #     #need to investigate problem with db
 
     def test_validate_transcript_by_score_false(self):
         score = {'structure': 70, 'all': 80}
