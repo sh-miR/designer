@@ -6,7 +6,7 @@
 import logging
 
 ORIENTATION_ERROR = (
-    'insert only one siRNA sequence or both strands of one'
+    'insert only one siRNA sequence or both strands of one '
     'siRNA at a time; check if both stands are in 5-3 orientation'
 )
 LENGTH_ERROR = "sequence(s) too long or too short"
