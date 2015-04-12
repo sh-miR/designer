@@ -137,7 +137,9 @@ def shmir_from_fasta(siRNA, offtarget, regexp, original_frames, prefix):
         ).apply_async().get()
 
     results = []
-    for frame, original_frame, folding in izip(frames, original_frames, foldings):
+    iter_frames = izip(frames, original_frames, foldings)
+
+    for frame, original_frame, folding in iter_frames:
         score = score_from_transcript(
             frame,
             original_frame,

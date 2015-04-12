@@ -1,13 +1,17 @@
+#/usr/bin/env python
 """
 .. module:: shmir.designer.error
     :synopsis: This module has all possible exceptions
 """
 import logging
 
-orientation_error = 'insert only one siRNA sequence or both strands of one' \
-                    'siRNA at a time; check if both stands are in 5-3 orientation'
-len_error = "sequence(s) too long or too short"
-patt_error = 'sequence(s) can contain only {actgu} letters'
+ORIENTATION_ERROR = (
+    'insert only one siRNA sequence or both strands of one '
+    'siRNA at a time; check if both stands are in 5-3 orientation'
+)
+LENGTH_ERROR = "sequence(s) too long or too short"
+PATTERN_ERROR = 'sequence(s) can contain only {actgu} letters'
+CUT_WARNING = "cut 'UU' or 'TT'"
 
 
 class BaseException(Exception):

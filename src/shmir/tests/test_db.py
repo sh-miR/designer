@@ -9,6 +9,11 @@ from shmir.testing import (
     TestModelBase
 )
 
+from shmir.designer.utils import (
+    adjusted_frames,
+    reverse_complement
+)
+
 
 class TestModelBaseCase(TestModelBase):
 
@@ -37,3 +42,22 @@ class TestBackboneModel(TestModelBase):
                  'test_loop_s', 'test_siRNA2', 'test_flanks3_s']
             ).upper()
         )
+
+    def test_reverse_complement(self):
+        sequence = "atcgatcg"
+        reversed_sequence = "cgatcgat"
+        result = reverse_complement(sequence)
+        self.assertEqual(result, reversed_sequence)
+
+    def test_adjusted_frames(self):
+        seq1 = 'acgt'
+        seq2 = 'gtac'
+        shift_left = 0
+        shift_right = 0
+        backbone = create_backbone()
+        backbone.active_strand = 3
+        all_frames = [backbone]
+        results = adjusted_frames(
+            seq1, seq2, shift_left, shift_right, all_frames
+        )
+        self.assertEqual(all_frames, results)

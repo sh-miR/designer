@@ -42,7 +42,6 @@ def blast_offtarget(self, fasta_string):
 
         return len(blast_lines)
     except ApplicationError:
-
         try:
             result_handle = NCBIWWW.qblast(
                 "blastn", "refseq_rna", fasta_string,
