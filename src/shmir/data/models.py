@@ -263,3 +263,13 @@ class Utr(Base):
     id = Column(Integer, primary_key=True)
     reference = Column(Unicode(15), nullable=False)
     sequence = Column(Text, nullable=False)
+
+
+class HumanmRNA(Base):
+    """
+    Table to store Human mRNA
+    """
+
+    id = Column(Integer, primary_key=True)
+    reference = Column(Unicode(15), nullable=False)
+    sequence = Column(Text, nullable=False)
