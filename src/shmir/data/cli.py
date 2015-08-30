@@ -1,8 +1,10 @@
 from shmir.data.models import (
     db_session,
     Backbone,
-    Immuno
+    Immuno,
+    Utr
 )
+from shmir.data.parsers import parse_utr_database
 
 
 def seed_initial_data():
@@ -190,8 +192,19 @@ def seed_initial_data():
         )
     ]
 
+    # TODO get filename
+    filename = "3UTRaspic.Hum.dat"
+    for sequnece, reference in parse_utr_database(filename):
+        db_session.add(
+            Utr(
+                sequnece=sequnece,
+                reference=reference
+            )
+        )
+
     db_session.add_all(backbones)
     db_session.add_all(immunos)
+    db_session.commit()
 
 
 def main():

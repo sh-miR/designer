@@ -13,6 +13,7 @@ from sqlalchemy import (
     Unicode,
     event,
     ForeignKey,
+    Text
 )
 from sqlalchemy.dialects.postgresql import JSON as psqlJSON
 from sqlalchemy.ext.declarative import declarative_base
@@ -252,3 +253,13 @@ def create_regexp(seq_list):
                        for i in range(15, 18)])
 
     return json.dumps(ret)
+
+
+class Utr(Base):
+    """
+    Table to store 3'UTR
+    """
+
+    id = Column(Integer, primary_key=True)
+    reference = Column(Unicode(15), nullable=False)
+    sequence = Column(Text, nullable=False)
