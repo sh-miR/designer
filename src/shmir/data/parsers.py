@@ -8,4 +8,4 @@ def parse_utr_database(filename):
         name = 'RefSeq:'
         ref = [s[len(name):] for s in source.qualifiers['db_xref']
                if s.startswith(name)][0]
-        yield seq, ref
+        yield seq.lower(), ref

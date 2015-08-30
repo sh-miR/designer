@@ -23,10 +23,21 @@ from shmir.designer.transcript.worker import shmir_from_transcript_sequence
 from shmir.designer.mfold.worker import delegate
 from shmir.designer.mfold.path import get_zip_path
 
+from shmir.designer.transcript.offtarget import (
+    offtarget_seed,
+    blast_offtarget
+)
+
 from data.models import (
     Backbone,
     db_session,
 )
+
+
+OFFTARGET_FUNCTIONS = {
+    'blast': blast_offtarget,
+    'utr': offtarget_seed
+}
 
 
 @app.route('/mfold/status/<task_id>')
@@ -223,3 +234,34 @@ def scaffolds():
         'templates': [
             columns[0] for columns in db_session.query(Backbone.name)]
     })
+
+
+@app.route("/offtarget/<db>/<fasta_string>")
+def offtarget_task_creator(db, fasta_string):
+    function = OFFTARGET_FUNCTIONS.get(db)
+    resource = function.apply_async(
+        args=(fasta_string,),
+        kwargs={'with_references': True},
+        queue='blast'
+    )
+    return jsonify({'task_id': resource.task_id})
+
+
+@app.route("/offtarget/<db>/status/<task_id>")
+def offtarget_task_status(db, task_id):
+    function = OFFTARGET_FUNCTIONS.get(db)
+
+    return jsonify(get_async_result(
+        function, task_id, only_status=True)
+    )
+
+
+@app.route("/offtarget/<db>/result/<task_id>")
+def offtarget_task_result(db, task_id):
+    function = OFFTARGET_FUNCTIONS.get(db)
+    result = get_async_result(function, task_id)
+
+    if result['status'] != 'ok':
+        return jsonify(result), 400
+
+    return jsonify(result)

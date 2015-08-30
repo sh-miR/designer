@@ -46,3 +46,16 @@ def validate_immuno(sequence, immuno):
 
 def validate_transcript_by_score(score):
     return score['structure'] > 60 and score['all'] > 100
+
+
+def validate_thermostability(sequence):
+    """Function to check thermostability of siRNA.
+
+    Args:
+        seq1(str): First RNA sequence.
+        seq2(str): Second RNA sequence.
+
+    Returns:
+        bool if 3'end of sense strand is more stable
+    """
+    return not (sequence[0] == 'G' or sequence[0] == 'C')
