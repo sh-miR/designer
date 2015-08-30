@@ -4,7 +4,7 @@
 
 install_mfold () {
     cd /tmp
-    curl -O http://mfold.rna.albany.edu/download/mfold-3.6.tar.gz
+    curl -O http://unafold.rna.albany.edu/download/mfold-3.6.tar.gz
     tar zxvf mfold-3.6.tar.gz
     cd mfold-3.6
     ./configure --prefix=/usr/local
