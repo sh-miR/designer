@@ -18,4 +18,6 @@ RUN pip install -e /opt/shmir
 RUN pip install -r /opt/shmir/test-requirements.txt
 RUN pip install tox
 
+COPY start.sh /
+
 ENV C_FORCE_ROOT true
