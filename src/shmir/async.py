@@ -5,16 +5,23 @@
 from __future__ import absolute_import
 
 from celery import Celery
+from celery.signals import worker_process_init
 from celery.exceptions import TimeoutError
 from kombu import Exchange, Queue
 
+from shmir.data.models import engine
 from shmir import app
 from shmir.settings import (
     CELERY_BROKER,
-    CELERY_RESULT_BACKEND
+    CELERY_RESULT_BACKEND,
 )
 
 __all__ = ['celery', 'get_async_result', 'task']
+
+
+@worker_process_init.connect
+def configure_workers(sender=None, conf=None, **kwargs):
+    engine.dispose()
 
 
 def make_celery(app_obj):

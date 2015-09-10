@@ -45,7 +45,7 @@ def validate_immuno(sequence, immuno):
 
 
 def validate_transcript_by_score(score):
-    return score['structure'] > 60 and score['all'] > 100
+    return score['structure'] > 60 and score['all'] > 105
 
 
 def validate_thermostability(sequence):

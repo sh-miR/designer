@@ -39,21 +39,21 @@ def score_thermostability(
     """Function to scores thermostability of siRNA.
 
         Args:
-        seq1(str): First RNA sequence.
-        seq2(str): Second RNA sequence.
+            frame: backbone object
 
         Returns: Tuple with:
-        Thermostability score(int), where 0 means discard,
-        1 means somehow efficient,
-        2 means efficient.
+        Thermostability score(int), where 5 means least efficient,
+        15 means somehow efficient,
+        20 means efficient.
     """
-    if frame.siRNA2[0] == 'G' and (frame.siRNA2[:-1] == 'A' or frame.siRNA2[:-1] == 'T'):
+    thermostability_score = 0
+    if frame.siRNA2[0] == 'G' and (frame.siRNA2[-1] == 'A' or frame.siRNA2[-1] == 'T'):
         thermostability_score = 20
     elif (frame.siRNA2[0] == 'C' and
-          (frame.siRNA2[:-1] == 'A' or frame.siRNA2[:-1] == 'T')):
+          (frame.siRNA2[-1] == 'A' or frame.siRNA2[-1] == 'T')):
         thermostability_score = 15
-    elif (frame.siRNA2[0] == 'A' or frame.siRNA2[0] == 'T' and
-          (frame.siRNA2[:-1] == 'A' or frame.siRNA2[:-1] == 'T')):
+    elif ((frame.siRNA2[0] == 'A' or frame.siRNA2[0] == 'T') and
+          (frame.siRNA2[-1] == 'A' or frame.siRNA2[-1] == 'T')):
         thermostability_score = 5
     return thermostability_score
 

@@ -18,20 +18,16 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSON as psqlJSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import (
-    relationship,
-)
-from sqlalchemy.orm import (
     scoped_session,
-    sessionmaker
+    sessionmaker,
+    relationship
 )
 
-from shmir.settings import (
-    FCONN
-)
+from shmir.settings import FCONN
 
 __all__ = ['db_session', 'Backbone', 'Immuno', 'InputData', 'Result', 'Utr']
 
-engine = create_engine(FCONN)
+engine = create_engine(FCONN, pool_size=100)
 
 db_session = scoped_session(sessionmaker(
     autocommit=False, autoflush=False, bind=engine
@@ -259,6 +255,7 @@ class Utr(Base):
     """
     Table to store 3'UTR
     """
+    __tablename__ = 'utr'
 
     id = Column(Integer, primary_key=True)
     reference = Column(Unicode(15), nullable=False)
@@ -269,6 +266,7 @@ class HumanmRNA(Base):
     """
     Table to store Human mRNA
     """
+    __tablename__ = 'human_mrna'
 
     id = Column(Integer, primary_key=True)
     reference = Column(Unicode(15), nullable=False)

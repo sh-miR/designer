@@ -197,23 +197,23 @@ def seed_initial_data():
     ]
 
     # TODO get filename
-    filename = "3UTRaspic.Hum.dat"
-    for sequnece, reference in parse_utr_database(filename):
-        db_session.add(
-            Utr(
-                sequnece=sequnece,
-                reference=reference
-            )
-        )
-    # TODO 2 get filename 2
-    filename = 'human_all.fna'
-    for sequnece, reference in parse_mRNA_database(filename):
-        db_session.add(
-            HumanmRNA(
-                sequnece=sequnece,
-                reference=reference
-            )
-        )
+    # filename = "3UTRaspic.Hum.dat"
+    # for sequence, reference in parse_utr_database(filename):
+    #     db_session.add(
+    #         Utr(
+    #             sequence=sequence,
+    #             reference=reference
+    #         )
+    #     )
+    # # TODO 2 get filename 2
+    # filename = 'human_all.fna'
+    # for sequence, reference in parse_mRNA_database(filename):
+    #     db_session.add(
+    #         HumanmRNA(
+    #             sequence=sequence,
+    #             reference=reference
+    #         )
+    #     )
 
     db_session.add_all(backbones)
     db_session.add_all(immunos)

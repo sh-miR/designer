@@ -14,9 +14,9 @@ from shmir.data.models import (
 
 @task
 def blast_offtarget(fasta_string, with_references=False):
-    references = db_session.query(Utr.reference).filter(
-        HumanmRNA.sequence.like("%{}%".format(fasta_string.lower()))
-    )
+    references = db_session.query(HumanmRNA.reference).filter(
+        HumanmRNA.sequence.like("%{}%".format(fasta_string.upper()))
+    ).all()
     count = len(references)
     if with_references:
         return {
@@ -40,8 +40,8 @@ def offtarget_seed(fasta_string, with_references=False):
 
     """
     references = db_session.query(Utr.reference).filter(
-        Utr.sequence.like("%{}%".format(fasta_string[1:9].lower()))
-    )
+        Utr.sequence.like("%{}%".format(fasta_string[1:9].upper()))
+    ).all()
     count = len(references)
     if with_references:
         return {

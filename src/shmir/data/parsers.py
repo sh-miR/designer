@@ -8,10 +8,10 @@ def parse_utr_database(filename):
         name = 'RefSeq:'
         ref = [s[len(name):] for s in source.qualifiers['db_xref']
                if s.startswith(name)][0]
-        yield seq.lower(), ref
+        yield seq.upper(), ref
 
 
 def parse_mRNA_database(filename):
     for record in SeqIO.parse(open(filename, 'r'), 'fasta'):
         seq = str(record.seq)
-        yield seq.lower(), record.id.split("|")[-2]
+        yield seq.upper(), record.id.split("|")[-2]
