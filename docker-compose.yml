@@ -4,9 +4,9 @@ shmir:
     command: /start.sh
     volumes:
         - .:/opt/shmir
-        - etc/shmir:/etc/shmir
-        - etc/supervisor:/etc/supervisor
-        - mfold_files_volume:/tmp/mfold_files
+        - ./etc/shmir:/etc/shmir
+        - ./etc/supervisor:/etc/supervisor
+        - ./mfold_files_volume:/tmp/mfold_files
     links:
         - db
         - rabbitmq
