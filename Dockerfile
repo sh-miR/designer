@@ -27,13 +27,11 @@ RUN yum localinstall -y \
         ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.2.30+-3.x86_64.rpm \
     && yum clean all
 
-RUN pip install supervisor supervisor-stdout
-
 ADD . /opt/shmir
 
 RUN sh /opt/shmir/scripts/mfold-docker.sh
 
-RUN pip install -e /opt/shmir
+RUN pip install /opt/shmir
 RUN pip install -r /opt/shmir/test-requirements.txt
 RUN pip install tox
 

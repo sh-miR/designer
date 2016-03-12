@@ -1,22 +1,106 @@
-shmir:
+version: '2'
+services:
+  shmir:
     build: .
     working_dir: /opt/shmir
-    command: /start.sh
+    command: /shmir_start.sh
+    tty: true
     volumes:
-        - .:/opt/shmir
-        - ./etc/shmir:/etc/shmir
-        - ./etc/supervisor:/etc/supervisor
-        - ./mfold_files_volume:/tmp/mfold_files
+      - ./src/shmir:/usr/lib/python2.7/site-packages/shmir
+      - ./etc/shmir:/etc/shmir
+      - mfold_data:/tmp/mfold_files
     links:
-        - db
-        - rabbitmq
-        - redis
+      - db
+      - rabbitmq
+      - redis
     ports:
-        - "8080:8080"
-        - "5555:5555"
-db:
+      - "8080:8080"
+    depends_on:
+      - db
+      - rabbitmq
+      - redis
+  shmir-celery-worker1:
+    build: .
+    working_dir: /opt/shmir
+    command: /start.sh /usr/bin/celery -A shmir.async.celery worker --concurrency=2 -l info -n worker1.%%h -Q design
+    tty: true
+    volumes:
+      - ./src/shmir:/usr/lib/python2.7/site-packages/shmir
+      - ./etc/shmir:/etc/shmir
+      - mfold_data:/tmp/mfold_files
+    links:
+      - db
+      - rabbitmq
+      - redis
+    depends_on:
+      - shmir
+  shmir-celery-worker2:
+    build: .
+    working_dir: /opt/shmir
+    command: /start.sh /usr/bin/celery -A shmir.async.celery worker --concurrency=6 -l info -n worker2.%%h -Q score
+    tty: true
+    volumes:
+      - ./src/shmir:/usr/lib/python2.7/site-packages/shmir
+      - ./etc/shmir:/etc/shmir
+      - mfold_data:/tmp/mfold_files
+    links:
+      - db
+      - rabbitmq
+      - redis
+    depends_on:
+      - shmir
+  shmir-celery-worker3:
+    build: .
+    working_dir: /opt/shmir
+    command: /start.sh /usr/bin/celery -A shmir.async.celery worker --concurrency=8 -l info -n worker3.%%h -Q subtasks
+    tty: true
+    volumes:
+      - ./src/shmir:/usr/lib/python2.7/site-packages/shmir
+      - ./etc/shmir:/etc/shmir
+      - mfold_data:/tmp/mfold_files
+    links:
+      - db
+      - rabbitmq
+      - redis
+    depends_on:
+      - shmir
+  shmir-celery-worker4:
+    build: .
+    working_dir: /opt/shmir
+    command: /start.sh /usr/bin/celery -A shmir.async.celery worker --concurrency=16 -l info -n worker4.%%h -Q blast
+    tty: true
+    volumes:
+      - ./src/shmir:/usr/lib/python2.7/site-packages/shmir
+      - ./etc/shmir:/etc/shmir
+      - mfold_data:/tmp/mfold_files
+    links:
+      - db
+      - rabbitmq
+      - redis
+    depends_on:
+      - shmir
+  flower:
+    build: .
+    working_dir: /opt/shmir
+    command: /opt/shmir/scripts/flower
+    tty: true
+    volumes:
+      - ./src/shmir:/usr/lib/python2.7/site-packages/shmir
+      - ./etc/shmir:/etc/shmir
+      - mfold_data:/tmp/mfold_files
+    links:
+      - rabbitmq
+      - redis
+    ports:
+      - "5555:5555"
+    depends_on:
+      - shmir
+  db:
     image: postgres
-rabbitmq:
+  rabbitmq:
     image: jplock/rabbitmq
-redis:
+  redis:
     image: fedora/redis
+volumes:
+  mfold_data:
+    driver: local

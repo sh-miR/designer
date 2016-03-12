@@ -32,8 +32,7 @@ def do_revision(config, message=None, autogenerate=False):
 
 
 def get_alembic_config():
-    config = alembic_config.Config(os.path.join(os.path.dirname(__file__),
-                                                'alembic.ini'))
+    config = alembic_config.Config('/etc/shmir/alembic.ini')
     config.set_main_option('sqlalchemy.url', settings.FCONN)
 
     return config
