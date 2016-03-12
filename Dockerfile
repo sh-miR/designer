@@ -22,6 +22,7 @@ RUN yum install -y \
         telnet \
         net-tools \
         nc \
+        sudo \
     && yum clean all
 RUN yum localinstall -y \
         ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.2.30+-3.x86_64.rpm \
@@ -36,5 +37,14 @@ RUN pip install -r /opt/shmir/test-requirements.txt
 RUN pip install tox
 
 COPY start.sh /
+COPY shmir_start.sh /
 
 ENV C_FORCE_ROOT true
+
+RUN useradd --user-group shmir \
+    && mkdir -p /var/lib/shmir/mfold /var/lib/shmir/blast \
+    && chown -R shmir: /var/lib/shmir/mfold /var/lib/shmir/blast
+
+COPY shmir_sudoers /etc/sudoers.d/shmir_sudoers
+
+USER shmir

@@ -8,7 +8,8 @@ services:
     volumes:
       - ./src/shmir:/usr/lib/python2.7/site-packages/shmir
       - ./etc/shmir:/etc/shmir
-      - mfold_data:/tmp/mfold_files
+      - mfold_data:/var/lib/shmir/mfold
+      - blast_data:/var/lib/shmir/blast
     links:
       - db
       - rabbitmq
@@ -27,7 +28,8 @@ services:
     volumes:
       - ./src/shmir:/usr/lib/python2.7/site-packages/shmir
       - ./etc/shmir:/etc/shmir
-      - mfold_data:/tmp/mfold_files
+      - mfold_data:/var/lib/shmir/mfold
+      - blast_data:/var/lib/shmir/blast
     links:
       - db
       - rabbitmq
@@ -42,7 +44,8 @@ services:
     volumes:
       - ./src/shmir:/usr/lib/python2.7/site-packages/shmir
       - ./etc/shmir:/etc/shmir
-      - mfold_data:/tmp/mfold_files
+      - mfold_data:/var/lib/shmir/mfold
+      - blast_data:/var/lib/shmir/blast
     links:
       - db
       - rabbitmq
@@ -57,7 +60,8 @@ services:
     volumes:
       - ./src/shmir:/usr/lib/python2.7/site-packages/shmir
       - ./etc/shmir:/etc/shmir
-      - mfold_data:/tmp/mfold_files
+      - mfold_data:/var/lib/shmir/mfold
+      - blast_data:/var/lib/shmir/blast
     links:
       - db
       - rabbitmq
@@ -72,7 +76,8 @@ services:
     volumes:
       - ./src/shmir:/usr/lib/python2.7/site-packages/shmir
       - ./etc/shmir:/etc/shmir
-      - mfold_data:/tmp/mfold_files
+      - mfold_data:/var/lib/shmir/mfold
+      - blast_data:/var/lib/shmir/blast
     links:
       - db
       - rabbitmq
@@ -87,7 +92,8 @@ services:
     volumes:
       - ./src/shmir:/usr/lib/python2.7/site-packages/shmir
       - ./etc/shmir:/etc/shmir
-      - mfold_data:/tmp/mfold_files
+      - mfold_data:/var/lib/shmir/mfold
+      - blast_data:/var/lib/shmir/blast
     links:
       - rabbitmq
       - redis
