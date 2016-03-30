@@ -25,7 +25,7 @@ RUN yum install -y \
         sudo \
     && yum clean all
 RUN yum localinstall -y \
-        ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.2.30+-3.x86_64.rpm \
+        ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.3.0+-1.x86_64.rpm \
     && yum clean all
 
 ADD . /opt/shmir
