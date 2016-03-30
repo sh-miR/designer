@@ -23,6 +23,8 @@ RUN yum install -y \
         net-tools \
         nc \
         sudo \
+        ghostscript \
+        which \
     && yum clean all
 RUN yum localinstall -y \
         ftp://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.3.0+-1.x86_64.rpm \

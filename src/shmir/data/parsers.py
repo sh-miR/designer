@@ -1,8 +1,10 @@
+import gzip
+
 from Bio import SeqIO
 
 
 def parse_utr_database(filename):
-    for record in SeqIO.parse(open(filename, 'r'), 'embl'):
+    for record in SeqIO.parse(gzip.open(filename, 'r'), 'embl'):
         seq = str(record.seq)
         source = [f for f in record.features if f.type == 'source'][0]
         name = 'RefSeq:'
@@ -12,6 +14,6 @@ def parse_utr_database(filename):
 
 
 def parse_mRNA_database(filename):
-    for record in SeqIO.parse(open(filename, 'r'), 'fasta'):
+    for record in SeqIO.parse(gzip.open(filename, 'r'), 'fasta'):
         seq = str(record.seq)
         yield seq.upper(), record.id.split("|")[-2]

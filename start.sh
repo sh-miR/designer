@@ -1,6 +1,9 @@
 #!/bin/bash
 
-sudo chown -R shmir: /tmp/mfold_files
-sudo chown -R shmir: /opt/shmir/databases
+set -e
+
+sudo chown -R shmir: /var/lib/shmir/mfold
+sudo chown -R shmir: /var/lib/shmir/blast
+sudo chown -R shmir: /var/lib/shmir/bio_databases
 
 exec $@

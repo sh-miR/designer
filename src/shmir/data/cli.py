@@ -1,3 +1,4 @@
+from shmir.data import download
 from shmir.data.models import (
     db_session,
     Backbone,
@@ -196,24 +197,22 @@ def seed_initial_data():
         )
     ]
 
-    # TODO get filename
-    # filename = "3UTRaspic.Hum.dat"
-    # for sequence, reference in parse_utr_database(filename):
-    #     db_session.add(
-    #         Utr(
-    #             sequence=sequence,
-    #             reference=reference
-    #         )
-    #     )
-    # # TODO 2 get filename 2
-    # filename = 'human_all.fna'
-    # for sequence, reference in parse_mRNA_database(filename):
-    #     db_session.add(
-    #         HumanmRNA(
-    #             sequence=sequence,
-    #             reference=reference
-    #         )
-    #     )
+    filename = download.download_utr_database()
+    for sequence, reference in parse_utr_database(filename):
+        db_session.add(
+            Utr(
+                sequence=sequence,
+                reference=reference
+            )
+        )
+    filename = download.download_human_all_database()
+    for sequence, reference in parse_mRNA_database(filename):
+        db_session.add(
+            HumanmRNA(
+                sequence=sequence,
+                reference=reference
+            )
+        )
 
     db_session.add_all(backbones)
     db_session.add_all(immunos)

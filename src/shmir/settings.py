@@ -105,7 +105,7 @@ CELERY_QUEUES = (
 
 # Mfold
 MFOLD_PATH = '/opt/shmir/mfold/mfold'
-MFOLD_FILES = '/tmp/mfold_files'  # Path where mfold fiels are generated
+MFOLD_FILES = '/var/lib/shmir/mfold'  # Path where mfold fiels are generated
 
 
 # nucleotide type for ncbi database
@@ -135,4 +135,7 @@ EMAIL_FROM = get_config('email', 'email_from')
 EMAIL_PASSWORD = get_config('email', 'password')
 
 # Blast
-BLAST_PATH = get_config('blast', 'path', default='/opt/shmir/blast')
+BLAST_PATH = get_config('blast', 'path', default='/var/lib/shmir/blast')
+
+# Misc bio databases
+BIO_DATABASES_PATH = get_config('bio', 'path', default='/var/lib/shmir/bio_databases')
