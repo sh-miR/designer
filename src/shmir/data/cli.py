@@ -197,25 +197,29 @@ def seed_initial_data():
         )
     ]
 
-    filename = download.download_utr_database()
-    for sequence, reference in parse_utr_database(filename):
-        db_session.add(
-            Utr(
-                sequence=sequence,
-                reference=reference
+    if db_session.query(Utr).count() == 0:
+        filename = download.download_utr_database()
+        for sequence, reference in parse_utr_database(filename):
+            db_session.add(
+                Utr(
+                    sequence=sequence,
+                    reference=reference
+                )
             )
-        )
-    filename = download.download_human_all_database()
-    for sequence, reference in parse_mRNA_database(filename):
-        db_session.add(
-            HumanmRNA(
-                sequence=sequence,
-                reference=reference
+    if db_session.query(HumanmRNA).count() == 0:
+        filename = download.download_human_all_database()
+        for sequence, reference in parse_mRNA_database(filename):
+            db_session.add(
+                HumanmRNA(
+                    sequence=sequence,
+                    reference=reference
+                )
             )
-        )
 
-    db_session.add_all(backbones)
-    db_session.add_all(immunos)
+    if db_session.query(Backbone).count() == 0:
+        db_session.add_all(backbones)
+    if db_session.query(Immuno).count() == 0:
+        db_session.add_all(immunos)
     db_session.commit()
 
 
