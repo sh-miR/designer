@@ -5,7 +5,7 @@
 ## Requirements ##
 
 * [docker](https://www.docker.com)
-* [fig](http://fig.sh)
+* [docker-compose](https://docs.docker.com/compose/)
 
 That's all you need, how cool is that? :)
 
@@ -14,9 +14,9 @@ That's all you need, how cool is that? :)
 
 To start server:
 ```
-    $ ./scripts/db_docker
-    $ fig up
+    $ docker-compose up
 ```
+You may need to run this command by root.
 
 After this commands server builds all its dependencies and start sh-miR RESTful API.
 

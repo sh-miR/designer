@@ -48,13 +48,14 @@ from shmir.designer.transcript.validators import (
     validate_gc_content,
     validate_immuno,
     validate_transcript_by_score,
+    validate_thermostability
 )
 from shmir.designer.transcript.score import score_from_transcript
 from shmir.designer.transcript.search import (
     find_by_patterns,
     all_possible_sequences,
 )
-from shmir.designer.transcript.offtarget import blast_offtarget
+from shmir.designer.transcript.offtarget import offtarget_seed
 
 from shmir.designer.mfold.worker import fold
 from shmir.designer.mfold.path import remove_bad_foldings
@@ -81,6 +82,9 @@ def validate_sequences(
             validate_immuno(
                 sequence,
                 immuno
+            ),
+            validate_thermostability(
+                sequence
             )]),
         sequences
     )
@@ -96,7 +100,7 @@ def validate_sequences(
     # counting offtarget is expensive
     with allow_join_result():
         offtarget = group(
-            blast_offtarget.s(
+            offtarget_seed.s(
                 sequence,
             ).set(queue="blast")
             for sequence in preprocessed

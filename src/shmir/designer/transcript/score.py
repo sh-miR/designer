@@ -33,6 +33,31 @@ def score_regexp(number):
     return number * 5
 
 
+def score_thermostability(
+    frame
+):
+    """Function to scores thermostability of siRNA.
+
+        Args:
+            frame: backbone object
+
+        Returns: Tuple with:
+        Thermostability score(int), where 5 means least efficient,
+        15 means somehow efficient,
+        20 means efficient.
+    """
+    thermostability_score = 0
+    if frame.siRNA2[0] == 'G' and (frame.siRNA2[-1] == 'A' or frame.siRNA2[-1] == 'T'):
+        thermostability_score = 20
+    elif (frame.siRNA2[0] == 'C' and
+          (frame.siRNA2[-1] == 'A' or frame.siRNA2[-1] == 'T')):
+        thermostability_score = 15
+    elif ((frame.siRNA2[0] == 'A' or frame.siRNA2[0] == 'T') and
+          (frame.siRNA2[-1] == 'A' or frame.siRNA2[-1] == 'T')):
+        thermostability_score = 5
+    return thermostability_score
+
+
 def score_from_transcript(
     frame, original_frame, frame_ss, offtarget, regexp
 ):
@@ -52,9 +77,14 @@ def score_from_transcript(
     structure_points = score_structure(frame, frame_ss, original_frame)
     offtarget_points = score_offtarget(offtarget)
     regexp_points = score_regexp(regexp)
+    thermostability_points = score_thermostability(frame)
     return {
         'structure': structure_points,
         'offtarget': offtarget_points,
         'regexp': regexp_points,
-        'all': structure_points + offtarget_points + regexp_points
+        'thermostability': thermostability_points,
+        'all': (
+            structure_points + offtarget_points +
+            regexp_points + thermostability_points
+        )
     }

@@ -85,15 +85,13 @@ FCONN = CONN_STR.format(
     dbname=get_db_config('name', 'shmird'),
     user=get_db_config('user', 'postgres'),
     # password=get_db_config('password'),
-    host=get_db_config('host', os.environ.get('DB_PORT_5432_TCP_ADDR')),
+    host=get_db_config('host', 'db'),
     port=get_db_config('port', '5432')
 )
 
 # Celery
-CELERY_BROKER = 'amqp://{}'.format(
-    os.environ.get('RABBITMQ_PORT_5672_TCP_ADDR'))
-CELERY_RESULT_BACKEND = 'redis://{}'.format(
-    os.environ.get('REDIS_PORT_6379_TCP_ADDR'))
+CELERY_BROKER = 'amqp://rabbitmq:5672'
+CELERY_RESULT_BACKEND = 'redis://redis:6379'
 # CELERYD_FORCE_EXECV = True
 CELERY_QUEUES = (
     Queue('design', routing_key='design'),
@@ -107,7 +105,7 @@ CELERY_QUEUES = (
 
 # Mfold
 MFOLD_PATH = '/opt/shmir/mfold/mfold'
-MFOLD_FILES = '/tmp/mfold_files'  # Path where mfold fiels are generated
+MFOLD_FILES = '/var/lib/shmir/mfold'  # Path where mfold fiels are generated
 
 
 # nucleotide type for ncbi database
@@ -127,7 +125,7 @@ if DEBUG:
     CACHE_DEFAULT_TIMEOUT = get_config('cache', 'timeout', 1)
 else:
     CACHE_DEFAULT_TIMEOUT = get_config('cache', 'timeout', 3600)
-CACHE_REDIS_HOST = os.environ.get('REDIS_PORT_6379_TCP_ADDR')
+CACHE_REDIS_HOST = 'redis'
 
 # Email
 EMAIL_ENABLED = get_bool('email', 'enabled', default=False)
@@ -137,4 +135,7 @@ EMAIL_FROM = get_config('email', 'email_from')
 EMAIL_PASSWORD = get_config('email', 'password')
 
 # Blast
-BLAST_PATH = get_config('blast', 'path', default='/opt/shmir/blast')
+BLAST_PATH = get_config('blast', 'path', default='/var/lib/shmir/blast')
+
+# Misc bio databases
+BIO_DATABASES_PATH = get_config('bio', 'path', default='/var/lib/shmir/bio_databases')

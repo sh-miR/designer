@@ -26,3 +26,4 @@ pdb.sock
 fasta
 blast
 .tox
+.eggs

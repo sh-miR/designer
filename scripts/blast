@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /opt/shmir/blast
+cd /var/lib/shmir/blast
 
 update_blastdb.pl --decompress refseq_rna
 update_blastdb.pl --decompress taxdb

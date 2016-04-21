@@ -1,7 +1,14 @@
+from shmir.data import download
 from shmir.data.models import (
     db_session,
     Backbone,
-    Immuno
+    Immuno,
+    Utr,
+    HumanmRNA
+)
+from shmir.data.parsers import (
+    parse_utr_database,
+    parse_mRNA_database
 )
 
 
@@ -190,8 +197,26 @@ def seed_initial_data():
         )
     ]
 
+    filename = download.download_utr_database()
+    for sequence, reference in parse_utr_database(filename):
+        db_session.add(
+            Utr(
+                sequence=sequence,
+                reference=reference
+            )
+        )
+    filename = download.download_human_all_database()
+    for sequence, reference in parse_mRNA_database(filename):
+        db_session.add(
+            HumanmRNA(
+                sequence=sequence,
+                reference=reference
+            )
+        )
+
     db_session.add_all(backbones)
     db_session.add_all(immunos)
+    db_session.commit()
 
 
 def main():

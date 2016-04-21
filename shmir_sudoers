@@ -1,0 +1,1 @@
+%shmir ALL=(root) NOPASSWD: /bin/chown -R shmir\: /var/lib/shmir/mfold, /usr/bin/chown -R shmir\: /var/lib/shmir/mfold, /bin/chown -R shmir\: /var/lib/shmir/blast, /usr/bin/chown -R shmir\: /var/lib/shmir/blast, /bin/chown -R shmir\: /var/lib/shmir/bio_databases, /usr/bin/chown -R shmir\: /var/lib/shmir/bio_databases
