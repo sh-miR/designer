@@ -9,6 +9,12 @@
 
 That's all you need, how cool is that? :)
 
+If you use SELinux, please allow to create volumes in directory where sh-miR
+designer is cloned. Assuming you're in this directory, please execute:
+
+```
+    $ sudo chcon -Rvt svirt_sandbox_file_t .
+```
 
 ## Quick Start ##
 
